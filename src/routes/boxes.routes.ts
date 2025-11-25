@@ -4,6 +4,8 @@ import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
 import Authenticate from "../middleware/Authenticate";
 import { BoxesStoreData, BoxesUpdateData } from "../entities/Boxes";
 import BoxesController from "../controllers/BoxesController";
+import BoxBrandingController from "../controllers/BoxBrandingController";
+import { BoxBrandingProps } from "../entities/BoxBranding";
 
 const boxesRoutes = Router();
 
@@ -101,6 +103,58 @@ boxesRoutes.delete(
       );
       const ok = await controller.destroy(Number(request.params.id));
       return response.json({ success: ok });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Buscar branding da box
+boxesRoutes.get(
+  "/boxes/:id/branding",
+  Authenticate,
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const controller = container.get<BoxBrandingController>(
+        Registry.BoxBrandingController
+      );
+      const branding = await controller.getByBoxId(Number(request.params.id));
+      return response.json(branding);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Atualizar (ou criar) branding da box
+boxesRoutes.put(
+  "/boxes/:id/branding",
+  Authenticate,
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const controller = container.get<BoxBrandingController>(
+        Registry.BoxBrandingController
+      );
+      const box_id = Number(request.params.id);
+      // para update, espera que branding já exista; senão, cria
+      let branding = await controller.getByBoxId(box_id);
+      const data = request.body as Partial<
+        Omit<BoxBrandingProps, "id" | "box_id">
+      >;
+      if (branding) {
+        branding = await controller.update(box_id, data);
+      } else {
+        branding = await controller.create({
+          box_id,
+          primary_color: data.primary_color!,
+          secondary_color: data.secondary_color!,
+          logo_url: data.logo_url,
+          client_name: data.client_name,
+        });
+      }
+      return response.json(branding);
     } catch (error) {
       next(error);
     }
