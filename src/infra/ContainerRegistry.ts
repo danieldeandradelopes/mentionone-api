@@ -61,6 +61,10 @@ export const Registry = {
   KnexConfig: Symbol.for("KnexConfig"),
   EnterpriseGateway: Symbol.for("EnterpriseGateway"),
   EnterpriseController: Symbol.for("EnterpriseController"),
+  BoxesGateway: Symbol.for("BoxesGateway"),
+  BoxesController: Symbol.for("BoxesController"),
+  FeedbackGateway: Symbol.for("FeedbackGateway"),
+  FeedbackController: Symbol.for("FeedbackController"),
 };
 
 export const container = new Container();
@@ -215,4 +219,27 @@ container.bind(Registry.GatewayPaymentsController).toDynamicValue((context) => {
 
 container.bind(Registry.KnexConfig).toDynamicValue(() => {
   return KnexConfig;
+});
+
+container.bind(Registry.BoxesGateway).toDynamicValue(() => {
+  return new (require("../gateway/BoxesGateway/KnexBoxesGateway").KnexBoxesGateway)(
+    container.get(Registry.KnexConfig)
+  );
+});
+
+container.bind(Registry.BoxesController).toDynamicValue((context) => {
+  const BoxesController = require("../controllers/BoxesController").default;
+  return new BoxesController(container.get(Registry.KnexConfig));
+});
+
+container.bind(Registry.FeedbackGateway).toDynamicValue(() => {
+  return new (require("../gateway/FeedbackGateway/KnexFeedbackGateway").KnexFeedbackGateway)(
+    container.get(Registry.KnexConfig)
+  );
+});
+
+container.bind(Registry.FeedbackController).toDynamicValue((context) => {
+  const FeedbackController =
+    require("../controllers/FeedbackController").default;
+  return new FeedbackController(container.get(Registry.KnexConfig));
 });
