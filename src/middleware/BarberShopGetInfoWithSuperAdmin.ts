@@ -24,7 +24,7 @@ const EnterpriseGetInfoWithSuperAdmin = async (
     if (!Enterprise)
       return response.status(401).json({ message: "Unauthorized!" });
 
-    request.enterprise_Id = Enterprise.id;
+    request.enterprise_id = Enterprise.id;
 
     return next();
   } catch (error) {

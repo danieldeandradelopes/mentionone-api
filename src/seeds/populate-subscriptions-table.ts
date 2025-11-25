@@ -50,7 +50,7 @@ export async function seed(knex: Knex): Promise<void> {
     if (index === 2) status = "canceled"; // Barbearia Vintage cancelada
 
     subscriptions.push({
-      enterprise_Id: shop.id,
+      enterprise_id: shop.id,
       plan_price_id: planPrice.id,
       status: status,
       start_date: startDate.toISOString().split("T")[0],
@@ -71,7 +71,7 @@ export async function seed(knex: Knex): Promise<void> {
 
   activeSubscriptions.forEach((subscription, index) => {
     const Enterprise = Enterprises.find(
-      (bs) => bs.id === subscription.enterprise_Id
+      (bs) => bs.id === subscription.enterprise_id
     );
     const planPrice = planPrices.find(
       (pp) => pp.id === subscription.plan_price_id

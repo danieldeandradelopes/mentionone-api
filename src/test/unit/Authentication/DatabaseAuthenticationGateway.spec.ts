@@ -49,7 +49,7 @@ describe("Testa o DatabaseAuthenticationGateway", () => {
       table.increments("id");
       table.integer("user_id").references("id").inTable("users").notNullable();
       table
-        .integer("enterprise_Id")
+        .integer("enterprise_id")
         .references("id")
         .inTable("Enterprise")
         .notNullable();
@@ -58,7 +58,7 @@ describe("Testa o DatabaseAuthenticationGateway", () => {
       table.decimal("rate", 3, 2).defaultTo(0);
       table.boolean("is_active").defaultTo(true);
       table.timestamps(true, true);
-      table.unique(["user_id", "enterprise_Id"]);
+      table.unique(["user_id", "enterprise_id"]);
     });
 
     await connection("users").insert([
@@ -147,7 +147,7 @@ describe("Testa o DatabaseAuthenticationGateway", () => {
 
     await connection("barbers").insert({
       user_id: userId[0].id,
-      enterprise_Id: enterpriseId[0].id,
+      enterprise_id: enterpriseId[0].id,
       specialties: "Corte de cabelo",
       bio: "Barbeiro profissional",
       rate: 4.5,

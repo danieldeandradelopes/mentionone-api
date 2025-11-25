@@ -6,7 +6,7 @@ declare global {
     interface Request {
       user_id?: number;
       access_level: string;
-      enterprise_Id: number;
+      enterprise_id: number;
       refreshToken?: any;
     }
 

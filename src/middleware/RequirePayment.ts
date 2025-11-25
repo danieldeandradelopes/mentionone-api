@@ -48,7 +48,7 @@ export async function RequirePayment(
 
     const Enterprise = await EnterpriseController.getBySubdomain(subdomain);
 
-    const subscription = await subscriptionController.getByenterpriseId(
+    const subscription = await subscriptionController.getByEnterpriseId(
       Enterprise.id
     );
 

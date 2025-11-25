@@ -3,7 +3,7 @@ export interface SocialMediaProps {
   name: string;
   url: string;
   icon: string;
-  enterprise_Id: number;
+  enterprise_id: number;
   updated_at?: string;
   created_at?: string;
 }
@@ -13,7 +13,7 @@ export default class SocialMedia {
   readonly name: string;
   readonly url: string;
   readonly icon: string;
-  readonly enterprise_Id: number;
+  readonly enterprise_id: number;
   readonly updated_at?: string;
   readonly created_at?: string;
 
@@ -22,7 +22,7 @@ export default class SocialMedia {
     name,
     url,
     icon,
-    enterprise_Id,
+    enterprise_id,
     updated_at,
     created_at,
   }: SocialMediaProps) {
@@ -30,7 +30,7 @@ export default class SocialMedia {
     this.name = name;
     this.url = url;
     this.icon = icon;
-    this.enterprise_Id = enterprise_Id;
+    this.enterprise_id = enterprise_id;
     this.updated_at = updated_at;
     this.created_at = created_at;
   }

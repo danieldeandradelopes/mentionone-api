@@ -75,7 +75,7 @@ userRoutes.get(
 
       const user = await userController.getUserSession(
         request.user_id!,
-        request.enterprise_Id!
+        request.enterprise_id!
       );
 
       return response.status(201).json(user);

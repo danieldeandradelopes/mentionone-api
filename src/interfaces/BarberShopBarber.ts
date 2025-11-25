@@ -7,7 +7,7 @@ export interface AvailableHour {
 export interface Barber {
   id: number;
   user_id: number;
-  enterprise_Id: number;
+  enterprise_id: number;
   specialties?: string;
   bio?: string;
   is_active: boolean;

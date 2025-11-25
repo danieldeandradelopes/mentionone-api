@@ -41,11 +41,11 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
       .update({ status: "past_due" });
   }
 
-  async getSubscriptionByenterpriseId(
+  async getSubscriptionByEnterpriseId(
     enterpriseId: number
   ): Promise<SubscriptionValidateResponse> {
     let subscription = await this.connection("subscription")
-      .where({ enterprise_Id: enterpriseId })
+      .where({ enterprise_id: enterpriseId })
       .whereRaw(
         `
     (
@@ -64,7 +64,7 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
 
     if (!subscription) {
       subscription = await this.connection("subscription")
-        .where({ enterprise_Id: enterpriseId })
+        .where({ enterprise_id: enterpriseId })
         .join("plan_price", "subscription.plan_price_id", "plan_price.id")
         .join("plan", "plan_price.plan_id", "plan.id")
         .orderBy("subscription.end_date", "desc")
@@ -79,7 +79,6 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
         plan_name: "",
         plan_description: "",
         plan_price: "",
-        features: [],
       };
     }
 
@@ -90,7 +89,6 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
       plan_name: subscription.name,
       plan_description: subscription.description,
       plan_price: subscription.price,
-      features: subscription.features,
     };
   }
 

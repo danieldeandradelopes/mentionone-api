@@ -1,4 +1,3 @@
-import Barber, { BarberListResponse } from "../../entities/Barber";
 import Phone from "../../entities/Phone";
 import User from "../../entities/User";
 import UserSession from "../../entities/UserSession";
@@ -57,14 +56,14 @@ export default class KnexUserGateway implements IUserGateway {
       const phones = await this.connection
         .select("*")
         .from("phones")
-        .where("enterprise_Id", enterpriseId);
+        .where("enterprise_id", enterpriseId);
 
       const formattedPhones: Phone[] = phones.map((phone: Phone) => ({
         id: phone.id,
         phone_number: phone.phone_number,
         is_whatsapp: phone.is_whatsapp,
         is_cellphone: phone.is_cellphone,
-        enterprise_Id: phone.enterprise_Id,
+        enterprise_id: phone.enterprise_id,
       }));
 
       if (EnterpriseData) {
@@ -74,7 +73,7 @@ export default class KnexUserGateway implements IUserGateway {
           .select("barbers.specialties", "barbers.bio", "barbers.rate")
           .from("barbers")
           .where({
-            enterprise_Id: enterpriseId,
+            enterprise_id: enterpriseId,
             user_id: user.id,
           })
           .first();
@@ -89,7 +88,7 @@ export default class KnexUserGateway implements IUserGateway {
         const workingHours = await this.connection
           .select("working_hours.*")
           .from("working_hours")
-          .where("enterprise_Id", EnterpriseData.id)
+          .where("enterprise_id", EnterpriseData.id)
           .orderBy("week_day");
 
         // Buscar slots de horário para cada dia
@@ -184,7 +183,7 @@ export default class KnexUserGateway implements IUserGateway {
     name: string,
     email: string,
     password: string,
-    accessLevel: "barber" | "client" | "admin",
+    accessLevel: "superadmin" | "admin" | "employee" | "customer",
     phone: string,
     trx?: any
   ): Promise<User> {
@@ -211,134 +210,6 @@ export default class KnexUserGateway implements IUserGateway {
 
     const query = trx ? trx("users") : this.connection("users");
     const insertedUser = await query.insert(newUser).returning("*");
-
-    delete insertedUser[0].password;
-
-    return insertedUser[0];
-  }
-
-  async addBarber(
-    name: string,
-    email: string,
-    password: string,
-    phone: string,
-    enterpriseId: number,
-    digital_comission: number,
-    physical_comission: number,
-    services_comission: number,
-    trx?: any
-  ): Promise<{ user: User; barber: Barber }> {
-    const newUser = {
-      name: name,
-      email: email,
-      password: await this.Encrypt.encrypt(password),
-      access_level: "barber",
-      phone: phone,
-    };
-
-    const emailAlreadyExists = await this.connection
-      .select("*")
-      .from("users")
-      .where("email", email);
-
-    if (emailAlreadyExists.length) {
-      throw new HttpException(404, "Email already exists");
-    }
-
-    if (!name || !email || !password) {
-      throw new HttpException(400, "All inputs is required");
-    }
-
-    const query = trx ? trx("users") : this.connection("users");
-    const insertedUser = await query.insert(newUser).returning("*");
-
-    delete insertedUser[0].password;
-
-    const queryBarber = trx ? trx("barbers") : this.connection("barbers");
-    const insertedBarber = await queryBarber
-      .insert({
-        user_id: insertedUser[0].id,
-        enterprise_Id: enterpriseId,
-        digital_comission: digital_comission,
-        physical_comission: physical_comission,
-        services_comission: services_comission,
-      })
-      .returning("*");
-
-    return {
-      user: new User({
-        ...insertedUser[0],
-      }),
-      barber: new Barber({
-        ...insertedBarber[0],
-      }),
-    };
-  }
-
-  async addCustomer(
-    userId: number,
-    enterpriseId: number,
-    trx?: any
-  ): Promise<User> {
-    const query = trx ? trx("customers") : this.connection("customers");
-    const insertedCustomer = await query
-      .insert({
-        user_id: userId,
-        enterprise_Id: enterpriseId,
-      })
-      .returning("*");
-
-    return insertedCustomer[0];
-  }
-
-  async addProviderUser(
-    name: string,
-    email: string,
-    accessLevel: "client",
-    provider: string,
-    providerUid: string,
-    enterpriseId: number,
-    phone?: string,
-    avatar?: string,
-    trx?: any
-  ): Promise<User> {
-    const newUser = {
-      name: name,
-      email: email,
-      access_level: accessLevel,
-      phone: phone,
-      avatar: avatar ?? "",
-    };
-
-    const emailAlreadyExists = await this.connection
-      .select("*")
-      .from("users")
-      .where("email", email);
-
-    if (emailAlreadyExists.length) {
-      throw new HttpException(404, "Email already exists");
-    }
-
-    if (!name || !email) {
-      throw new HttpException(400, "All inputs is required");
-    }
-
-    const query = trx ? trx("users") : this.connection("users");
-    const insertedUser = await query.insert(newUser).returning("*");
-
-    const queryUsersProvider = trx
-      ? trx("users_provider")
-      : this.connection("users_provider");
-
-    await queryUsersProvider
-      .insert({
-        provider,
-        provider_uid: providerUid,
-        users_id: insertedUser[0].id,
-      })
-      .returning("*");
-
-    await this.addCustomer(insertedUser[0].id, enterpriseId, trx);
 
     delete insertedUser[0].password;
 
@@ -479,87 +350,11 @@ export default class KnexUserGateway implements IUserGateway {
     return updatedUser[0];
   }
 
-  async getBarbersByenterpriseId(
-    enterpriseId: number
-  ): Promise<BarberListResponse[]> {
-    const barbers: BarberListResponse[] = await this.connection
-      .select("users.*", "barbers.*")
-      .from("users")
-      .where("users.access_level", "barber")
-      .where("barbers.enterprise_Id", enterpriseId)
-      .where("users.is_deleted", false)
-      .join("barbers", "barbers.user_id", "users.id");
-
-    const formattedBarbers: BarberListResponse[] = [];
-
-    for (const barber of barbers) {
-      formattedBarbers.push({
-        ...barber,
-      });
-    }
-
-    return formattedBarbers;
-  }
-
-  async updateBarber(
-    id: number,
-    name: string,
-    email: string,
-    phone: string,
-    digital_comission: number,
-    physical_comission: number,
-    services_comission: number,
-    avatar: string,
-    trx?: any
-  ): Promise<{ user: User; barber: Barber }> {
-    const currentUser = await this.connection("users").where("id", id).first();
-
-    if (!currentUser) throw new HttpException(404, "User not found");
-
-    const queryUser = trx ? trx("users") : this.connection("users");
-    const updatedUser = await queryUser
-      .where("id", id)
-      .update({
-        ...currentUser,
-        name: name ?? currentUser.name,
-        email: email ?? currentUser.email,
-        phone: phone ?? currentUser.phone,
-        avatar: avatar ?? currentUser.avatar,
-      })
-      .returning("*");
-
-    const currentBarber = await this.connection("barbers")
-      .where("user_id", id)
-      .first();
-    if (!currentBarber) throw new HttpException(404, "Barber not found");
-
-    const queryBarber = trx ? trx("barbers") : this.connection("barbers");
-    const updatedBarber = await queryBarber
-      .where("user_id", id)
-      .update({
-        digital_comission: digital_comission ?? currentBarber.digital_comission,
-        physical_comission:
-          physical_comission ?? currentBarber.physical_comission,
-        services_comission:
-          services_comission ?? currentBarber.services_comission,
-      })
-      .returning("*");
-
-    return {
-      user: new User({
-        ...updatedUser[0],
-      }),
-      barber: new Barber({
-        ...updatedBarber[0],
-      }),
-    };
-  }
-
   async listCustomers(enterpriseId: number): Promise<User[]> {
     const customers = await this.connection("users")
       .where("access_level", "client")
       .join("customers", "customers.user_id", "users.id")
-      .where("customers.enterprise_Id", enterpriseId)
+      .where("customers.enterprise_id", enterpriseId)
       .where("is_deleted", false);
 
     const formattedCustomers: User[] = [];

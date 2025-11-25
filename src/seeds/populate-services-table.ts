@@ -16,7 +16,7 @@ export async function seed(knex: Knex): Promise<void> {
   // Verificar se já existem serviços
   const existingServices = await knex("services")
     .whereIn(
-      "enterprise_Id",
+      "enterprise_id",
       Enterprises.map((shop) => shop.id)
     )
     .select("id");
@@ -188,7 +188,7 @@ export async function seed(knex: Knex): Promise<void> {
     shopServices.forEach((service) => {
       servicesData.push({
         ...service,
-        enterprise_Id: shop.id,
+        enterprise_id: shop.id,
       });
     });
   });
@@ -202,7 +202,7 @@ export async function seed(knex: Knex): Promise<void> {
   // Mostrar resumo por barbearia
   Enterprises.forEach((shop, index) => {
     const shopServices = services.filter(
-      (service) => service.enterprise_Id === shop.id
+      (service) => service.enterprise_id === shop.id
     );
     const totalPriceCents = shopServices.reduce(
       (sum, service) => sum + service.price,

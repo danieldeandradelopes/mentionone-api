@@ -106,7 +106,7 @@ export async function seed(knex: Knex): Promise<void> {
 
     return {
       user_id: user.id,
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
     };
   });
 

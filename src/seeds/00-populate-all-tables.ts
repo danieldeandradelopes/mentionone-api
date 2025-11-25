@@ -14,7 +14,7 @@ export async function seed(knex: Knex): Promise<void> {
       console.log("📦 Populando tabela de produtos...");
       await knex("products").insert([
         {
-          enterprise_Id: 1, // Assumindo que existe uma barbearia com ID 1
+          enterprise_id: 1, // Assumindo que existe uma barbearia com ID 1
           title: "Pomada Modeladora Premium",
           description:
             "Pomada de alta qualidade para modelar cabelos com fixação média e brilho natural.",
@@ -28,7 +28,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: 1,
+          enterprise_id: 1,
           title: "Gel Fixador Extra Forte",
           description:
             "Gel com fixação extra forte, ideal para penteados que precisam durar o dia todo.",
@@ -42,7 +42,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: 1,
+          enterprise_id: 1,
           title: "Shampoo Antirresíduos",
           description:
             "Shampoo especial para remover resíduos de produtos e limpar profundamente o couro cabeludo.",
@@ -56,7 +56,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: 1,
+          enterprise_id: 1,
           title: "Creme para Barba Hidratante",
           description:
             "Creme nutritivo para manter a barba macia, hidratada e com aspecto saudável.",
@@ -70,7 +70,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: 1,
+          enterprise_id: 1,
           title: "Óleo para Barba Premium",
           description:
             "Óleo essencial para barba com ingredientes naturais, proporcionando maciez e brilho.",
@@ -84,7 +84,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: 1,
+          enterprise_id: 1,
           title: "E-book: Guia Completo de Cuidados Masculinos",
           description:
             "E-book digital com dicas profissionais para cuidados com cabelo, barba e pele masculina.",
@@ -98,7 +98,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: 1,
+          enterprise_id: 1,
           title: "Curso Online: Técnicas de Corte Modernas",
           description:
             "Curso digital com videoaulas ensinando as principais técnicas de corte masculino da atualidade.",
@@ -112,7 +112,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: 1,
+          enterprise_id: 1,
           title: "Kit Completo Barbearia",
           description:
             "Kit com pomada, gel, shampoo e creme para barba. Perfeito para presentear.",
@@ -146,7 +146,7 @@ export async function seed(knex: Knex): Promise<void> {
         const orders = await knex("orders")
           .insert([
             {
-              enterprise_Id: 1,
+              enterprise_id: 1,
               client_id: 1, // Assumindo que existe um usuário com ID 1
               total: 74.4,
               discount: 1.25,
@@ -155,7 +155,7 @@ export async function seed(knex: Knex): Promise<void> {
               is_deleted: false,
             },
             {
-              enterprise_Id: 1,
+              enterprise_id: 1,
               client_id: 1,
               total: 109.8,
               discount: 12.9,
@@ -164,7 +164,7 @@ export async function seed(knex: Knex): Promise<void> {
               is_deleted: false,
             },
             {
-              enterprise_Id: 1,
+              enterprise_id: 1,
               client_id: 1,
               total: 89.9,
               discount: 0,

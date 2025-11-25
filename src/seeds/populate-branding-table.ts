@@ -216,7 +216,7 @@ export async function seed(knex: Knex): Promise<void> {
   Enterprises.forEach((shop, index) => {
     const theme = brandingThemes[index] || brandingThemes[0];
     brandings.push({
-      enterprise_Id: shop.id,
+      enterprise_id: shop.id,
       name: `${theme.name} - ${shop.name}`,
       theme: theme.theme as "light" | "dark" | "custom",
       ...theme.colors,

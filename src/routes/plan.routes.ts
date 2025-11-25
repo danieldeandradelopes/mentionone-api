@@ -44,12 +44,11 @@ planRoutes.post(
         Registry.PlanController
       );
 
-      const { name, description, features } = request.body;
+      const { name, description } = request.body;
 
       const plan = await planController.store({
         name,
         description,
-        features,
       });
       return response.status(201).json(plan);
     } catch (error) {

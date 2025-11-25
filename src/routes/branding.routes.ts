@@ -149,7 +149,7 @@ brandingRoutes.post(
         drawer_active_bg,
         logo,
         favicon,
-        enterprise_Id: request.enterprise_Id,
+        enterprise_id: request.enterprise_id,
         theme,
       });
 
@@ -181,7 +181,7 @@ brandingRoutes.get(
         Registry.BrandingController
       );
 
-      const branding = await brandingController.get(request.enterprise_Id);
+      const branding = await brandingController.get(request.enterprise_id);
 
       return response.status(201).json(branding);
     } catch (error) {
@@ -316,7 +316,7 @@ brandingRoutes.put(
         drawer_active_bg,
         logo,
         favicon,
-        enterprise_Id: request.enterprise_Id,
+        enterprise_id: request.enterprise_id,
         theme,
       });
 

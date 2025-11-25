@@ -20,7 +20,7 @@ export default class KnexBrandingGateway implements IBrandingGateway {
     const currentBranding = await this.connection
       .select("*")
       .from("branding")
-      .where("enterprise_Id", branding.enterprise_Id)
+      .where("enterprise_id", branding.enterprise_id)
       .first();
 
     if (!currentBranding) throw new HttpException(404, "Branding not found");
@@ -30,7 +30,7 @@ export default class KnexBrandingGateway implements IBrandingGateway {
     const updatedBranding = await this.connection
       .update({ ...currentBranding, ...cleanedBranding })
       .into("branding")
-      .where("enterprise_Id", branding.enterprise_Id)
+      .where("enterprise_id", branding.enterprise_id)
       .returning("*");
 
     return new Branding(updatedBranding);
@@ -40,7 +40,7 @@ export default class KnexBrandingGateway implements IBrandingGateway {
     const allBrandings: Branding[] = await this.connection
       .select("*")
       .from("branding")
-      .where("enterprise_Id", enterpriseId)
+      .where("enterprise_id", enterpriseId)
       .limit(2);
 
     const Enterprise: Enterprise = await this.connection

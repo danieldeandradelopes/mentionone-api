@@ -16,7 +16,7 @@ export async function seed(knex: Knex): Promise<void> {
   // Verificar se já existem horários
   const existingHours = await knex("working_hours")
     .whereIn(
-      "enterprise_Id",
+      "enterprise_id",
       Enterprises.map((shop) => shop.id)
     )
     .select("id");
@@ -419,7 +419,7 @@ export async function seed(knex: Knex): Promise<void> {
 
     pattern.week_days.forEach((dayData) => {
       workingHoursData.push({
-        enterprise_Id: shop.id,
+        enterprise_id: shop.id,
         week_day: dayData.day,
         is_open: dayData.is_open,
       });
@@ -847,7 +847,7 @@ export async function seed(knex: Knex): Promise<void> {
 
   // Mostrar resumo por barbearia
   Enterprises.forEach((shop, index) => {
-    const shopHours = workingHours.filter((wh) => wh.enterprise_Id === shop.id);
+    const shopHours = workingHours.filter((wh) => wh.enterprise_id === shop.id);
     const openDays = shopHours.filter((wh) => wh.is_open).length;
     console.log(`   - ${shop.name}: ${openDays} dias abertos por semana`);
   });

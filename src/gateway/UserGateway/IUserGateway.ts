@@ -20,9 +20,4 @@ export default interface IUserGateway {
   checkPassword(userId: number, password: string): Promise<boolean>;
   getUserSession(id: number, userId: number): Promise<UserSession>;
   updateUserPhone(id: number, phone: string): Promise<User>;
-  addUserToEnterprise(
-    userId: number,
-    enterpriseId: number,
-    trx?: any
-  ): Promise<void>;
 }

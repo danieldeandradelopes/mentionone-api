@@ -1,12 +1,12 @@
 import Payment, { PaymentResponse } from "../../entities/Payment";
 
 export default interface IPaymentsGateway {
-  registerPayment(enterprise_Id: number): Promise<void>;
+  registerPayment(enterprise_id: number): Promise<void>;
   getPaymentBySubscriptionId(subscriptionId: number): Promise<Payment | null>;
   getPayment(id: number): Promise<Payment | null>;
   getPayments(): Promise<Payment[]>;
   addPayment(
-    enterprise_Id: number,
+    enterprise_id: number,
     planId: number,
     trx: any
   ): Promise<PaymentResponse>;

@@ -198,7 +198,7 @@ enterpriseRoutes.get(
         Registry.EnterpriseController
       );
 
-      const Enterprise = await EnterpriseController.get(request.enterprise_Id!);
+      const Enterprise = await EnterpriseController.get(request.enterprise_id!);
 
       return response.status(201).json(Enterprise);
     } catch (error) {
@@ -337,7 +337,7 @@ enterpriseRoutes.put(
 
       const Enterprise = await EnterpriseController.update({
         ...request.body,
-        id: request.enterprise_Id!,
+        id: request.enterprise_id!,
       });
 
       return response.status(201).json(Enterprise);

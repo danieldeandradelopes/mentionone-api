@@ -13,12 +13,12 @@ export default class JsonWebTokenAdapter implements IJwtAssign {
   decrypt(token: string): {
     id: number;
     access_level: string;
-    enterprise_Id: number;
+    enterprise_id: number;
   } {
     const decrypted = jwt.verify(token, secret);
     const { data } = decrypted as {
       exp: number;
-      data: { id: number; access_level: string; enterprise_Id: number };
+      data: { id: number; access_level: string; enterprise_id: number };
       iat: number;
     };
     return data;
@@ -70,12 +70,12 @@ export default class JsonWebTokenAdapter implements IJwtAssign {
   decryptRefreshToken(token: string): {
     id: number;
     access_level: string;
-    enterprise_Id: number;
+    enterprise_id: number;
   } {
     const decrypted = jwt.verify(token, refreshSecret);
     const { data } = decrypted as {
       exp: number;
-      data: { id: number; access_level: string; enterprise_Id: number };
+      data: { id: number; access_level: string; enterprise_id: number };
       iat: number;
       type: string;
     };

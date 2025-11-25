@@ -9,7 +9,7 @@ export default class KnexManifestGateway implements IManifestGateway {
     const currentManifest: Manifest = await this.connection
       .select("*")
       .from("manifest")
-      .where("enterprise_Id", enterpriseId)
+      .where("enterprise_id", enterpriseId)
       .first();
 
     if (!currentManifest) throw new HttpException(404, "Manifest not found");

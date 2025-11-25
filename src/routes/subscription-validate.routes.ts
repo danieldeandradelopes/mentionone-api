@@ -26,8 +26,8 @@ subscriptionValidateRoutes.get(
         Registry.SubscriptionController
       );
 
-      const subscription = await subscriptionController.getByenterpriseId(
-        request.enterprise_Id
+      const subscription = await subscriptionController.getByEnterpriseId(
+        request.enterprise_id
       );
 
       return response.status(200).json(subscription);

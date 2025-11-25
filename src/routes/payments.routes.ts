@@ -19,10 +19,7 @@ paymentsRoutes.post(
 
       const { subscription_id } = request.body;
 
-      const user = await paymentsController.createPaymentLink(
-        subscription_id,
-        request.enterprise_Id
-      );
+      const user = await paymentsController.createPaymentLink(subscription_id);
 
       return response.status(201).json(user);
     } catch (error) {
@@ -75,7 +72,7 @@ paymentsRoutes.post(
       const { plan_id } = request.body;
 
       const payment = await paymentsController.addPayment(
-        request.enterprise_Id,
+        request.enterprise_id,
         plan_id,
         trx
       );

@@ -59,7 +59,7 @@ authRoutes.post(
       const user = await authenticationController.makeLogin({
         email,
         password,
-        enterpriseId: request.enterprise_Id,
+        enterpriseId: request.enterprise_id,
       });
 
       if (user.refreshToken) {

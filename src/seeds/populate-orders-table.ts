@@ -28,7 +28,7 @@ export async function seed(knex: Knex): Promise<void> {
   // Criar pedidos de exemplo
   const orders = [
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       client_id: users[0].id,
       total: 7440, // 2590 + 1850 + 2875 + 125 (desconto) em centavos
       discount: 125, // R$ 1,25 em centavos
@@ -37,7 +37,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       client_id: users[1]?.id || users[0].id,
       total: 10980, // 3200 + 4500 + 1990 + 1290 (desconto) em centavos
       discount: 1290, // R$ 12,90 em centavos
@@ -46,7 +46,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       client_id: users[2]?.id || users[0].id,
       total: 8990, // R$ 89,90 em centavos
       discount: 0,
@@ -55,7 +55,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       client_id: users[0].id,
       total: 2250, // R$ 22,50 em centavos
       discount: 0,

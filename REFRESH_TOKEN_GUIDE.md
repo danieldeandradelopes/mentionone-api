@@ -48,7 +48,7 @@ Renova o access token usando o refresh token.
   "user": {
     "id": 1,
     "access_level": "admin",
-    "enterprise_Id": 123
+    "enterprise_id": 123
   }
 }
 ```

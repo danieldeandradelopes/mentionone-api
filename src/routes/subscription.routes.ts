@@ -21,7 +21,7 @@ const subscriptionRoutes = Router();
  *           schema:
  *             type: object
  *             properties:
- *               enterprise_Id:
+ *               enterprise_id:
  *                 type: string
  *               plan_price_id:
  *                 type: number
@@ -57,7 +57,7 @@ subscriptionRoutes.post(
       const { plan_price_id, start_date } = request.body;
 
       const subscription = await subscriptionController.store({
-        enterprise_Id: request.enterprise_Id,
+        enterprise_id: request.enterprise_id,
         plan_price_id,
         start_date,
       });

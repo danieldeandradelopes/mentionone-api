@@ -44,7 +44,7 @@ export interface BrandingProps {
   drawer_active_bg: string;
   logo: string;
   favicon: string;
-  enterprise_Id: number;
+  enterprise_id: number;
   theme: "light" | "dark" | "custom";
   barber_shop: Enterprise;
   updated_at?: string;
@@ -111,7 +111,7 @@ export default class Branding {
   readonly favicon: string;
 
   // Relacionamento
-  readonly enterprise_Id: number;
+  readonly enterprise_id: number;
 
   // Tema
   readonly theme: "light" | "dark" | "custom";
@@ -166,7 +166,7 @@ export default class Branding {
     drawer_active_bg,
     logo,
     favicon,
-    enterprise_Id,
+    enterprise_id,
     theme,
     updated_at,
     created_at,
@@ -215,7 +215,7 @@ export default class Branding {
     this.drawer_active_bg = drawer_active_bg;
     this.logo = logo;
     this.favicon = favicon;
-    this.enterprise_Id = enterprise_Id;
+    this.enterprise_id = enterprise_id;
     this.theme = theme;
     this.updated_at = updated_at;
     this.created_at = created_at;

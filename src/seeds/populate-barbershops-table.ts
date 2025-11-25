@@ -135,13 +135,13 @@ export async function seed(knex: Knex): Promise<void> {
   Enterprises.forEach((shop, index) => {
     phones.push(
       {
-        enterprise_Id: shop.id,
+        enterprise_id: shop.id,
         phone_number: `1198765432${index + 1}`,
         is_whatsapp: false,
         is_cellphone: true,
       },
       {
-        enterprise_Id: shop.id,
+        enterprise_id: shop.id,
         phone_number: `113333444${index + 1}`,
         is_whatsapp: false,
         is_cellphone: true,
@@ -171,7 +171,7 @@ export async function seed(knex: Knex): Promise<void> {
 
     socials.forEach((social) => {
       socialMedias.push({
-        enterprise_Id: shop.id,
+        enterprise_id: shop.id,
         name: social.name,
         url: social.url,
         icon: "instagram",

@@ -26,7 +26,7 @@ manifestRoutes.get(
         Registry.ManifestController
       );
 
-      const manifest = await manifestController.get(request.enterprise_Id);
+      const manifest = await manifestController.get(request.enterprise_id);
 
       const manifestData = {
         name: manifest.name,

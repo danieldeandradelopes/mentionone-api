@@ -14,7 +14,7 @@ export async function seed(knex: Knex): Promise<void> {
   // Inserir produtos de exemplo
   await knex("products").insert([
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       title: "Pomada Modeladora Premium",
       description:
         "Pomada de alta qualidade para modelar cabelos com fixação média e brilho natural.",
@@ -27,7 +27,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       title: "Gel Fixador Extra Forte",
       description:
         "Gel com fixação extra forte, ideal para penteados que precisam durar o dia todo.",
@@ -40,7 +40,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       title: "Shampoo Antirresíduos",
       description:
         "Shampoo especial para remover resíduos de produtos e limpar profundamente o couro cabeludo.",
@@ -53,7 +53,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       title: "Creme para Barba Hidratante",
       description:
         "Creme nutritivo para manter a barba macia, hidratada e com aspecto saudável.",
@@ -66,7 +66,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       title: "Óleo para Barba Premium",
       description:
         "Óleo essencial para barba com ingredientes naturais, proporcionando maciez e brilho.",
@@ -79,7 +79,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       title: "E-book: Guia Completo de Cuidados Masculinos",
       description:
         "E-book digital com dicas profissionais para cuidados com cabelo, barba e pele masculina.",
@@ -92,7 +92,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       title: "Curso Online: Técnicas de Corte Modernas",
       description:
         "Curso digital com videoaulas ensinando as principais técnicas de corte masculino da atualidade.",
@@ -105,7 +105,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       title: "Pomada Clássica Vintage",
       description:
         "Pomada com fórmula clássica, ideal para penteados retrô e estilo vintage.",
@@ -118,7 +118,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       title: "Produto Descontinuado",
       description: "Este produto foi descontinuado e não está mais disponível.",
       image_url: "https://picsum.photos/200/300",
@@ -130,7 +130,7 @@ export async function seed(knex: Knex): Promise<void> {
       is_deleted: false,
     },
     {
-      enterprise_Id: Enterprise.id,
+      enterprise_id: Enterprise.id,
       title: "Kit Completo Barbearia",
       description:
         "Kit com pomada, gel, shampoo e creme para barba. Perfeito para presentear.",

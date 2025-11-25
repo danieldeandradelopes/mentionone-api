@@ -1,6 +1,6 @@
 export interface ManifestProps {
   id?: number;
-  enterprise_Id: number;
+  enterprise_id: number;
 
   name: string;
   short_name: string;
@@ -23,7 +23,7 @@ export interface ManifestProps {
 
 export default class Manifest {
   readonly id?: number;
-  readonly enterprise_Id: number;
+  readonly enterprise_id: number;
 
   readonly name: string;
   readonly short_name: string;
@@ -45,7 +45,7 @@ export default class Manifest {
 
   constructor({
     id,
-    enterprise_Id,
+    enterprise_id,
     name,
     short_name,
     start_url = "/",
@@ -58,7 +58,7 @@ export default class Manifest {
     updated_at,
   }: ManifestProps) {
     this.id = id;
-    this.enterprise_Id = enterprise_Id;
+    this.enterprise_id = enterprise_id;
 
     this.name = name;
     this.short_name = short_name;

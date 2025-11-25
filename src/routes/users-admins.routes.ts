@@ -52,13 +52,13 @@ userAdminsRoutes.post(
       );
 
       const { name, email, password, phone } = request.body;
-      const user = await userController.storeUser({
+      const user = await userController.store({
         name,
         email,
         password,
         accessLevel: "admin",
         phone,
-        enterpriseId: request.enterprise_Id,
+        enterpriseId: request.enterprise_id,
       });
 
       return response.status(201).json(user);
@@ -91,7 +91,10 @@ userAdminsRoutes.get(
         Registry.UserController
       );
 
-      const users = await userController.listAdmins();
+      const users = await userController.list({
+        page: parseInt(request.query.page as string),
+        limit: parseInt(request.query.limit as string),
+      });
 
       return response.status(201).json(users);
     } catch (error) {

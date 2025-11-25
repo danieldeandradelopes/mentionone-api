@@ -205,14 +205,14 @@ export async function seed(knex: Knex): Promise<void> {
       Enterprises.forEach((shop, index) => {
         phones.push(
           {
-            enterprise_Id: shop.id,
+            enterprise_id: shop.id,
             phone_number: `1198765432${index + 1}`,
             is_whatsapp: false,
             is_cellphone: true,
             id: 1,
           },
           {
-            enterprise_Id: shop.id,
+            enterprise_id: shop.id,
             phone_number: `113333444${index + 1}`,
             is_whatsapp: false,
             is_cellphone: true,
@@ -222,21 +222,21 @@ export async function seed(knex: Knex): Promise<void> {
 
         socialMedias.push(
           {
-            enterprise_Id: shop.id,
+            enterprise_id: shop.id,
             name: "instagram",
             url: `https://instagram.com/barbearia${shop.subdomain}`,
             icon: "instagram",
             id: 1,
           },
           {
-            enterprise_Id: shop.id,
+            enterprise_id: shop.id,
             name: "facebook",
             url: `https://facebook.com/barbearia${shop.subdomain}`,
             icon: "facebook",
             id: 2,
           },
           {
-            enterprise_Id: shop.id,
+            enterprise_id: shop.id,
             name: "whatsapp",
             url: `https://wa.me/551198765432${index + 1}`,
             icon: "whatsapp",
@@ -324,7 +324,7 @@ export async function seed(knex: Knex): Promise<void> {
         .insert([
           {
             user_id: barberUsers[0].id,
-            enterprise_Id: Enterprises[0].id,
+            enterprise_id: Enterprises[0].id,
             is_active: true,
             name: "Roberto Mendes",
             bio: "Especialista em cortes clássicos há mais de 15 anos.",
@@ -334,7 +334,7 @@ export async function seed(knex: Knex): Promise<void> {
           },
           {
             user_id: barberUsers[1].id,
-            enterprise_Id: Enterprises[0].id,
+            enterprise_id: Enterprises[0].id,
             is_active: true,
             name: "Pedro Santos",
             bio: "Jovem talento com técnicas modernas.",
@@ -344,7 +344,7 @@ export async function seed(knex: Knex): Promise<void> {
           },
           {
             user_id: barberUsers[2].id,
-            enterprise_Id: Enterprises[1].id,
+            enterprise_id: Enterprises[1].id,
             is_active: true,
             name: "Lucas Ferreira",
             bio: "Especialista em tendências atuais.",
@@ -354,7 +354,7 @@ export async function seed(knex: Knex): Promise<void> {
           },
           {
             user_id: barberUsers[3].id,
-            enterprise_Id: Enterprises[1].id,
+            enterprise_id: Enterprises[1].id,
             is_active: true,
             name: "Diego Alves",
             bio: "Mestre em barbas e bigodes.",
@@ -364,7 +364,7 @@ export async function seed(knex: Knex): Promise<void> {
           },
           {
             user_id: barberUsers[4].id,
-            enterprise_Id: Enterprises[2].id,
+            enterprise_id: Enterprises[2].id,
             is_active: true,
             name: "Antonio Barbosa",
             bio: "Tradição e elegância.",
@@ -374,7 +374,7 @@ export async function seed(knex: Knex): Promise<void> {
           },
           {
             user_id: barberUsers[5].id,
-            enterprise_Id: Enterprises[3].id,
+            enterprise_id: Enterprises[3].id,
             is_active: true,
             name: "Rafael Costa",
             bio: "Atendimento premium e personalizado.",
@@ -384,7 +384,7 @@ export async function seed(knex: Knex): Promise<void> {
           },
           {
             user_id: barberUsers[6].id,
-            enterprise_Id: Enterprises[3].id,
+            enterprise_id: Enterprises[3].id,
             is_active: true,
             name: "Gabriel Lima",
             bio: "Jovem promessa com técnicas avançadas.",
@@ -401,7 +401,7 @@ export async function seed(knex: Knex): Promise<void> {
       barbers.forEach((barber, index) => {
         for (let day = 1; day <= 5; day++) {
           workingHours.push({
-            enterprise_Id: barber.enterprise_Id,
+            enterprise_id: barber.enterprise_id,
             week_day: "monday",
             time_slots: ["08:00", "18:00"],
             is_open: true,
@@ -607,7 +607,7 @@ export async function seed(knex: Knex): Promise<void> {
       ];
 
       const brandings = Enterprises.map((shop, index) => ({
-        enterprise_Id: shop.id,
+        enterprise_id: shop.id,
         name: brandingThemes[index].name,
         theme: brandingThemes[index].theme as "light" | "dark" | "custom",
         id: index + 1,
@@ -647,7 +647,7 @@ export async function seed(knex: Knex): Promise<void> {
         if (index === 2) status = "canceled";
 
         return {
-          enterprise_Id: shop.id,
+          enterprise_id: shop.id,
           plan_price_id: shop.plan_price_id,
           status: status,
           start_date: startDate.toISOString().split("T")[0],
@@ -671,7 +671,7 @@ export async function seed(knex: Knex): Promise<void> {
 
       await knex("products").insert([
         {
-          enterprise_Id: Enterprises[0].id,
+          enterprise_id: Enterprises[0].id,
           title: "Pomada Modeladora Premium",
           description:
             "Pomada de alta qualidade para modelar cabelos com fixação média e brilho natural.",
@@ -685,7 +685,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: Enterprises[0].id,
+          enterprise_id: Enterprises[0].id,
           title: "Gel Fixador Extra Forte",
           description:
             "Gel com fixação extra forte, ideal para penteados que precisam durar o dia todo.",
@@ -699,7 +699,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: Enterprises[1].id,
+          enterprise_id: Enterprises[1].id,
           title: "Shampoo Antirresíduos",
           description:
             "Shampoo especial para remover resíduos de produtos e limpar profundamente o couro cabeludo.",
@@ -713,7 +713,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: Enterprises[1].id,
+          enterprise_id: Enterprises[1].id,
           title: "Creme para Barba Hidratante",
           description:
             "Creme nutritivo para manter a barba macia, hidratada e com aspecto saudável.",
@@ -727,7 +727,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: Enterprises[2].id,
+          enterprise_id: Enterprises[2].id,
           title: "Óleo para Barba Premium",
           description:
             "Óleo essencial para barba com ingredientes naturais, proporcionando maciez e brilho.",
@@ -741,7 +741,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: Enterprises[2].id,
+          enterprise_id: Enterprises[2].id,
           title: "E-book: Guia Completo de Cuidados Masculinos",
           description:
             "E-book digital com dicas profissionais para cuidados com cabelo, barba e pele masculina.",
@@ -755,7 +755,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: Enterprises[3].id,
+          enterprise_id: Enterprises[3].id,
           title: "Curso Online: Técnicas de Corte Modernas",
           description:
             "Curso digital com videoaulas ensinando as principais técnicas de corte masculino da atualidade.",
@@ -769,7 +769,7 @@ export async function seed(knex: Knex): Promise<void> {
           is_deleted: false,
         },
         {
-          enterprise_Id: Enterprises[3].id,
+          enterprise_id: Enterprises[3].id,
           title: "Kit Completo Barbearia",
           description:
             "Kit com pomada, gel, shampoo e creme para barba. Perfeito para presentear.",
@@ -805,7 +805,7 @@ export async function seed(knex: Knex): Promise<void> {
         const orders = await knex("orders")
           .insert([
             {
-              enterprise_Id: Enterprises[0].id,
+              enterprise_id: Enterprises[0].id,
               client_id: users[0].id,
               total: 74.4,
               discount: 1.25,
@@ -814,7 +814,7 @@ export async function seed(knex: Knex): Promise<void> {
               is_deleted: false,
             },
             {
-              enterprise_Id: Enterprises[1].id,
+              enterprise_id: Enterprises[1].id,
               client_id: users[1]?.id || users[0].id,
               total: 109.8,
               discount: 12.9,
@@ -823,7 +823,7 @@ export async function seed(knex: Knex): Promise<void> {
               is_deleted: false,
             },
             {
-              enterprise_Id: Enterprises[2].id,
+              enterprise_id: Enterprises[2].id,
               client_id: users[2]?.id || users[0].id,
               total: 89.9,
               discount: 0,
