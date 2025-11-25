@@ -1,0 +1,24 @@
+{
+  "apps": [
+    {
+      "name": "agende7",
+      "script": "./build/index.js",
+      "instances": 1,
+      "exec_mode": "fork",
+      "autorestart": true,
+      "watch": false,
+      "max_memory_restart": "300M",
+      "restart_delay": 5000,
+      "log_date_format": "YYYY-MM-DD HH:mm:ss",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 3000
+      },
+      "error_file": "./logs/agende7-error.log",
+      "out_file": "./logs/agende7-out.log",
+      "merge_logs": true,
+      "min_uptime": "60s",
+      "max_restarts": 10
+    }
+  ]
+}

@@ -1,0 +1,233 @@
+import { Knex } from "knex";
+import Branding from "../entities/Branding";
+import Enterprise from "../entities/Enterprise";
+
+export async function seed(knex: Knex): Promise<void> {
+  console.log("🎨 Populando tabela de branding...");
+
+  // Buscar barbearias existentes
+  const Enterprises = await knex("Enterprise").select(
+    "id",
+    "name",
+    "subdomain"
+  );
+
+  if (Enterprises.length === 0) {
+    console.log(
+      "⚠️  Nenhuma barbearia encontrada. Execute primeiro o seed de barbearias."
+    );
+    return;
+  }
+
+  // Temas de cores para cada barbearia
+  const brandingThemes = [
+    {
+      name: "Tema Clássico",
+      theme: "light",
+      colors: {
+        primary_color: "#4A90E2",
+        secondary_color: "#7ED321",
+        tertiary_color: "#F5A623",
+        quaternary_color: "#BD10E0",
+        background_color: "#FFFFFF",
+        surface_color: "#F8F9FA",
+        text_primary_color: "#212529",
+        text_secondary_color: "#6C757D",
+        border_color: "#DEE2E6",
+        error_color: "#DC3545",
+        success_color: "#28A745",
+        btn_primary_bg: "#4A90E2",
+        btn_primary_text: "#FFFFFF",
+        btn_secondary_bg: "#6C757D",
+        btn_secondary_text: "#FFFFFF",
+        btn_tertiary_bg: "#F8F9FA",
+        btn_tertiary_text: "#212529",
+        btn_quaternary_bg: "#E9ECEF",
+        btn_quaternary_text: "#495057",
+        heading_color: "#212529",
+        subheading_color: "#495057",
+        text_default: "#212529",
+        text_muted: "#6C757D",
+        link_color: "#4A90E2",
+        link_hover_color: "#357ABD",
+        input_bg: "#FFFFFF",
+        input_text: "#212529",
+        input_border: "#CED4DA",
+        input_placeholder: "#6C757D",
+        input_focus_border: "#4A90E2",
+        app_background: "#F8F9FA",
+        card_background: "#FFFFFF",
+        card_border: "#DEE2E6",
+        card_shadow: "0 2px 4px rgba(0,0,0,0.1)",
+        drawer_bg: "#FFFFFF",
+        drawer_text: "#212529",
+        drawer_border: "#DEE2E6",
+        drawer_hover_bg: "#F8F9FA",
+        drawer_active_bg: "#E3F2FD",
+        logo: "https://via.placeholder.com/200x80/4A90E2/FFFFFF?text=Classica",
+        favicon: "https://via.placeholder.com/32x32/4A90E2/FFFFFF?text=C",
+      },
+    },
+    {
+      name: "Tema Moderno",
+      theme: "light",
+      colors: {
+        primary_color: "#7ED321",
+        secondary_color: "#50E3C2",
+        tertiary_color: "#9013FE",
+        quaternary_color: "#417505",
+        background_color: "#FFFFFF",
+        surface_color: "#F5F7FA",
+        text_primary_color: "#1A1A1A",
+        text_secondary_color: "#666666",
+        border_color: "#E1E5E9",
+        error_color: "#FF6B6B",
+        success_color: "#51CF66",
+        btn_primary_bg: "#7ED321",
+        btn_primary_text: "#FFFFFF",
+        btn_secondary_bg: "#50E3C2",
+        btn_secondary_text: "#FFFFFF",
+        btn_tertiary_bg: "#F5F7FA",
+        btn_tertiary_text: "#1A1A1A",
+        btn_quaternary_bg: "#E1E5E9",
+        btn_quaternary_text: "#666666",
+        heading_color: "#1A1A1A",
+        subheading_color: "#333333",
+        text_default: "#1A1A1A",
+        text_muted: "#666666",
+        link_color: "#7ED321",
+        link_hover_color: "#6BC41A",
+        input_bg: "#FFFFFF",
+        input_text: "#1A1A1A",
+        input_border: "#E1E5E9",
+        input_placeholder: "#999999",
+        input_focus_border: "#7ED321",
+        app_background: "#F5F7FA",
+        card_background: "#FFFFFF",
+        card_border: "#E1E5E9",
+        card_shadow: "0 4px 12px rgba(0,0,0,0.15)",
+        drawer_bg: "#FFFFFF",
+        drawer_text: "#1A1A1A",
+        drawer_border: "#E1E5E9",
+        drawer_hover_bg: "#F5F7FA",
+        drawer_active_bg: "#E8F5E8",
+        logo: "https://via.placeholder.com/200x80/7ED321/FFFFFF?text=Moderna",
+        favicon: "https://via.placeholder.com/32x32/7ED321/FFFFFF?text=M",
+      },
+    },
+    {
+      name: "Tema Vintage",
+      theme: "light",
+      colors: {
+        primary_color: "#F5A623",
+        secondary_color: "#B8E986",
+        tertiary_color: "#D0021B",
+        quaternary_color: "#4A4A4A",
+        background_color: "#FFF8E1",
+        surface_color: "#FFFFFF",
+        text_primary_color: "#2C2C2C",
+        text_secondary_color: "#757575",
+        border_color: "#D4AF37",
+        error_color: "#D32F2F",
+        success_color: "#388E3C",
+        btn_primary_bg: "#F5A623",
+        btn_primary_text: "#FFFFFF",
+        btn_secondary_bg: "#B8E986",
+        btn_secondary_text: "#2C2C2C",
+        btn_tertiary_bg: "#FFF8E1",
+        btn_tertiary_text: "#2C2C2C",
+        btn_quaternary_bg: "#D4AF37",
+        btn_quaternary_text: "#FFFFFF",
+        heading_color: "#2C2C2C",
+        subheading_color: "#4A4A4A",
+        text_default: "#2C2C2C",
+        text_muted: "#757575",
+        link_color: "#F5A623",
+        link_hover_color: "#E65100",
+        input_bg: "#FFFFFF",
+        input_text: "#2C2C2C",
+        input_border: "#D4AF37",
+        input_placeholder: "#9E9E9E",
+        input_focus_border: "#F5A623",
+        app_background: "#FFF8E1",
+        card_background: "#FFFFFF",
+        card_border: "#D4AF37",
+        card_shadow: "0 2px 8px rgba(245,166,35,0.3)",
+        drawer_bg: "#FFFFFF",
+        drawer_text: "#2C2C2C",
+        drawer_border: "#D4AF37",
+        drawer_hover_bg: "#FFF8E1",
+        drawer_active_bg: "#FFE0B2",
+        logo: "https://via.placeholder.com/200x80/F5A623/FFFFFF?text=Vintage",
+        favicon: "https://via.placeholder.com/32x32/F5A623/FFFFFF?text=V",
+      },
+    },
+    {
+      name: "Tema Premium",
+      theme: "dark",
+      colors: {
+        primary_color: "#BD10E0",
+        secondary_color: "#50E3C2",
+        tertiary_color: "#F5A623",
+        quaternary_color: "#4A90E2",
+        background_color: "#1A1A1A",
+        surface_color: "#2D2D2D",
+        text_primary_color: "#FFFFFF",
+        text_secondary_color: "#B0B0B0",
+        border_color: "#404040",
+        error_color: "#FF6B6B",
+        success_color: "#51CF66",
+        btn_primary_bg: "#BD10E0",
+        btn_primary_text: "#FFFFFF",
+        btn_secondary_bg: "#50E3C2",
+        btn_secondary_text: "#1A1A1A",
+        btn_tertiary_bg: "#2D2D2D",
+        btn_tertiary_text: "#FFFFFF",
+        btn_quaternary_bg: "#404040",
+        btn_quaternary_text: "#FFFFFF",
+        heading_color: "#FFFFFF",
+        subheading_color: "#E0E0E0",
+        text_default: "#FFFFFF",
+        text_muted: "#B0B0B0",
+        link_color: "#BD10E0",
+        link_hover_color: "#9C0DB8",
+        input_bg: "#2D2D2D",
+        input_text: "#FFFFFF",
+        input_border: "#404040",
+        input_placeholder: "#808080",
+        input_focus_border: "#BD10E0",
+        app_background: "#1A1A1A",
+        card_background: "#2D2D2D",
+        card_border: "#404040",
+        card_shadow: "0 4px 20px rgba(189,16,224,0.3)",
+        drawer_bg: "#2D2D2D",
+        drawer_text: "#FFFFFF",
+        drawer_border: "#404040",
+        drawer_hover_bg: "#404040",
+        drawer_active_bg: "#BD10E0",
+        logo: "https://via.placeholder.com/200x80/BD10E0/FFFFFF?text=Premium",
+        favicon: "https://via.placeholder.com/32x32/BD10E0/FFFFFF?text=P",
+      },
+    },
+  ];
+
+  // Criar branding para cada barbearia
+  const brandings: any[] = [];
+  Enterprises.forEach((shop, index) => {
+    const theme = brandingThemes[index] || brandingThemes[0];
+    brandings.push({
+      enterprise_Id: shop.id,
+      name: `${theme.name} - ${shop.name}`,
+      theme: theme.theme as "light" | "dark" | "custom",
+      ...theme.colors,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+  });
+
+  await knex("branding").insert(brandings);
+
+  console.log("✅ Branding inserido com sucesso!");
+  console.log(`🎨 Criados ${brandings.length} temas de branding`);
+  console.log(`🏪 ${Enterprises.length} barbearias personalizadas`);
+}

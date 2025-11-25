@@ -1,0 +1,2204 @@
+type: collection.insomnia.rest/5.0
+name: Agenda7 API
+meta:
+  id: wrk_d6f668e9728e4b0ca2c83fb063a24ee1
+  created: 1754076384636
+  modified: 1754076384636
+  description: ""
+collection:
+  - name: Services
+    meta:
+      id: fld_1444840517124a3e95575b95b59b7245
+      created: 1741007128844
+      modified: 1750458392111
+      sortKey: -1710495353719
+      description: Gerenciamento de serviços
+    children:
+      - url: "{{api_url}}/services/1"
+        name: Update Service
+        meta:
+          id: req_542305b1b9044bf290f732e1d467fac3
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Atualizar serviço
+          sortKey: -1710614649625
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "title": "Corte Atualizado",
+              "description": "Descrição atualizada",
+              "price": 35.00,
+              "duration": 45
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/services"
+        name: Create Service
+        meta:
+          id: req_7c48986a2ce247de9d652ede97c76d41
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Criar serviço
+          sortKey: -1710614649628
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "title": "Corte Masculino",
+              "description": "Corte tradicional masculino",
+              "price": 30.00,
+              "duration": 30
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/services/1"
+        name: Delete Service
+        meta:
+          id: req_aa1aedcfa406496196c78a45cdb17b90
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Deletar serviço
+          sortKey: -1710614649624
+        method: DELETE
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/services"
+        name: List Services
+        meta:
+          id: req_ad5201e6654948dba686e8af4b801bd0
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Listar serviços
+          sortKey: -1710614649627
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/services/1"
+        name: Get Service
+        meta:
+          id: req_ccd9697a90ad4041b670afbfa6ab417f
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Buscar serviço por ID
+          sortKey: -1710614649626
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    scripts:
+      afterResponse: ""
+      preRequest: ""
+  - name: Branding
+    meta:
+      id: fld_2836e943fa8a41f8bc40660139b8de28
+      created: 1741007128844
+      modified: 1750458392111
+      sortKey: -1710495353714
+      description: Gerenciamento completo de identidade visual (cores, botões, textos, inputs, containers, drawer e assets)
+    children:
+      - url: "{{api_url}}/branding"
+        name: Get Branding
+        meta:
+          id: req_5f37f4b41cd94197894d9c9e4b598feb
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Buscar identidade visual
+          sortKey: -1710614649600
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/branding"
+        name: Create Branding
+        meta:
+          id: req_ab40a838b729478aa4a8c690d9be2dc2
+          created: 1741007128844
+          modified: 1754104657735
+          isPrivate: false
+          description: Criar identidade visual completa
+          sortKey: -1710614649601
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Barbearia Estilo",
+              
+              // Paleta base
+              "primaryColor": "#1a1a1a",
+              "secondaryColor": "#f5f5f5",
+              "tertiaryColor": "#d4af37",
+              "quaternaryColor": "#e0e0e0",
+              "backgroundColor": "#ffffff",
+              "surfaceColor": "#fafafa",
+              "textPrimaryColor": "#333333",
+              "textSecondaryColor": "#666666",
+              "borderColor": "#dddddd",
+              "errorColor": "#dc3545",
+              "successColor": "#28a745",
+
+              // Botões
+              "btnPrimaryBg": "#1a1a1a",
+              "btnPrimaryText": "#ffffff",
+              "btnSecondaryBg": "#f5f5f5",
+              "btnSecondaryText": "#333333",
+              "btnTertiaryBg": "#d4af37",
+              "btnTertiaryText": "#ffffff",
+              "btnQuaternaryBg": "#e0e0e0",
+              "btnQuaternaryText": "#333333",
+
+              // Textos
+              "headingColor": "#1a1a1a",
+              "subheadingColor": "#666666",
+              "textDefault": "#333333",
+              "textMuted": "#999999",
+              "linkColor": "#d4af37",
+              "linkHoverColor": "#b8941f",
+
+              // Inputs
+              "inputBg": "#ffffff",
+              "inputText": "#333333",
+              "inputBorder": "#dddddd",
+              "inputPlaceholder": "#999999",
+              "inputFocusBorder": "#d4af37",
+
+              // Containers
+              "appBackground": "#ffffff",
+              "cardBackground": "#ffffff",
+              "cardBorder": "#dddddd",
+              "cardShadow": "0 2px 4px rgba(0,0,0,0.1)",
+
+              // Drawer/Sidebar
+              "drawerBg": "#1a1a1a",
+              "drawerText": "#ffffff",
+              "drawerBorder": "#333333",
+              "drawerHoverBg": "#333333",
+              "drawerActiveBg": "#d4af37",
+
+              // Assets
+              "logo": "https://example.com/logo.png",
+              "favicon": "https://example.com/favicon.ico",
+
+              // Tema
+              "theme": "custom"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_bd7fdab564ab4b5083c7d792e55fe573',
+            'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/branding"
+        name: Update Branding
+        meta:
+          id: req_d58d2ade9d9e460a93a1a7a5230bb1fa
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Atualizar identidade visual completa
+          sortKey: -1710614649599
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Barbearia Estilo Atualizada",
+              
+              // Paleta base
+              "primaryColor": "#1a1a1a",
+              "secondaryColor": "#f5f5f5",
+              "tertiaryColor": "#d4af37",
+              "quaternaryColor": "#e0e0e0",
+              "backgroundColor": "#ffffff",
+              "surfaceColor": "#fafafa",
+              "textPrimaryColor": "#333333",
+              "textSecondaryColor": "#666666",
+              "borderColor": "#dddddd",
+              "errorColor": "#dc3545",
+              "successColor": "#28a745",
+
+              // Botões
+              "btnPrimaryBg": "#1a1a1a",
+              "btnPrimaryText": "#ffffff",
+              "btnSecondaryBg": "#f5f5f5",
+              "btnSecondaryText": "#333333",
+              "btnTertiaryBg": "#d4af37",
+              "btnTertiaryText": "#ffffff",
+              "btnQuaternaryBg": "#e0e0e0",
+              "btnQuaternaryText": "#333333",
+
+              // Textos
+              "headingColor": "#1a1a1a",
+              "subheadingColor": "#666666",
+              "textDefault": "#333333",
+              "textMuted": "#999999",
+              "linkColor": "#d4af37",
+              "linkHoverColor": "#b8941f",
+
+              // Inputs
+              "inputBg": "#ffffff",
+              "inputText": "#333333",
+              "inputBorder": "#dddddd",
+              "inputPlaceholder": "#999999",
+              "inputFocusBorder": "#d4af37",
+
+              // Containers
+              "appBackground": "#ffffff",
+              "cardBackground": "#ffffff",
+              "cardBorder": "#dddddd",
+              "cardShadow": "0 2px 4px rgba(0,0,0,0.1)",
+
+              // Drawer/Sidebar
+              "drawerBg": "#1a1a1a",
+              "drawerText": "#ffffff",
+              "drawerBorder": "#333333",
+              "drawerHoverBg": "#333333",
+              "drawerActiveBg": "#d4af37",
+
+              // Assets
+              "logo": "https://example.com/new-logo.png",
+              "favicon": "https://example.com/new-favicon.ico",
+
+              // Tema
+              "theme": "custom"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/branding"
+        name: Update Branding (Parcial)
+        meta:
+          id: req_update_branding_partial
+          created: 1754104657735
+          modified: 1754104657735
+          isPrivate: false
+          description: Atualizar apenas alguns campos da identidade visual
+          sortKey: -1710614649598
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Barbearia Estilo Atualizada",
+              "primaryColor": "#2a2a2a",
+              "secondaryColor": "#e5e5e5",
+              "tertiaryColor": "#ffd700",
+              "logo": "https://example.com/new-logo.png",
+              "theme": "dark"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/branding"
+        name: Update Branding (Tema Light)
+        meta:
+          id: req_update_branding_light
+          created: 1754104657735
+          modified: 1754104657735
+          isPrivate: false
+          description: Atualizar branding com tema claro
+          sortKey: -1710614649597
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Barbearia Estilo Light",
+              "primaryColor": "#ffffff",
+              "secondaryColor": "#f8f9fa",
+              "tertiaryColor": "#007bff",
+              "quaternaryColor": "#e9ecef",
+              "backgroundColor": "#ffffff",
+              "surfaceColor": "#f8f9fa",
+              "textPrimaryColor": "#212529",
+              "textSecondaryColor": "#6c757d",
+              "borderColor": "#dee2e6",
+              "errorColor": "#dc3545",
+              "successColor": "#28a745",
+              "btnPrimaryBg": "#007bff",
+              "btnPrimaryText": "#ffffff",
+              "btnSecondaryBg": "#6c757d",
+              "btnSecondaryText": "#ffffff",
+              "headingColor": "#212529",
+              "textDefault": "#212529",
+              "textMuted": "#6c757d",
+              "linkColor": "#007bff",
+              "inputBg": "#ffffff",
+              "inputText": "#212529",
+              "inputBorder": "#ced4da",
+              "inputPlaceholder": "#6c757d",
+              "appBackground": "#ffffff",
+              "cardBackground": "#ffffff",
+              "cardBorder": "#dee2e6",
+              "drawerBg": "#f8f9fa",
+              "drawerText": "#212529",
+              "drawerBorder": "#dee2e6",
+              "logo": "https://example.com/light-logo.png",
+              "favicon": "https://example.com/light-favicon.ico",
+              "theme": "light"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    scripts:
+      afterResponse: ""
+      preRequest: ""
+  - name: Barbers
+    meta:
+      id: fld_34b2fd996ba041b18deee3d76e472d85
+      created: 1741007128844
+      modified: 1750458392111
+      sortKey: -1710495353715
+      description: Gerenciamento de barbeiros
+    children:
+      - url: "{{api_url}}/barbers/2024-01-15"
+        name: List Barbers by Date
+        meta:
+          id: req_4f741c6799ad4d2aa97345b529412754
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Listar barbeiros por data
+          sortKey: -1710614649603
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barbers/2024-01-15/list"
+        name: Get Barbers List
+        meta:
+          id: req_f0b71a6778454ff2ae2890409c15dc54
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Buscar lista de barbeiros
+          sortKey: -1710614649602
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    scripts:
+      afterResponse: ""
+      preRequest: ""
+  - name: Enterprise
+    meta:
+      id: fld_6c00966ac5a84d97beb5dcb29a865398
+      created: 1741007128844
+      modified: 1750458392111
+      sortKey: -1710495353718
+      description: Gerenciamento de barbearias
+    children:
+      - url: "{{api_url}}/barber-shop/1"
+        name: Update Enterprise
+        meta:
+          id: req_17dfc421d6d946b3a77491226652e1c8
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Atualizar barbearia
+          sortKey: -1710614649619
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Barbearia Atualizada",
+              "address": "Nova Rua, 789",
+              "phone": "11999999999",
+              "cover": "https://example.com/new-cover.jpg",
+              "description": "Descrição atualizada"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barber-shop/default-template"
+        name: Create With Template
+        meta:
+          id: req_2bc259995a034bbaaa6ffb74d005dbf2
+          created: 1741007128844
+          modified: 1754099381010
+          isPrivate: false
+          description: Criar barbearia com template padrão
+          sortKey: -1710614649622
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+              "name": "Mr. Barber",
+              "address": "R. Milton Valeriano da Silva - Jardim Novo Bongiovani, Pres. Prudente - SP",
+              "phone": "18998086750",
+              "cover": "https://example.com/cover.jpg",
+              "description": "Melhor barbearia da região",
+              "subdomain": "mrbarber"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_bd7fdab564ab4b5083c7d792e55fe573',
+            'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barber-shop"
+        name: Create Enterprise
+        meta:
+          id: req_4f11f70234ad48fe90439ee464e813e4
+          created: 1741007128844
+          modified: 1754077057614
+          isPrivate: false
+          description: Criar barbearia
+          sortKey: -1710614649623
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Barbearia Teste",
+              "address": "Rua Teste, 123",
+              "phone": "11999999999",
+              "cover": "https://example.com/cover.jpg",
+              "description": "Melhor barbearia da cidade"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_bd7fdab564ab4b5083c7d792e55fe573',
+            'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barber-shop/1"
+        name: Delete Enterprise
+        meta:
+          id: req_5553a0f84c754d4d8c0ff73ac21d71e1
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Deletar barbearia
+          sortKey: -1710614649618
+        method: DELETE
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_superadmin_001', 'b64::JC50b2tlbg==::46b',
+            'never', 60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barber-shop"
+        name: List Enterprises
+        meta:
+          id: req_be2b05aebf4c49599cf89a41159d5c5e
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Listar barbearias
+          sortKey: -1710614649621
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barber-shop/3"
+        name: Get Enterprise
+        meta:
+          id: req_d6edd0545b004284b547cc44fe533321
+          created: 1741007128844
+          modified: 1754078207251
+          isPrivate: false
+          description: Buscar barbearia por ID
+          sortKey: -1710614649620
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_bd7fdab564ab4b5083c7d792e55fe573',
+            'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    scripts:
+      afterResponse: ""
+      preRequest: ""
+  - name: Users
+    meta:
+      id: fld_cef3db86f817482ebe41544e3fa90c4f
+      created: 1741007128844
+      modified: 1750458392111
+      sortKey: -1710495353720
+      description: Gerenciamento de usuários
+    children:
+      - url: "{{api_url}}/users/barbers"
+        name: Create Barber
+        meta:
+          id: req_2a15aaf98863402f85c13ad9b4b655f0
+          created: 1741007128844
+          modified: 1754104625088
+          isPrivate: false
+          description: Criar usuário barbeiro
+          sortKey: -1710614649635
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "João Barbeiro",
+              "email": "joao@gmail.com",
+              "password": "lop32145",
+              "phone": "11999999999"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_bd7fdab564ab4b5083c7d792e55fe573',
+            'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/users/1"
+        name: Get User
+        meta:
+          id: req_3f6c55f8032944f681f711ab836a9fb3
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Buscar usuário por ID
+          sortKey: -1710614649630
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/users/admins"
+        name: List Admins
+        meta:
+          id: req_60d2bb217b7b4def81a7037f10856ddd
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Listar admins
+          sortKey: -1710614649631
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/users/admins"
+        name: Create Admin
+        meta:
+          id: req_70533aba2be94b1ab7f36f540aad864e
+          created: 1741007128844
+          modified: 1754104641375
+          isPrivate: false
+          description: Criar usuário admin
+          sortKey: -1710614649634
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Admin User",
+              "email": "admin@gmail.com",
+              "password": "lop32145",
+              "phone": "11999999999"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_bd7fdab564ab4b5083c7d792e55fe573',
+            'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/users"
+        name: List Users
+        meta:
+          id: req_94b6853a789342eda8dde292eed5be1d
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Listar todos os usuários
+          sortKey: -1710614649633
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/users/barbers"
+        name: List Barbers
+        meta:
+          id: req_b87018ae027842d7b2f7f31e9675e3cd
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Listar barbeiros
+          sortKey: -1710614649632
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/users/1"
+        name: Update User
+        meta:
+          id: req_c9b37cd1cf624dbdbed0489049804569
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Atualizar usuário
+          sortKey: -1710614649629
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Nome Atualizado",
+              "email": "novo@example.com",
+              "phone": "11999999999",
+              "currentPassword": "password123",
+              "password": "newpassword123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/users/customer"
+        name: Create Customer
+        meta:
+          id: req_2cb2d0698ce6466e8a84e5f1f7c2a8ac
+          created: 1750458876574
+          modified: 1754100615860
+          isPrivate: false
+          description: Criar usuário cliente
+          sortKey: -1710613723615
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Cliente Teste",
+              "email": "cliente@gmail.com",
+              "password": "lop32145",
+              "phone": "11999999999"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    scripts:
+      afterResponse: ""
+      preRequest: ""
+  - name: Auth
+    meta:
+      id: fld_d240739712934a1ab462bd88b7ec9df3
+      created: 1741007128844
+      modified: 1750458392111
+      sortKey: -1710495353721
+      description: Endpoints de autenticação
+    children:
+      - url: "{{api_url}}/login"
+        name: Login
+        meta:
+          id: req_553491dcb79640728d60be5678921e35
+          created: 1741007128855
+          modified: 1753936283731
+          isPrivate: false
+          description: Login de usuário
+          sortKey: -1710599833326
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "email": "user@example.com",
+              "password": "password123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/login/superadmin"
+        name: Login SuperAdmin
+        meta:
+          id: req_bd7fdab564ab4b5083c7d792e55fe573
+          created: 1753936766289
+          modified: 1754076429816
+          isPrivate: false
+          description: Login de super admin
+          sortKey: -1710599833276
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "email": "danieldeandradelopes@gmail.com",
+              "password": "lop32145"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    scripts:
+      afterResponse: ""
+      preRequest: ""
+  - name: Schedules
+    meta:
+      id: fld_da7dab02eab542a585160ddf2f3cd89f
+      created: 1741007128844
+      modified: 1750458392111
+      sortKey: -1710495353716
+      description: Gerenciamento de agendamentos
+    children:
+      - url: "{{api_url}}/schedules/customer"
+        name: Get Customer Schedules
+        meta:
+          id: req_2491bf4419984457ac05422f9cf5eae6
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Buscar agendamentos do cliente
+          sortKey: -1710614649609
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/schedules/1/barber"
+        name: Delete Barber Schedule
+        meta:
+          id: req_92608f0315734758a349db5503585a1f
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Deletar agendamento do barbeiro
+          sortKey: -1710614649604
+        method: DELETE
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/schedules/customer"
+        name: Create Customer Schedule
+        meta:
+          id: req_b4b9e293e3ba48d2a038b63a9b37dffb
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Criar agendamento como cliente
+          sortKey: -1710614649611
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "date": "2024-01-15",
+              "time": "14:00",
+              "barberId": 1,
+              "serviceIds": [1, 2]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/schedules/1"
+        name: Update Schedule
+        meta:
+          id: req_bf43bd203b9b48499315cba08d5ac7ef
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Atualizar agendamento
+          sortKey: -1710614649606
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "date": "2024-01-16",
+              "time": "15:00",
+              "barberId": 1,
+              "serviceIds": [1, 3]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/schedules/1"
+        name: Delete Schedule
+        meta:
+          id: req_d6a136627b7d4a29b29f4a03c0a98f38
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Deletar agendamento
+          sortKey: -1710614649605
+        method: DELETE
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/schedules/1"
+        name: Get Schedule
+        meta:
+          id: req_e1810fbebdca47ea8ec130eab5ddb03f
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Buscar agendamento por ID
+          sortKey: -1710614649607
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/schedules"
+        name: Get Barber Schedules
+        meta:
+          id: req_ea53460730be4a5c8f224198da0b407f
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Buscar agendamentos do barbeiro
+          sortKey: -1710614649608
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/schedules"
+        name: Create Schedule
+        meta:
+          id: req_fa69329c2d264d4d8865ad0141d1f4fe
+          created: 1741007128844
+          modified: 1754076413558
+          isPrivate: false
+          description: Criar agendamento
+          sortKey: -1710614649610
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "date": "2024-01-15",
+              "time": "14:00",
+              "barberId": 1,
+              "serviceIds": [1, 2]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    scripts:
+      afterResponse: ""
+      preRequest: ""
+  - name: Working Hours
+    meta:
+      id: fld_f7e8feff6acd4109b3454444fd1ddd01
+      created: 1741007128844
+      modified: 1750458392111
+      sortKey: -1710495353717
+      description: Gerenciamento de horários de trabalho
+    children:
+      - url: "{{api_url}}/barber-shop/working-hours/1"
+        name: Delete Working Hours
+        meta:
+          id: req_099ff54766ff4efc8672add7de9ec1bb
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Deletar horários de trabalho
+          sortKey: -1710614649614
+        method: DELETE
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barber-shop/barber/custom-working-hours/2024-01-15/1"
+        name: Get Custom Working Hours
+        meta:
+          id: req_09a16580f8024f978012009e0384ece4
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Buscar horários customizados do barbeiro
+          sortKey: -1710614649612
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barber-shop/working-hours/admin"
+        name: Get Working Hours
+        meta:
+          id: req_c4dcc61abf374f8793d437df86f9e518
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Buscar horários de trabalho
+          sortKey: -1710614649616
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barber-shop/working-hours/admin"
+        name: Add Working Hours
+        meta:
+          id: req_d26849d6a7584792aae3866a953a0439
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Adicionar horários de trabalho
+          sortKey: -1710614649617
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "weekDays": [1, 2, 3, 4, 5],
+              "timeSlots": [
+                {
+                  "startTime": "09:00",
+                  "endTime": "18:00"
+                }
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barber-shop/working-hours/1"
+        name: Update Working Hours
+        meta:
+          id: req_e544fc60c289440f8ff65d2034c46a76
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Atualizar horários de trabalho
+          sortKey: -1710614649615
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "weekDay": 1,
+              "timeSlots": [
+                {
+                  "startTime": "10:00",
+                  "endTime": "19:00"
+                }
+              ],
+              "isOpen": true
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/barber-shop/barber/custom-working-hours"
+        name: Add Custom Working Hours
+        meta:
+          id: req_f2a917f89d2345f888a890eca5ea7c91
+          created: 1741007128844
+          modified: 1754070183784
+          isPrivate: false
+          description: Adicionar horários customizados do barbeiro
+          sortKey: -1710614649613
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "date": "2024-01-15",
+              "timeSlots": [
+                {
+                  "startTime": "14:00",
+                  "endTime": "20:00"
+                }
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token:
+            "{% response 'body', 'req_login_001', 'b64::JC50b2tlbg==::46b', 'never',
+            60 %}"
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    scripts:
+      afterResponse: ""
+      preRequest: ""
+  - name: Subscriptions
+    meta:
+      id: fld_subscriptions
+      created: 1754110000000
+      modified: 1754110000000
+      sortKey: -1710495353722
+      description: Gerenciamento de assinaturas
+    children:
+      - url: "{{api_url}}/subscriptions"
+        name: Create Subscription
+        meta:
+          id: req_create_subscription
+          created: 1754110000001
+          modified: 1754110000001
+          isPrivate: false
+          description: Criar assinatura
+          sortKey: -1710614649700
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "enterprise_Id": 1,
+              "plan_price_id": 1,
+              "status": "active",
+              "start_date": "2024-07-01",
+              "end_date": "2024-08-01"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/subscriptions"
+        name: List Subscriptions
+        meta:
+          id: req_list_subscriptions
+          created: 1754110000002
+          modified: 1754110000002
+          isPrivate: false
+          description: Listar assinaturas
+          sortKey: -1710614649701
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/subscriptions/1"
+        name: Get Subscription
+        meta:
+          id: req_get_subscription
+          created: 1754110000003
+          modified: 1754110000003
+          isPrivate: false
+          description: Buscar assinatura por ID
+          sortKey: -1710614649702
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/subscriptions/1"
+        name: Update Subscription
+        meta:
+          id: req_update_subscription
+          created: 1754110000004
+          modified: 1754110000004
+          isPrivate: false
+          description: Atualizar assinatura
+          sortKey: -1710614649703
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": "cancelled"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/subscriptions/1"
+        name: Delete Subscription
+        meta:
+          id: req_delete_subscription
+          created: 1754110000005
+          modified: 1754110000005
+          isPrivate: false
+          description: Deletar assinatura
+          sortKey: -1710614649704
+        method: DELETE
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Plans
+    meta:
+      id: fld_plans
+      created: 1754110000010
+      modified: 1754110000010
+      sortKey: -1710495353723
+      description: Gerenciamento de planos
+    children:
+      - url: "{{api_url}}/plans"
+        name: Create Plan
+        meta:
+          id: req_create_plan
+          created: 1754110000011
+          modified: 1754110000011
+          isPrivate: false
+          description: Criar plano
+          sortKey: -1710614649710
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Plano Mensal",
+              "description": "Plano mensal para barbearia",
+              "features": 10,
+              "duration": 30
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/plans"
+        name: List Plans
+        meta:
+          id: req_list_plans
+          created: 1754110000012
+          modified: 1754110000012
+          isPrivate: false
+          description: Listar planos
+          sortKey: -1710614649711
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/plans/1"
+        name: Get Plan
+        meta:
+          id: req_get_plan
+          created: 1754110000013
+          modified: 1754110000013
+          isPrivate: false
+          description: Buscar plano por ID
+          sortKey: -1710614649712
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/plans/1"
+        name: Update Plan
+        meta:
+          id: req_update_plan
+          created: 1754110000014
+          modified: 1754110000014
+          isPrivate: false
+          description: Atualizar plano
+          sortKey: -1710614649713
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Plano Mensal Atualizado",
+              "description": "Plano atualizado",
+              "features": 15
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/plans/1"
+        name: Delete Plan
+        meta:
+          id: req_delete_plan
+          created: 1754110000015
+          modified: 1754110000015
+          isPrivate: false
+          description: Deletar plano
+          sortKey: -1710614649714
+        method: DELETE
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Payments
+    meta:
+      id: fld_payments
+      created: 1754110000020
+      modified: 1754110000020
+      sortKey: -1710495353724
+      description: Gerenciamento de pagamentos
+    children:
+      - url: "{{api_url}}/payments"
+        name: Create Payment
+        meta:
+          id: req_create_payment
+          created: 1754110000021
+          modified: 1754110000021
+          isPrivate: false
+          description: Criar pagamento
+          sortKey: -1710614649720
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "subscription_id": 1,
+              "amount": 100.00,
+              "status": "paid",
+              "transaction_id": "abc123",
+              "paid_at": "2024-07-01T10:00:00Z",
+              "created_at": "2024-07-01T09:00:00Z"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/payments"
+        name: List Payments
+        meta:
+          id: req_list_payments
+          created: 1754110000022
+          modified: 1754110000022
+          isPrivate: false
+          description: Listar pagamentos
+          sortKey: -1710614649721
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/payments/1"
+        name: Get Payment
+        meta:
+          id: req_get_payment
+          created: 1754110000023
+          modified: 1754110000023
+          isPrivate: false
+          description: Buscar pagamento por ID
+          sortKey: -1710614649722
+        method: GET
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/payments/1"
+        name: Update Payment
+        meta:
+          id: req_update_payment
+          created: 1754110000024
+          modified: 1754110000024
+          isPrivate: false
+          description: Atualizar pagamento
+          sortKey: -1710614649723
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": "refunded"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/payments/1"
+        name: Delete Payment
+        meta:
+          id: req_delete_payment
+          created: 1754110000025
+          modified: 1754110000025
+          isPrivate: false
+          description: Deletar pagamento
+          sortKey: -1710614649724
+        method: DELETE
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: ""
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{api_url}}/payments-webhook-pagarme"
+        name: Payments Webhook (Pagarme)
+        meta:
+          id: req_payments_webhook
+          created: 1754110000026
+          modified: 1754110000026
+          isPrivate: false
+          description: Webhook de pagamentos do Pagarme
+          sortKey: -1710614649725
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "data": {
+                "customer": {
+                  "enterprise_Id": 1
+                },
+                "payment": {
+                  "amount": 100.00,
+                  "status": "paid"
+                }
+              }
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          preRequest: ""
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - url: "{{api_url}}/health"
+    name: Health Check
+    meta:
+      id: req_b1f31a5c73cd4a22b6df9983270aa302
+      created: 1741007128856
+      modified: 1753936278336
+      isPrivate: false
+      description: Verificar status da API
+      sortKey: -1715133595458
+    method: GET
+    headers:
+      - name: Content-Type
+        value: application/json
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_733ed0936f0e405bbbfbe76edbe7b187
+    created: 1750458392147
+    modified: 1750458392147
+environments:
+  name: Base Environment
+  meta:
+    id: env_3a88193a61ad4934b2580597354db150
+    created: 1741007128843
+    modified: 1753820462656
+    isPrivate: false
+  data:
+    api_url: https://api.agende7.com
+  subEnvironments:
+    - name: Production
+      meta:
+        id: env_f23e7d89a195434c98dc371c1d920ae4
+        created: 1741007128843
+        modified: 1753911371293
+        isPrivate: false
+        sortKey: 1718889814182
+      data:
+        api_url: https://api.agende7.com
+    - name: Localhost
+      meta:
+        id: env_8fdcdb14a06b403d965a9693d158d9ae
+        created: 1753821027052
+        modified: 1753821064120
+        isPrivate: false
+        sortKey: 1753821027052
+      data:
+        api_url: http://localhost:3000

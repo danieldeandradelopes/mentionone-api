@@ -1,0 +1,20 @@
+import Payment, { PaymentResponse } from "../../entities/Payment";
+
+export default interface IPaymentsGateway {
+  registerPayment(enterprise_Id: number): Promise<void>;
+  getPaymentBySubscriptionId(subscriptionId: number): Promise<Payment | null>;
+  getPayment(id: number): Promise<Payment | null>;
+  getPayments(): Promise<Payment[]>;
+  addPayment(
+    enterprise_Id: number,
+    planId: number,
+    trx: any
+  ): Promise<PaymentResponse>;
+  updatePayment(data: Payment): Promise<Payment>;
+  removePayment(id: number): Promise<void>;
+  updatePaymentTransactionId(
+    paymentId: number,
+    transactionId: string,
+    trx: any
+  ): Promise<Payment>;
+}
