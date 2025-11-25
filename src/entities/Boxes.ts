@@ -7,6 +7,17 @@ export interface BoxesProps {
   updated_at?: string;
 }
 
+export type BoxesStoreData = {
+  enterprise_id: number;
+  name: string;
+  location: string;
+};
+
+export type BoxesUpdateData = Partial<{
+  name: string;
+  location: string;
+}> & { id: number };
+
 export default class Boxes {
   readonly id: number;
   readonly enterprise_id: number;

@@ -1,20 +1,8 @@
-import Feedback from "../entities/Feedback";
+import Feedback, {
+  FeedbackStoreData,
+  FeedbackUpdateData,
+} from "../entities/Feedback";
 import { IFeedbackGateway } from "../gateway/FeedbackGateway/IFeedbackGateway";
-
-type FeedbackStoreData = {
-  enterprise_id: number;
-  box_id: number;
-  text: string;
-  category: string;
-  status?: string;
-  response?: string | null;
-  rating?: number | null;
-  attachments?: string[] | null;
-};
-
-type FeedbackUpdateData = Partial<
-  Omit<FeedbackStoreData, "enterprise_id" | "box_id">
-> & { id: number };
 
 export default class FeedbackController {
   constructor(private readonly gateway: IFeedbackGateway) {}

@@ -20,6 +20,8 @@ import { subscriptionRoutes } from "./subscription.routes";
 import uploadRoutes from "./upload.routes";
 import { userAdminsRoutes } from "./users-admins.routes";
 import { userRoutes } from "./users.routes";
+import { boxesRoutes } from "./boxes.routes";
+import { feedbackRoutes } from "./feedback.routes";
 
 const routes = Router();
 
@@ -103,5 +105,7 @@ routes.use(planRoutes);
 routes.use(planPriceRoutes);
 routes.use(enterpriseRoutes);
 routes.use(subscriptionRoutes);
+routes.use(boxesRoutes);
+routes.use(feedbackRoutes);
 
 export default routes;

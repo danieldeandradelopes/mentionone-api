@@ -5,11 +5,11 @@ import { IFeedbackGateway } from "./IFeedbackGateway";
 export class KnexFeedbackGateway implements IFeedbackGateway {
   constructor(private readonly knex: Knex) {}
 
-  async findById(id: number): Promise<Feedback | null> {
+  async findById(id: number): Promise<Feedback> {
     const result = await this.knex<FeedbackProps>("feedbacks")
       .where({ id })
       .first();
-    if (!result) return null;
+    if (!result) throw new Error("Feedback não encontrado.");
     return new Feedback({
       ...result,
       attachments: result.attachments
@@ -66,25 +66,23 @@ export class KnexFeedbackGateway implements IFeedbackGateway {
   async update(
     id: number,
     data: Partial<Omit<FeedbackProps, "id" | "enterprise_id" | "box_id">>
-  ): Promise<Feedback | null> {
+  ): Promise<Feedback> {
     await this.knex<FeedbackProps>("feedbacks").where({ id }).update(data);
     const row = await this.knex<FeedbackProps>("feedbacks")
       .where({ id })
       .first();
-    return row
-      ? new Feedback({
-          ...row,
-          attachments: row.attachments
-            ? JSON.parse(row.attachments as any)
-            : null,
-        })
-      : null;
+    if (!row) throw new Error("Feedback não encontrado.");
+    return new Feedback({
+      ...row,
+      attachments: row.attachments ? JSON.parse(row.attachments as any) : null,
+    });
   }
 
   async delete(id: number): Promise<boolean> {
     const affected = await this.knex<FeedbackProps>("feedbacks")
       .where({ id })
       .del();
-    return affected > 0;
+    if (!affected) throw new Error("Feedback não encontrado.");
+    return true;
   }
 }

@@ -1,16 +1,5 @@
-import Boxes from "../entities/Boxes";
+import Boxes, { BoxesStoreData, BoxesUpdateData } from "../entities/Boxes";
 import { IBoxesGateway } from "../gateway/BoxesGateway/IBoxesGateway";
-
-type BoxesStoreData = {
-  enterprise_id: number;
-  name: string;
-  location: string;
-};
-
-type BoxesUpdateData = Partial<{
-  name: string;
-  location: string;
-}> & { id: number };
 
 export default class BoxesController {
   constructor(private readonly gateway: IBoxesGateway) {}

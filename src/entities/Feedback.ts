@@ -12,6 +12,21 @@ export interface FeedbackProps {
   updated_at?: string;
 }
 
+export type FeedbackStoreData = {
+  enterprise_id: number;
+  box_id: number;
+  text: string;
+  category: string;
+  status?: string;
+  response?: string | null;
+  rating?: number | null;
+  attachments?: string[] | null;
+};
+
+export type FeedbackUpdateData = Partial<
+  Omit<FeedbackStoreData, "enterprise_id" | "box_id">
+> & { id: number };
+
 export default class Feedback {
   readonly id: number;
   readonly enterprise_id: number;
