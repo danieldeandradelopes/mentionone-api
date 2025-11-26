@@ -6,40 +6,35 @@ const plans = [
   {
     name: "Starter",
     description: "Plano básico",
-    features: "",
-    is_active: true,
+    features: null,
   },
   {
     name: "Pro",
     description: "Plano para empresas",
-    features: "",
-    is_active: true,
+    features: null,
   },
 ];
 
-const plan_prices = [
-  { plan_id: 1, price: 49.99, duration_months: 1, billing_cycle: "monthly" },
-  { plan_id: 2, price: 129.99, duration_months: 1, billing_cycle: "monthly" },
-];
+// plan_prices será criado dinamicamente após inserir os plans
 
 const users = [
   {
     email: "superadmin@mentionone.com",
     password: bcrypt.hashSync("123456", 8),
     name: "SuperAdmin",
-    is_superadmin: true,
+    access_level: "superadmin",
   },
   {
     email: "admin1@mentionone.com",
     password: bcrypt.hashSync("admin123", 8),
     name: "Admin One",
-    is_superadmin: false,
+    access_level: "admin",
   },
   {
     email: "admin2@mentionone.com",
     password: bcrypt.hashSync("admin456", 8),
     name: "Admin Two",
-    is_superadmin: false,
+    access_level: "admin",
   },
 ];
 
@@ -75,31 +70,113 @@ const enterprises = [
 ];
 
 export async function seed(knex: Knex) {
-  await knex("user_enterprises").del();
-  await knex("feedbacks").del();
-  await knex("boxes_branding").del();
-  await knex("boxes").del();
-  await knex("subscriptions").del();
-  await knex("plan_prices").del();
-  await knex("plans").del();
-  await knex("users").del();
-  await knex("enterprises").del();
+  // ==========================================
+  // RESTART: Limpa todas as tabelas na ordem correta
+  // (respeitando foreign keys)
+  // ==========================================
+
+  console.log("🔄 Iniciando restart do banco de dados...");
+
+  // 1. Tabelas dependentes (com foreign keys) - ordem inversa das dependências
+  await knex("payments")
+    .del()
+    .catch(() => {}); // Pode não existir ainda
+  await knex("feedbacks")
+    .del()
+    .catch(() => {});
+  await knex("boxes_branding")
+    .del()
+    .catch(() => {});
+  await knex("boxes")
+    .del()
+    .catch(() => {});
+  await knex("subscriptions")
+    .del()
+    .catch(() => {});
+  await knex("user_enterprises")
+    .del()
+    .catch(() => {});
+  await knex("refresh_tokens")
+    .del()
+    .catch(() => {});
+  await knex("manifests")
+    .del()
+    .catch(() => {});
+  await knex("phones")
+    .del()
+    .catch(() => {});
+  await knex("social_medias")
+    .del()
+    .catch(() => {});
+
+  // 2. Tabelas principais (referenciadas por outras)
+  await knex("plan_prices")
+    .del()
+    .catch(() => {});
+  await knex("plans")
+    .del()
+    .catch(() => {});
+  await knex("users")
+    .del()
+    .catch(() => {});
+  await knex("enterprises")
+    .del()
+    .catch(() => {});
+
+  // 3. Resetar sequências de auto-increment (PostgreSQL)
+  const tables = [
+    "payments",
+    "feedbacks",
+    "boxes_branding",
+    "boxes",
+    "subscriptions",
+    "user_enterprises",
+    "refresh_tokens",
+    "manifests",
+    "phones",
+    "social_medias",
+    "plan_prices",
+    "plans",
+    "users",
+    "enterprises",
+  ];
+
+  for (const table of tables) {
+    try {
+      await knex.raw(
+        `SELECT setval(pg_get_serial_sequence('${table}', 'id'), 1, false)`
+      );
+    } catch (error) {
+      // Ignora erros se a tabela não existir ou não tiver sequência
+    }
+  }
+
+  console.log("✅ Banco de dados limpo e sequências resetadas");
 
   // 1. Plans
-  await knex("plans").insert(plans);
-  await knex("plan_prices").insert(plan_prices);
+  const createdPlans = await knex("plans")
+    .insert(plans)
+    .returning(["id", "name"]);
 
-  // 2. Users (superadmin, 2 admins)
+  // 2. Plan Prices (usando os IDs retornados dos plans)
+  const createdPlanPrices = await knex("plan_prices")
+    .insert([
+      { plan_id: createdPlans[0].id, price: 50, billing_cycle: "monthly" },
+      { plan_id: createdPlans[1].id, price: 130, billing_cycle: "monthly" },
+    ])
+    .returning(["id"]);
+
+  // 3. Users (superadmin, 2 admins)
   const createdUsers = await knex("users")
     .insert(users)
     .returning(["id", "email"]);
 
-  // 3. Enterprises
+  // 4. Enterprises
   const createdEnterprises = await knex("enterprises")
     .insert(enterprises)
     .returning(["id", "name"]);
 
-  // 4. Vínculo user_enterprises: admin1→alpha, admin2→beta
+  // 5. Vínculo user_enterprises: admin1→alpha, admin2→beta
   await knex("user_enterprises").insert([
     {
       user_id: createdUsers[1].id,
@@ -113,25 +190,29 @@ export async function seed(knex: Knex) {
     },
   ]);
 
-  // 5. Subscription: uma para cada enterprise
+  // 6. Subscription: uma para cada enterprise (usando os IDs retornados dos plan_prices)
+  const startDate = new Date();
+  const endDate = new Date();
+  endDate.setMonth(endDate.getMonth() + 1); // 1 mês a partir de hoje
+
   await knex("subscriptions").insert([
     {
       enterprise_id: createdEnterprises[0].id,
-      plan_price_id: 1,
+      plan_price_id: createdPlanPrices[0].id,
       status: "active",
-      start_date: new Date(),
-      end_date: null,
+      start_date: startDate,
+      end_date: endDate,
     },
     {
       enterprise_id: createdEnterprises[1].id,
-      plan_price_id: 2,
+      plan_price_id: createdPlanPrices[1].id,
       status: "active",
-      start_date: new Date(),
-      end_date: null,
+      start_date: startDate,
+      end_date: endDate,
     },
   ]);
 
-  // 6. Cada enterprise com uma box
+  // 7. Cada enterprise com uma box
   const boxes = await knex("boxes")
     .insert([
       {
@@ -147,7 +228,7 @@ export async function seed(knex: Knex) {
     ])
     .returning(["id", "enterprise_id"]);
 
-  // 7. Adicionar branding das boxes (opcional)
+  // 8. Adicionar branding das boxes (opcional)
   await knex("boxes_branding").insert([
     {
       box_id: boxes[0].id,
@@ -165,7 +246,7 @@ export async function seed(knex: Knex) {
     },
   ]);
 
-  // 8. Cada box com 2 feedbacks
+  // 9. Cada box com 2 feedbacks
   await knex("feedbacks").insert([
     // Para Alpha
     {
@@ -206,4 +287,12 @@ export async function seed(knex: Knex) {
       updated_at: new Date(),
     },
   ]);
+
+  console.log("✅ Seed concluído com sucesso!");
+  console.log(`   - ${createdPlans.length} plan(s) criado(s)`);
+  console.log(`   - ${createdPlanPrices.length} preço(s) de plano criado(s)`);
+  console.log(`   - ${createdUsers.length} usuário(s) criado(s)`);
+  console.log(`   - ${createdEnterprises.length} empresa(s) criada(s)`);
+  console.log(`   - ${boxes.length} caixa(s) criada(s)`);
+  console.log(`   - 4 feedback(s) criado(s)`);
 }
