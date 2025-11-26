@@ -84,8 +84,6 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   async addEnterpriseWithDefaultTemplate(
     data: EnterpriseWithDefaultTemplate & { trx?: any } & {
       phone: string;
-      latitude: number;
-      longitude: number;
     }
   ): Promise<{ enterprise: Enterprise }> {
     const {
@@ -95,8 +93,6 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
       phone,
       description,
       subdomain,
-      latitude,
-      longitude,
       email,
       document,
       document_type,
@@ -116,8 +112,6 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
         subdomain: subdomain,
         cover: cover,
         description: description,
-        latitude: latitude,
-        longitude: longitude,
         auto_approve: true,
       };
 
@@ -187,6 +181,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
       .where("subdomain", domain)
       .whereNull("deleted_at")
       .first();
+
     if (!e) throw new Error("Enterprise not found");
     return new Enterprise(e);
   }

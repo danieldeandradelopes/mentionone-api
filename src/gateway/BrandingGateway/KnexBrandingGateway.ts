@@ -44,17 +44,7 @@ export default class KnexBrandingGateway implements IBrandingGateway {
       .limit(2);
 
     const Enterprise: Enterprise = await this.connection
-      .select(
-        "id",
-        "address",
-        "cover",
-        "description",
-        "latitude",
-        "longitude",
-        "name",
-        "timezone",
-        "id"
-      )
+      .select("id", "address", "cover", "description", "name", "timezone", "id")
       .from("Enterprise")
       .where("id", enterpriseId)
       .first();

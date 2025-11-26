@@ -28,42 +28,23 @@ export default class KnexAuthenticationGateway
     const currentUser = await this.connection
       .select("users.*")
       .from("users")
-      .where({ email: email });
+      .where({ email: email })
+      .first();
 
-    const accessLevel = currentUser[0].access_level;
-
-    if (accessLevel === "client") {
-      const customer = await this.connection
-        .select("customers.*")
-        .from("customers")
-        .where({ user_id: currentUser[0].id })
-        .first();
-
-      if (!customer || customer.enterprise_id !== enterpriseId) {
-        throw new HttpException(404, "Failed to make login");
-      }
-    }
-
-    if (accessLevel === "barber") {
-      const barber = await this.connection
-        .select("barbers.*")
-        .from("barbers")
-        .where({ user_id: currentUser[0].id })
-        .first();
-
-      if (!barber || barber.enterprise_id !== enterpriseId) {
-        throw new HttpException(404, "Failed to make login");
-      }
+    if (!currentUser) {
+      throw new HttpException(401, "Failed to make login");
     }
 
     const isPasswordMatch = await this.encrypt.compareValue(
       password,
-      currentUser[0].password
+      currentUser.password
     );
 
-    if (!isPasswordMatch) throw new HttpException(400, "Failed to make login");
+    if (!isPasswordMatch) {
+      throw new HttpException(401, "Failed to make login");
+    }
 
-    delete currentUser[0].password;
+    delete currentUser.password;
 
     // Buscar informações da barbearia para todos os usuários
     let enterprise = null;
@@ -75,9 +56,7 @@ export default class KnexAuthenticationGateway
           "enterprises.name",
           "enterprises.address",
           "enterprises.description",
-          "enterprises.cover",
-          "enterprises.latitude",
-          "enterprises.longitude"
+          "enterprises.cover"
         )
         .from("enterprises")
         .where("enterprises.id", enterpriseId)
@@ -96,72 +75,26 @@ export default class KnexAuthenticationGateway
         enterprise_id: phone.enterprise_id,
       }));
 
-      if (enterpriseData) {
-        // Se for barbeiro ou admin, buscar informações adicionais
-
-        const barberInfo = await this.connection
-          .select("barbers.specialties", "barbers.bio", "barbers.rate")
-          .from("barbers")
-          .where({
-            enterprise_id: enterpriseId,
-            user_id: currentUser[0].id,
-          })
-          .first();
-
-        if (barberInfo) {
-          enterpriseData.specialties = barberInfo.specialties;
-          enterpriseData.bio = barberInfo.bio;
-          enterpriseData.rate = barberInfo.rate;
-        }
-
-        // Buscar horários de funcionamento
-        const workingHours = await this.connection
-          .select("working_hours.*")
-          .from("working_hours")
-          .where("barber_shop_id", enterpriseData.id)
-          .orderBy("week_day");
-
-        // Buscar slots de horário para cada dia
-        const workingHoursWithSlots = await Promise.all(
-          workingHours.map(async (wh: any) => {
-            const timeSlots = await this.connection("working_hours_time_slots")
-              .select("time_slot")
-              .where("working_hours_id", wh.id)
-              .orderBy("time_slot");
-
-            return {
-              id: wh.id,
-              week_day: wh.week_day,
-              time_slots: timeSlots.map((slot: any) => slot.time_slot),
-              is_open: wh.is_open,
-              created_at: wh.created_at,
-              updated_at: wh.updated_at,
-            };
-          })
-        );
-
-        enterprise = {
-          ...enterpriseData,
-          working_hours: workingHoursWithSlots,
-          phones: formattedPhones,
-        };
-      }
+      enterprise = {
+        ...enterpriseData,
+        phones: formattedPhones,
+      };
     }
 
     const refreshToken = this.jwtSign.generateRefreshToken({
-      id: currentUser[0].id,
-      access_level: currentUser[0].access_level,
+      id: currentUser.id,
+      access_level: currentUser.access_level,
       enterprise_id: enterpriseId || null,
     });
 
-    await this.refreshTokenGateway.create(refreshToken, currentUser[0].id);
+    await this.refreshTokenGateway.create(refreshToken, currentUser.id);
 
     const data = {
-      user: currentUser[0],
+      user: currentUser,
       enterprise,
       token: this.jwtSign.generate({
-        id: currentUser[0].id,
-        access_level: currentUser[0].access_level,
+        id: currentUser.id,
+        access_level: currentUser.access_level,
         enterprise_id: enterpriseId || null,
       }),
       refreshToken,

@@ -80,10 +80,6 @@ enterpriseRoutes.delete(
  *                 type: string
  *               subdomain:
  *                 type: string
- *               latitude:
- *                 type: number
- *               longitude:
- *                 type: number
  *     responses:
  *       201:
  *         description: Barbearia criada com sucesso

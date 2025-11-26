@@ -12,17 +12,31 @@ const EnterpriseGetInfo = async (
     const subdomain =
       process.env.NODE_ENV === "production"
         ? request.headers.origin?.split(".")[0].split("//")[1]
-        : process.env.BARBER_SHOP_SUBDOMAIN;
+        : process.env.ENTERPRISE_SUBDOMAIN;
 
-    if (subdomainSkip.includes(subdomain ?? "")) return next();
+    // Se o subdomain estiver na lista de skip (ex: "admin"), permite continuar sem enterprise_id
+    // Isso permite login de superadmin
+    if (subdomainSkip.includes(subdomain ?? "")) {
+      return next();
+    }
 
-    if (!subdomain)
+    // Em desenvolvimento, se não houver subdomain configurado, permite continuar
+    // O controller vai verificar se é superadmin ou não
+    if (!subdomain && process.env.NODE_ENV !== "production") {
+      return next();
+    }
+
+    // Se não houver subdomain em produção, retorna erro
+    if (!subdomain) {
       return response.status(401).json({ message: "Unauthorized!" });
+    }
 
     const EnterpriseController = container.get<EnterpriseController>(
       Registry.EnterpriseController
     );
     const Enterprise = await EnterpriseController.getBySubdomain(subdomain);
+
+    console.log(Enterprise);
 
     if (!Enterprise)
       return response.status(401).json({ message: "Unauthorized!" });

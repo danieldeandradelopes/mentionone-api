@@ -45,9 +45,7 @@ export default class KnexUserGateway implements IUserGateway {
           "Enterprise.name",
           "Enterprise.address",
           "Enterprise.description",
-          "Enterprise.cover",
-          "Enterprise.latitude",
-          "Enterprise.longitude"
+          "Enterprise.cover"
         )
         .from("Enterprise")
         .where("Enterprise.id", enterpriseId)
