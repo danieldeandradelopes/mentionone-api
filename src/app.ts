@@ -21,8 +21,16 @@ app.use(
         return callback(null, true);
       }
 
-      // também libera localhost para dev
-      if (origin === "http://localhost:5173") {
+      // também libera localhost para dev (Vite e Next.js)
+      const allowedLocalhost = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
+        "http://localhost:3003",
+        "http://localhost:5173",
+      ];
+
+      if (allowedLocalhost.includes(origin)) {
         return callback(null, true);
       }
 
