@@ -3,6 +3,7 @@ export interface BoxesProps {
   enterprise_id: number;
   name: string;
   location: string;
+  slug: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -11,11 +12,13 @@ export type BoxesStoreData = {
   enterprise_id: number;
   name: string;
   location: string;
+  slug: string;
 };
 
 export type BoxesUpdateData = Partial<{
   name: string;
   location: string;
+  slug: string;
 }> & { id: number };
 
 export default class Boxes {
@@ -23,6 +26,7 @@ export default class Boxes {
   readonly enterprise_id: number;
   readonly name: string;
   readonly location: string;
+  readonly slug: string;
   readonly created_at?: string;
   readonly updated_at?: string;
 
@@ -31,6 +35,7 @@ export default class Boxes {
     this.enterprise_id = props.enterprise_id;
     this.name = props.name;
     this.location = props.location;
+    this.slug = props.slug;
     this.created_at = props.created_at;
     this.updated_at = props.updated_at;
   }

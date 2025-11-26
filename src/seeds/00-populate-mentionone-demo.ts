@@ -212,21 +212,25 @@ export async function seed(knex: Knex) {
     },
   ]);
 
-  // 7. Cada enterprise com uma box
+  // 7. Cada enterprise com uma box (com slug único global)
+  const boxesInput = [
+    {
+      enterprise_id: createdEnterprises[0].id,
+      name: "Caixa Recepção",
+      location: "Recepção",
+      slug: "caixa-recepcao-alpha",
+    },
+    {
+      enterprise_id: createdEnterprises[1].id,
+      name: "Caixa Central",
+      location: "Entrada Principal",
+      slug: "caixa-central-beta",
+    },
+  ];
+
   const boxes = await knex("boxes")
-    .insert([
-      {
-        enterprise_id: createdEnterprises[0].id,
-        name: "Caixa Recepção",
-        location: "Recepção",
-      },
-      {
-        enterprise_id: createdEnterprises[1].id,
-        name: "Caixa Central",
-        location: "Entrada Principal",
-      },
-    ])
-    .returning(["id", "enterprise_id"]);
+    .insert(boxesInput)
+    .returning(["id", "enterprise_id", "slug"]);
 
   // 8. Adicionar branding das boxes (opcional)
   await knex("boxes_branding").insert([

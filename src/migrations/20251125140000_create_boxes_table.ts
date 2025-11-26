@@ -12,6 +12,7 @@ export async function up(knex: Knex): Promise<void> {
       .onDelete("CASCADE");
     table.string("name", 100).notNullable();
     table.string("location", 255);
+    table.string("slug", 100).notNullable().unique();
     table.timestamps(true, true);
   });
 }

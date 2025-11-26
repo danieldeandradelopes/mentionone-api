@@ -45,6 +45,24 @@ boxesRoutes.get(
   }
 );
 
+// Obter uma box por SLUG
+boxesRoutes.get(
+  "/boxes/slug/:slug",
+  Authenticate,
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const controller = container.get<BoxesController>(
+        Registry.BoxesController
+      );
+      const box = await controller.getBySlug(request.params.slug);
+      return response.json(box);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // Criar uma nova box
 boxesRoutes.post(
   "/boxes",
@@ -55,11 +73,12 @@ boxesRoutes.post(
       const controller = container.get<BoxesController>(
         Registry.BoxesController
       );
-      const { name, location } = request.body;
+      const { name, location, slug } = request.body;
       const input: BoxesStoreData = {
         name,
         location,
         enterprise_id: request.enterprise_id,
+        slug,
       };
       const box = await controller.store(input);
       return response.status(201).json(box);
