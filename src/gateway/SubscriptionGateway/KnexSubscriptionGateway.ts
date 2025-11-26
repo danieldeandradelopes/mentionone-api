@@ -12,7 +12,7 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
   async verifyAndUpdateSubscriptionStatus(): Promise<void> {
     const now = new Date();
 
-    await this.connection("subscription")
+    await this.connection("subscriptions")
       .where("status", "active")
       .andWhere((builder: Knex.QueryBuilder) => {
         builder
@@ -44,30 +44,30 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
   async getSubscriptionByEnterpriseId(
     enterpriseId: number
   ): Promise<SubscriptionValidateResponse> {
-    let subscription = await this.connection("subscription")
+    let subscription = await this.connection("subscriptions")
       .where({ enterprise_id: enterpriseId })
       .whereRaw(
         `
     (
-      (subscription.start_date <= NOW() 
-       AND (subscription.end_date IS NULL OR subscription.end_date >= NOW()))
-      OR (subscription.trial_end_date IS NOT NULL AND subscription.trial_end_date >= NOW())
+      (subscriptions.start_date <= NOW() 
+       AND (subscriptions.end_date IS NULL OR subscriptions.end_date >= NOW()))
+      OR (subscriptions.trial_end_date IS NOT NULL AND subscriptions.trial_end_date >= NOW())
     )
   `
       )
-      .join("plan_price", "subscription.plan_price_id", "plan_price.id")
-      .join("plan", "plan_price.plan_id", "plan.id")
+      .join("plan_prices", "subscriptions.plan_price_id", "plan_prices.id")
+      .join("plans", "plan_prices.plan_id", "plans.id")
       .orderByRaw(
-        "COALESCE(subscription.end_date, subscription.trial_end_date) DESC"
+        "COALESCE(subscriptions.end_date, subscriptions.trial_end_date) DESC"
       )
       .first();
 
     if (!subscription) {
-      subscription = await this.connection("subscription")
+      subscription = await this.connection("subscriptions")
         .where({ enterprise_id: enterpriseId })
-        .join("plan_price", "subscription.plan_price_id", "plan_price.id")
-        .join("plan", "plan_price.plan_id", "plan.id")
-        .orderBy("subscription.end_date", "desc")
+        .join("plan_prices", "subscriptions.plan_price_id", "plan_prices.id")
+        .join("plans", "plan_prices.plan_id", "plans.id")
+        .orderBy("subscriptions.end_date", "desc")
         .first();
     }
 
@@ -93,15 +93,15 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
   }
 
   async getSubscription(id: number): Promise<Subscription> {
-    return await this.connection("subscription").where({ id }).first();
+    return await this.connection("subscriptions").where({ id }).first();
   }
 
   async getSubscriptions(): Promise<Subscription[]> {
-    return await this.connection("subscription");
+    return await this.connection("subscriptions");
   }
 
   async addSubscription(data: Subscription): Promise<Subscription> {
-    const planPrice: PlanPrice = await this.connection("plan_price")
+    const planPrice: PlanPrice = await this.connection("plan_prices")
       .where({ id: data.plan_price_id })
       .first();
 
@@ -121,7 +121,7 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
       );
     }
 
-    const subscription: Subscription[] = await this.connection("subscription")
+    const subscription: Subscription[] = await this.connection("subscriptions")
       .insert({ ...data, end_date: end_date.toISOString() })
       .returning("*");
 
@@ -129,14 +129,14 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
   }
 
   async updateSubscription(data: Subscription): Promise<Subscription> {
-    return await this.connection("subscription")
+    return await this.connection("subscriptions")
       .update(data)
       .where({ id: data.id })
       .returning("*");
   }
 
   async removeSubscription(id: number): Promise<void> {
-    await this.connection("subscription").where({ id }).delete();
+    await this.connection("subscriptions").where({ id }).delete();
     return undefined;
   }
 
@@ -144,7 +144,7 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
     payment: Payment
   ): Promise<Subscription> {
     const currentSubscription: Subscription = await this.connection(
-      "subscription"
+      "subscriptions"
     )
       .where({
         id: payment.subscription_id,
@@ -155,7 +155,7 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
       throw new Error("Subscription not found");
     }
 
-    const currentPlanPrice: PlanPrice = await this.connection("plan_price")
+    const currentPlanPrice: PlanPrice = await this.connection("plan_prices")
       .where({
         id: currentSubscription.plan_price_id,
       })
@@ -170,14 +170,14 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
         ? this.addMonths(new Date(), 1)
         : this.addYears(new Date(), 1);
 
-    await this.connection("payment")
+    await this.connection("payments")
       .where({ id: payment.id })
       .update({
         status: "paid",
       })
       .returning("*");
 
-    const updatedSubscription = await this.connection("subscription")
+    const updatedSubscription = await this.connection("subscriptions")
       .where({ id: currentSubscription.id })
       .update({
         end_date: newDueDate.toISOString(),

@@ -36,8 +36,6 @@ const EnterpriseGetInfo = async (
     );
     const Enterprise = await EnterpriseController.getBySubdomain(subdomain);
 
-    console.log(Enterprise);
-
     if (!Enterprise)
       return response.status(401).json({ message: "Unauthorized!" });
 

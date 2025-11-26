@@ -7,32 +7,32 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
   constructor(readonly connection: any) {}
 
   async getPayment(id: number): Promise<Payment | null> {
-    return await this.connection("payment").where({ id }).first();
+    return await this.connection("payments").where({ id }).first();
   }
   async getPayments(): Promise<Payment[]> {
-    return await this.connection("payment");
+    return await this.connection("payments");
   }
   async addPayment(
     enterprise_id: number,
     planId: number,
     trx: any
   ): Promise<PaymentResponse> {
-    const plan = await trx("plan").where({ id: planId }).first();
+    const plan = await trx("plans").where({ id: planId }).first();
 
     if (!plan) throw new Error("Plan not found");
 
-    const planPrice = await this.connection("plan_price")
+    const planPrice = await this.connection("plan_prices")
       .where({ plan_id: plan.id })
       .first();
 
     if (!planPrice) throw new Error("Plan price not found");
 
-    let subscription = await this.connection("subscription")
+    let subscription = await this.connection("subscriptions")
       .where({ enterprise_id, plan_price_id: planPrice.id })
       .first();
 
     if (subscription) {
-      const result = await trx("subscription")
+      const result = await trx("subscriptions")
         .update({
           plan_price_id: planPrice.id,
         })
@@ -43,7 +43,7 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
     }
 
     if (!subscription) {
-      const result = await trx("subscription")
+      const result = await trx("subscriptions")
         .insert({
           enterprise_id,
           plan_price_id: planPrice.id,
@@ -55,7 +55,7 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
       subscription = result[0];
     }
 
-    const payment = await trx("payment")
+    const payment = await trx("payments")
       .insert({
         subscription_id: subscription.id,
         amount: planPrice.price,
@@ -111,20 +111,20 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
   }
 
   async updatePayment(data: Payment): Promise<Payment> {
-    const payment = await this.connection("payment")
+    const payment = await this.connection("payments")
       .update(data)
       .where({ id: data.id })
       .returning("*");
     return new Payment(payment);
   }
   async removePayment(id: number): Promise<void> {
-    await this.connection("payment").where({ id }).delete();
+    await this.connection("payments").where({ id }).delete();
     return undefined;
   }
   async getPaymentBySubscriptionId(
     subscriptionId: number
   ): Promise<Payment | null> {
-    return await this.connection("payment")
+    return await this.connection("payments")
       .where({ subscription_id: subscriptionId })
       .first();
   }
@@ -138,7 +138,7 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
 
     if (!Enterprise) throw new Error("User not found");
 
-    await this.connection("payment")
+    await this.connection("payments")
       .insert({ user_id: Enterprise.id, payment_date: new Date() })
       .returning("*");
 

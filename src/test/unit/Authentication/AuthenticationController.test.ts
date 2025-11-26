@@ -1,7 +1,5 @@
 import AuthenticationController from "../../../controllers/AuthenticationController";
-import UserController from "../../../controllers/UserController";
 import InMemoryAuthenticationGateway from "../../../gateway/AuthenticationGateway/InMemoryAuthenticationGateway";
-import InMemoryUserGateway from "../../../gateway/UserGateway/InMemoryUserGateway";
 
 describe("Testa o UserController", () => {
   test("Deve realizar login com um usuário válido", async () => {
@@ -14,7 +12,6 @@ describe("Testa o UserController", () => {
           avatar: "",
           email: "daniel@gmail.com",
           phone: "",
-          statusPayment: "",
           password: "123456",
         },
         {
@@ -24,7 +21,6 @@ describe("Testa o UserController", () => {
           avatar: "",
           email: "maria@gmail.com",
           phone: "",
-          statusPayment: "",
           password: "123456",
         },
       ])
@@ -47,7 +43,6 @@ describe("Testa o UserController", () => {
           avatar: "",
           email: "daniel@gmail.com",
           phone: "",
-          statusPayment: "",
           password: "123456",
         },
         {
@@ -57,7 +52,6 @@ describe("Testa o UserController", () => {
           avatar: "",
           email: "maria@gmail.com",
           phone: "",
-          statusPayment: "",
           password: "123456",
         },
       ])

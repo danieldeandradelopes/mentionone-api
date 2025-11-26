@@ -56,8 +56,6 @@ authRoutes.post(
 
       const { email, password } = request.body;
 
-      console.log(request.enterprise_id);
-
       const user = await authenticationController.makeLogin({
         email,
         password,

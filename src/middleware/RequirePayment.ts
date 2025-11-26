@@ -30,7 +30,7 @@ export async function RequirePayment(
     const subdomain =
       process.env.NODE_ENV === "production"
         ? request.headers.origin?.split(".")[0].split("//")[1]
-        : process.env.BARBER_SHOP_SUBDOMAIN;
+        : process.env.ENTERPRISE_SUBDOMAIN;
 
     if (!subdomain)
       return response.status(401).json({ message: "Unauthorized!" });

@@ -231,7 +231,7 @@ container.bind(Registry.BoxesGateway).toDynamicValue(() => {
 
 container.bind(Registry.BoxesController).toDynamicValue((context) => {
   const BoxesController = require("../controllers/BoxesController").default;
-  return new BoxesController(container.get(Registry.KnexConfig));
+  return new BoxesController(container.get(Registry.BoxesGateway));
 });
 
 container.bind(Registry.FeedbackGateway).toDynamicValue(() => {
