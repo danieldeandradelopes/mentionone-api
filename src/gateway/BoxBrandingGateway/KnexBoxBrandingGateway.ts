@@ -5,11 +5,12 @@ import { IBoxBrandingGateway } from "./IBoxBrandingGateway";
 export class KnexBoxBrandingGateway implements IBoxBrandingGateway {
   constructor(private readonly knex: Knex) {}
 
-  async getByBoxId(box_id: number): Promise<BoxBranding | null> {
+  async getByBoxId(box_id: number): Promise<BoxBranding> {
     const result = await this.knex<BoxBrandingProps>("boxes_branding")
       .where({ box_id })
       .first();
-    return result ? new BoxBranding(result) : null;
+    if (!result) throw new Error("Branding não encontrado para esta box.");
+    return new BoxBranding(result);
   }
 
   async create(data: Omit<BoxBrandingProps, "id">): Promise<BoxBranding> {
@@ -32,7 +33,7 @@ export class KnexBoxBrandingGateway implements IBoxBrandingGateway {
     const row = await this.knex<BoxBrandingProps>("boxes_branding")
       .where({ box_id })
       .first();
-    if (!row) throw new Error("Branding para a box não encontrado.");
+    if (!row) throw new Error("Branding não encontrado para esta box.");
     return new BoxBranding(row);
   }
 }

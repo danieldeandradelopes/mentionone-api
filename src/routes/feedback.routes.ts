@@ -2,7 +2,11 @@ import { NextFunction, Request, Response, Router } from "express";
 import { container, Registry } from "../infra/ContainerRegistry";
 import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
 import Authenticate from "../middleware/Authenticate";
-import { FeedbackStoreData, FeedbackUpdateData } from "../entities/Feedback";
+import {
+  FeedbackStoreData,
+  FeedbackStoreDataWithSlug,
+  FeedbackUpdateData,
+} from "../entities/Feedback";
 import FeedbackController from "../controllers/FeedbackController";
 import rateLimit from "express-rate-limit";
 
@@ -83,11 +87,20 @@ feedbackRoutes.post(
       const controller = container.get<FeedbackController>(
         Registry.FeedbackController
       );
-      const payload: FeedbackStoreData = {
-        ...request.body,
-        enterprise_id: request.enterprise_id,
+      // Aceita box_slug ao invés de box_id - backend resolve internamente
+      const payload: FeedbackStoreDataWithSlug = {
+        box_slug: request.body.box_slug || request.body.boxId, // aceita ambos para compatibilidade
+        text: request.body.text,
+        category: request.body.category,
+        status: request.body.status,
+        response: request.body.response,
+        rating: request.body.rating,
+        attachments: request.body.attachments,
       };
-      const feedback = await controller.store(payload);
+      const feedback = await controller.storeWithSlug(
+        payload,
+        request.enterprise_id!
+      );
       return response.status(201).json(feedback);
     } catch (error) {
       next(error);

@@ -63,6 +63,29 @@ boxesRoutes.get(
   }
 );
 
+// Obter branding da box por SLUG (público, sem autenticação)
+boxesRoutes.get(
+  "/boxes/slug/:slug/branding",
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const boxesController = container.get<BoxesController>(
+        Registry.BoxesController
+      );
+      const brandingController = container.get<BoxBrandingController>(
+        Registry.BoxBrandingController
+      );
+      // Busca a box pelo slug para pegar o ID (gateway lança erro se não encontrar)
+      const box = await boxesController.getBySlug(request.params.slug);
+      // Busca o branding pelo box_id (gateway lança erro se não encontrar)
+      const branding = await brandingController.getByBoxId(box.id);
+      return response.json(branding);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // Criar uma nova box
 boxesRoutes.post(
   "/boxes",

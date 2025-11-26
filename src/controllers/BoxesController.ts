@@ -20,7 +20,7 @@ export default class BoxesController {
     return this.gateway.findById(id);
   }
 
-  async getBySlug(slug: string): Promise<Boxes | null> {
+  async getBySlug(slug: string): Promise<Boxes> {
     return this.gateway.findBySlug(slug);
   }
 

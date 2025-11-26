@@ -10,9 +10,10 @@ export class KnexBoxesGateway implements IBoxesGateway {
     return result ? new Boxes(result) : null;
   }
 
-  async findBySlug(slug: string): Promise<Boxes | null> {
+  async findBySlug(slug: string): Promise<Boxes> {
     const result = await this.knex<BoxesProps>("boxes").where({ slug }).first();
-    return result ? new Boxes(result) : null;
+    if (!result) throw new Error("Box não encontrada com o slug fornecido.");
+    return new Boxes(result);
   }
 
   async findAllByEnterprise(enterprise_id: number): Promise<Boxes[]> {

@@ -243,7 +243,10 @@ container.bind(Registry.FeedbackGateway).toDynamicValue(() => {
 container.bind(Registry.FeedbackController).toDynamicValue((context) => {
   const FeedbackController =
     require("../controllers/FeedbackController").default;
-  return new FeedbackController(container.get(Registry.KnexConfig));
+  return new FeedbackController(
+    container.get(Registry.FeedbackGateway),
+    container.get(Registry.BoxesGateway)
+  );
 });
 
 container.bind(Registry.BoxBrandingGateway).toDynamicValue(() => {

@@ -6,7 +6,7 @@ import Boxes, {
 
 export interface IBoxesGateway {
   findById(id: number): Promise<Boxes | null>;
-  findBySlug(slug: string): Promise<Boxes | null>;
+  findBySlug(slug: string): Promise<Boxes>;
   findAllByEnterprise(enterprise_id: number): Promise<Boxes[]>;
   create(data: BoxesStoreData): Promise<Boxes>;
   update(
