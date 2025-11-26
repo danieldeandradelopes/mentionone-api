@@ -4,8 +4,18 @@ import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
 import Authenticate from "../middleware/Authenticate";
 import { FeedbackStoreData, FeedbackUpdateData } from "../entities/Feedback";
 import FeedbackController from "../controllers/FeedbackController";
+import rateLimit from "express-rate-limit";
 
 const feedbackRoutes = Router();
+
+const feedbackPostLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutos
+  max: 5, // 5 feedbacks por IP por janela
+  message: {
+    error:
+      "Você está enviando feedbacks rápido demais. Tente novamente em alguns minutos.",
+  },
+});
 
 // Lista todos os feedbacks da empresa
 feedbackRoutes.get(
@@ -63,10 +73,10 @@ feedbackRoutes.get(
   }
 );
 
-// Criar novo feedback
+// Criar novo feedback (não autenticado, com rate limit)
 feedbackRoutes.post(
   "/feedbacks",
-  Authenticate,
+  feedbackPostLimiter,
   EnterpriseGetInfo,
   async (request: Request, response: Response, next: NextFunction) => {
     try {

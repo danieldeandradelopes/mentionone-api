@@ -2,103 +2,69 @@ import Branding from "./Branding";
 import Phone from "./Phone";
 import SocialMedia from "./SocialMedia";
 
-export interface EnterpriseWithDefaultTemplate {
-  name: string;
-  cover: string;
-  address: string;
-  phone: string;
-  description: string;
-  subdomain: string;
-  latitude: number;
-  longitude: number;
-  document: string;
-  document_type: string;
-  email: string;
-  plan_price_id: number;
-}
-
-export interface EnterpriseProps {
+export interface EnterpriseDTO {
   id: number;
   name: string;
-  cover: string;
-  address: string;
-  description: string;
-  social_medias?: SocialMedia[];
-  phones?: Phone[];
-  branding?: Branding[];
-  latitude?: number;
-  longitude?: number;
-  timezone?: string;
-  auto_approve: string;
-  email?: string;
-  document?: string;
-  subdomain: string;
-  document_type?: string;
-  min_advance_minutes?: number;
-  updated_at?: string;
+  cover?: string | null;
+  address?: string | null;
+  description?: string | null;
+  subdomain?: string | null;
+  document?: string | null;
+  document_type?: "cpf" | "cnpj" | null;
+  email?: string | null;
+  timezone: string;
+  deleted_at?: string | null;
   created_at?: string;
+  updated_at?: string;
 }
+
+export interface EnterpriseProps extends EnterpriseDTO {
+  social_medias?: any[];
+  phones?: any[];
+  branding?: any[];
+}
+
+export type EnterpriseWithDefaultTemplate = Omit<
+  EnterpriseProps,
+  "id" | "created_at" | "updated_at" | "deleted_at"
+> & {
+  plan_price_id: number;
+};
 
 export default class Enterprise {
   readonly id: number;
   readonly name: string;
-  readonly cover: string;
-  readonly address: string;
-  readonly description: string;
-  readonly auto_approve: string;
-  readonly social_medias?: SocialMedia[];
-  readonly phones?: Phone[];
-  readonly branding?: Branding[];
-  readonly latitude?: number;
-  readonly longitude?: number;
-  readonly timezone?: string;
-  readonly email?: string;
-  readonly document?: string;
-  readonly subdomain: string;
-  readonly document_type?: string;
-  readonly min_advance_minutes?: number;
-  readonly updated_at?: string;
+  readonly cover?: string | null;
+  readonly address?: string | null;
+  readonly description?: string | null;
+  readonly subdomain?: string | null;
+  readonly document?: string | null;
+  readonly document_type?: "cpf" | "cnpj" | null;
+  readonly email?: string | null;
+  readonly timezone: string;
+  readonly deleted_at?: string | null;
   readonly created_at?: string;
+  readonly updated_at?: string;
+  readonly social_medias?: any[];
+  readonly phones?: any[];
+  readonly branding?: any[];
 
-  constructor({
-    id,
-    name,
-    cover,
-    address,
-    description,
-    social_medias,
-    auto_approve,
-    phones,
-    branding,
-    latitude,
-    longitude,
-    subdomain,
-    timezone,
-    email,
-    document,
-    document_type,
-    min_advance_minutes,
-    updated_at,
-    created_at,
-  }: EnterpriseProps) {
-    this.id = id;
-    this.name = name;
-    this.cover = cover;
-    this.address = address;
-    this.description = description;
-    this.social_medias = social_medias;
-    this.phones = phones;
-    this.branding = branding;
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.subdomain = subdomain;
-    this.timezone = timezone;
-    this.email = email;
-    this.document = document;
-    this.document_type = document_type;
-    this.min_advance_minutes = min_advance_minutes;
-    this.updated_at = updated_at;
-    this.created_at = created_at;
-    this.auto_approve = auto_approve;
+  constructor(data: EnterpriseProps) {
+    this.id = data.id;
+    this.name = data.name;
+    this.cover = data.cover;
+    this.address = data.address;
+    this.description = data.description;
+    this.subdomain = data.subdomain;
+    this.document = data.document;
+    this.document_type = data.document_type;
+    this.email = data.email;
+    this.timezone = data.timezone || "America/Sao_Paulo";
+    this.deleted_at = data.deleted_at;
+    this.created_at = data.created_at;
+    this.updated_at = data.updated_at;
+    this.social_medias = data.social_medias;
+    this.phones = data.phones;
+    this.branding = data.branding;
   }
 }

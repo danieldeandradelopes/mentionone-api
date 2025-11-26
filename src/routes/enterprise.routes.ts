@@ -106,8 +106,6 @@ enterpriseRoutes.post(
         cover,
         description,
         subdomain,
-        latitude,
-        longitude,
         email,
         document,
         document_type,
@@ -116,16 +114,15 @@ enterpriseRoutes.post(
       const Enterprise = await EnterpriseController.storeWithDefaultTemplate({
         name,
         address,
-        phone,
+        phones: [phone],
         cover,
         description,
         subdomain,
-        latitude,
-        longitude,
         email,
         document,
         document_type,
         plan_price_id,
+        timezone: "America/Sao_Paulo",
       });
       return response.status(201).json(Enterprise);
     } catch (error) {
