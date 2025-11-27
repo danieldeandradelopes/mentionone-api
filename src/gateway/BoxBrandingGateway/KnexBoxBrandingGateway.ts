@@ -5,11 +5,11 @@ import { IBoxBrandingGateway } from "./IBoxBrandingGateway";
 export class KnexBoxBrandingGateway implements IBoxBrandingGateway {
   constructor(private readonly knex: Knex) {}
 
-  async getByBoxId(box_id: number): Promise<BoxBranding> {
+  async getByBoxId(box_id: number): Promise<BoxBranding | null> {
     const result = await this.knex<BoxBrandingProps>("boxes_branding")
       .where({ box_id })
       .first();
-    if (!result) throw new Error("Branding não encontrado para esta box.");
+    if (!result) return null;
     return new BoxBranding(result);
   }
 

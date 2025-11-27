@@ -58,6 +58,11 @@ boxesBrandingRoutes.get(
       );
       const box_id = Number(request.params.id);
       const branding = await controller.getByBoxId(box_id);
+      if (!branding) {
+        return response
+          .status(404)
+          .json({ message: "Branding não encontrado para esta box." });
+      }
       return response.json(branding);
     } catch (error) {
       next(error);
@@ -70,7 +75,6 @@ boxesBrandingRoutes.get(
   "/boxes/slug/:slug/branding",
   EnterpriseGetInfo,
   async (request: Request, response: Response, next: NextFunction) => {
-    console.log("request.params.slug", request.params.slug);
     try {
       const boxesController = container.get<BoxesController>(
         Registry.BoxesController
