@@ -67,6 +67,8 @@ export const Registry = {
   FeedbackController: Symbol.for("FeedbackController"),
   BoxBrandingGateway: Symbol.for("BoxBrandingGateway"),
   BoxBrandingController: Symbol.for("BoxBrandingController"),
+  FeedbackOptionGateway: Symbol.for("FeedbackOptionGateway"),
+  FeedbackOptionController: Symbol.for("FeedbackOptionController"),
 };
 
 export const container = new Container();
@@ -259,4 +261,18 @@ container.bind(Registry.BoxBrandingController).toDynamicValue((context) => {
   const BoxBrandingController =
     require("../controllers/BoxBrandingController").default;
   return new BoxBrandingController(container.get(Registry.BoxBrandingGateway));
+});
+
+container.bind(Registry.FeedbackOptionGateway).toDynamicValue(() => {
+  return new (require("../gateway/FeedbackOptionGateway/KnexFeedbackOptionGateway").KnexFeedbackOptionGateway)(
+    container.get(Registry.KnexConfig)
+  );
+});
+
+container.bind(Registry.FeedbackOptionController).toDynamicValue((context) => {
+  const FeedbackOptionController =
+    require("../controllers/FeedbackOptionController").default;
+  return new FeedbackOptionController(
+    container.get(Registry.FeedbackOptionGateway)
+  );
 });

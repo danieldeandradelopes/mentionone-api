@@ -4,6 +4,8 @@ import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
 import { FeedbackStoreDataWithSlug } from "../entities/Feedback";
 import FeedbackController from "../controllers/FeedbackController";
 import { container, Registry } from "../infra/ContainerRegistry";
+import BoxesController from "../controllers/BoxesController";
+import FeedbackOptionController from "../controllers/FeedbackOptionController";
 
 const customerRoutes = Router();
 
@@ -41,6 +43,31 @@ customerRoutes.post(
         request.enterprise_id!
       );
       return response.status(201).json(feedback);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Obter opções de feedback por SLUG da box (público, sem autenticação)
+customerRoutes.get(
+  "/customers/feedback-options/box/slug/:slug",
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const boxesController = container.get<BoxesController>(
+        Registry.BoxesController
+      );
+      const feedbackOptionController = container.get<FeedbackOptionController>(
+        Registry.FeedbackOptionController
+      );
+      // Busca a box pelo slug para pegar o ID
+      const box = await boxesController.getBySlug(request.params.slug);
+      // Busca as opções de feedback desta box
+      const options = await feedbackOptionController.list(box.enterprise_id);
+      // Filtra apenas as opções desta box específica
+      const boxOptions = options.filter((option) => option.box_id === box.id);
+      return response.json(boxOptions);
     } catch (error) {
       next(error);
     }

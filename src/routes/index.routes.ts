@@ -13,6 +13,7 @@ import { boxesBrandingRoutes } from "./branding.routes";
 import customerRoutes from "./customer.routes";
 import { enterpriseRoutes } from "./enterprise.routes";
 import { feedbackRoutes } from "./feedback.routes";
+import { feedbackOptionsRoutes } from "./feedback-options.routes";
 import { manifestRoutes } from "./manifest.routes";
 import { paymentsRoutes } from "./payments.routes";
 import { planPriceRoutes } from "./plan-price.routes";
@@ -109,5 +110,6 @@ routes.use(enterpriseRoutes);
 routes.use(subscriptionRoutes);
 routes.use(boxesRoutes);
 routes.use(feedbackRoutes);
+routes.use(feedbackOptionsRoutes);
 
 export default routes;
