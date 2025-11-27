@@ -3,7 +3,10 @@ import Feedback, {
   FeedbackStoreDataWithSlug,
   FeedbackUpdateData,
 } from "../entities/Feedback";
-import { IFeedbackGateway } from "../gateway/FeedbackGateway/IFeedbackGateway";
+import {
+  IFeedbackGateway,
+  FeedbackReportFilters,
+} from "../gateway/FeedbackGateway/IFeedbackGateway";
 import { IBoxesGateway } from "../gateway/BoxesGateway/IBoxesGateway";
 
 export default class FeedbackController {
@@ -64,5 +67,50 @@ export default class FeedbackController {
 
   async destroy(id: number): Promise<boolean> {
     return this.gateway.delete(id);
+  }
+
+  async getReport(
+    enterpriseId: number,
+    filters: {
+      boxId?: number;
+      category?: string;
+      startDate?: string;
+      endDate?: string;
+    }
+  ) {
+    const feedbacks = await this.gateway.findWithFilters({
+      enterprise_id: enterpriseId,
+      box_id: filters.boxId,
+      category: filters.category,
+      startDate: filters.startDate,
+      endDate: filters.endDate,
+    });
+
+    // Agrupa por categoria
+    const groupedByCategory: Record<string, number> = {};
+    feedbacks.forEach((feedback) => {
+      groupedByCategory[feedback.category] =
+        (groupedByCategory[feedback.category] || 0) + 1;
+    });
+
+    // Agrupa por dia
+    const groupedByDay: Record<string, number> = {};
+    feedbacks.forEach((feedback) => {
+      if (feedback.created_at) {
+        const date = new Date(feedback.created_at).toISOString().split("T")[0];
+        groupedByDay[date] = (groupedByDay[date] || 0) + 1;
+      }
+    });
+
+    return {
+      id: `report-${Date.now()}`,
+      boxId: filters.boxId?.toString() || null,
+      category: filters.category || null,
+      startDate: filters.startDate || null,
+      endDate: filters.endDate || null,
+      totalFeedbacks: feedbacks.length,
+      groupedByCategory,
+      groupedByDay,
+    };
   }
 }

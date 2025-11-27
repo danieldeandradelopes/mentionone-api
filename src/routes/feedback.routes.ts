@@ -50,6 +50,30 @@ feedbackRoutes.get(
   }
 );
 
+// Obter relatório de feedbacks
+feedbackRoutes.get(
+  "/feedbacks/report",
+  Authenticate,
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const controller = container.get<FeedbackController>(
+        Registry.FeedbackController
+      );
+      const filters = {
+        boxId: request.query.boxId ? Number(request.query.boxId) : undefined,
+        category: request.query.category as string | undefined,
+        startDate: request.query.startDate as string | undefined,
+        endDate: request.query.endDate as string | undefined,
+      };
+      const report = await controller.getReport(request.enterprise_id, filters);
+      return response.json(report);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // Obter feedback por ID
 feedbackRoutes.get(
   "/feedbacks/:id",

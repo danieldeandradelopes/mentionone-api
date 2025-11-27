@@ -48,6 +48,45 @@ export class KnexFeedbackGateway implements IFeedbackGateway {
     );
   }
 
+  async findWithFilters(filters: {
+    enterprise_id: number;
+    box_id?: number;
+    category?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<Feedback[]> {
+    let query = this.knex<FeedbackProps>("feedbacks").where({
+      enterprise_id: filters.enterprise_id,
+    });
+
+    if (filters.box_id) {
+      query = query.where({ box_id: filters.box_id });
+    }
+
+    if (filters.category) {
+      query = query.where({ category: filters.category });
+    }
+
+    if (filters.startDate) {
+      query = query.where("created_at", ">=", filters.startDate);
+    }
+
+    if (filters.endDate) {
+      query = query.where("created_at", "<=", filters.endDate);
+    }
+
+    const results = await query;
+    return results.map(
+      (row) =>
+        new Feedback({
+          ...row,
+          attachments: row.attachments
+            ? JSON.parse(row.attachments as any)
+            : null,
+        })
+    );
+  }
+
   async create(data: Omit<FeedbackProps, "id">): Promise<Feedback> {
     const [id] = await this.knex<FeedbackProps>("feedbacks")
       .insert(data)
