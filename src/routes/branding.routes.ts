@@ -4,6 +4,7 @@ import AdminValidate from "../middleware/AdminValidate";
 import Authenticate from "../middleware/Authenticate";
 import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
 import BoxBrandingController from "../controllers/BoxBrandingController";
+import BoxesController from "../controllers/BoxesController";
 
 const boxesBrandingRoutes = Router();
 
@@ -57,6 +58,30 @@ boxesBrandingRoutes.get(
       );
       const box_id = Number(request.params.id);
       const branding = await controller.getByBoxId(box_id);
+      return response.json(branding);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Obter branding da box por SLUG (público, sem autenticação)
+boxesBrandingRoutes.get(
+  "/boxes/slug/:slug/branding",
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    console.log("request.params.slug", request.params.slug);
+    try {
+      const boxesController = container.get<BoxesController>(
+        Registry.BoxesController
+      );
+      const brandingController = container.get<BoxBrandingController>(
+        Registry.BoxBrandingController
+      );
+      // Busca a box pelo slug para pegar o ID (gateway lança erro se não encontrar)
+      const box = await boxesController.getBySlug(request.params.slug);
+      // Busca o branding pelo box_id (gateway lança erro se não encontrar)
+      const branding = await brandingController.getByBoxId(box.id);
       return response.json(branding);
     } catch (error) {
       next(error);

@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import EnterpriseController from "../controllers/EnterpriseController";
 import SubscriptionController from "../controllers/SubscriptionController";
 import { container, Registry } from "../infra/ContainerRegistry";
-import { isPastDate } from "../utils/date";
 import JsonWebTokenAdapter from "../infra/JwtAssign/JsonWebTokenAdapter";
 
 export async function RequirePayment(

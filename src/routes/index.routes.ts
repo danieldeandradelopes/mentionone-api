@@ -8,7 +8,11 @@ import MercadoPagoWebhookValidate from "../middleware/MercadoPagoWebhookValidate
 import { RequirePayment } from "../middleware/RequirePayment";
 import { limiter } from "../utils/limit";
 import { authRoutes } from "./auth.routes";
+import { boxesRoutes } from "./boxes.routes";
+import { boxesBrandingRoutes } from "./branding.routes";
+import customerRoutes from "./customer.routes";
 import { enterpriseRoutes } from "./enterprise.routes";
+import { feedbackRoutes } from "./feedback.routes";
 import { manifestRoutes } from "./manifest.routes";
 import { paymentsRoutes } from "./payments.routes";
 import { planPriceRoutes } from "./plan-price.routes";
@@ -19,9 +23,6 @@ import { subscriptionRoutes } from "./subscription.routes";
 import uploadRoutes from "./upload.routes";
 import { userAdminsRoutes } from "./users-admins.routes";
 import { userRoutes } from "./users.routes";
-import { boxesRoutes } from "./boxes.routes";
-import { feedbackRoutes } from "./feedback.routes";
-import { boxesBrandingRoutes } from "./branding.routes";
 
 const routes = Router();
 
@@ -94,6 +95,7 @@ routes.use(refreshTokenRoutes);
 routes.use(boxesBrandingRoutes);
 routes.use(manifestRoutes);
 routes.use(subscriptionValidateRoutes);
+routes.use(customerRoutes);
 
 routes.use(RequirePayment);
 

@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { container, Registry } from "../infra/ContainerRegistry";
-import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
-import Authenticate from "../middleware/Authenticate";
-import { BoxesStoreData, BoxesUpdateData } from "../entities/Boxes";
-import BoxesController from "../controllers/BoxesController";
 import BoxBrandingController from "../controllers/BoxBrandingController";
+import BoxesController from "../controllers/BoxesController";
 import { BoxBrandingProps } from "../entities/BoxBranding";
+import { BoxesStoreData, BoxesUpdateData } from "../entities/Boxes";
+import { container, Registry } from "../infra/ContainerRegistry";
+import Authenticate from "../middleware/Authenticate";
+import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
 
 const boxesRoutes = Router();
 
@@ -57,29 +57,6 @@ boxesRoutes.get(
       );
       const box = await controller.getBySlug(request.params.slug);
       return response.json(box);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-// Obter branding da box por SLUG (público, sem autenticação)
-boxesRoutes.get(
-  "/boxes/slug/:slug/branding",
-  EnterpriseGetInfo,
-  async (request: Request, response: Response, next: NextFunction) => {
-    try {
-      const boxesController = container.get<BoxesController>(
-        Registry.BoxesController
-      );
-      const brandingController = container.get<BoxBrandingController>(
-        Registry.BoxBrandingController
-      );
-      // Busca a box pelo slug para pegar o ID (gateway lança erro se não encontrar)
-      const box = await boxesController.getBySlug(request.params.slug);
-      // Busca o branding pelo box_id (gateway lança erro se não encontrar)
-      const branding = await brandingController.getByBoxId(box.id);
-      return response.json(branding);
     } catch (error) {
       next(error);
     }
@@ -154,9 +131,9 @@ boxesRoutes.delete(
 // Buscar branding da box
 boxesRoutes.get(
   "/boxes/:id/branding",
-  Authenticate,
   EnterpriseGetInfo,
   async (request: Request, response: Response, next: NextFunction) => {
+    console.log("request.params.id", request.params.id, "hahahaha");
     try {
       const controller = container.get<BoxBrandingController>(
         Registry.BoxBrandingController
