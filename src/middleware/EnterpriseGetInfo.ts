@@ -48,12 +48,14 @@ const EnterpriseGetInfo = async (
     const EnterpriseController = container.get<EnterpriseController>(
       Registry.EnterpriseController
     );
-    const Enterprise = await EnterpriseController.getBySubdomain(subdomain);
+    const enterprise = await EnterpriseController.getBySubdomain(subdomain);
 
-    if (!Enterprise)
+    console.log(enterprise, "enterprise");
+
+    if (!enterprise)
       return response.status(401).json({ message: "Unauthorized!" });
 
-    request.enterprise_id = Enterprise.id;
+    request.enterprise_id = enterprise.id;
 
     return next();
   } catch (error) {
