@@ -26,8 +26,6 @@ const EnterpriseGetInfo = async (
         ? getSubdomain(request.headers.origin)
         : process.env.ENTERPRISE_SUBDOMAIN;
 
-    console.log(subdomain, "subdomain");
-
     // Se o subdomain estiver na lista de skip (ex: "admin"), permite continuar sem enterprise_id
     // Isso permite login de superadmin
     if (subdomainSkip.includes(subdomain ?? "")) {
@@ -50,8 +48,6 @@ const EnterpriseGetInfo = async (
     );
     const enterprise = await EnterpriseController.getBySubdomain(subdomain);
 
-    console.log(enterprise, "enterprise");
-
     if (!enterprise)
       return response.status(401).json({ message: "Unauthorized!" });
 
@@ -59,7 +55,6 @@ const EnterpriseGetInfo = async (
 
     return next();
   } catch (error) {
-    console.log(error, "error");
     return response.status(401).json({ message: "Unauthorized!" });
   }
 };
