@@ -19,9 +19,9 @@ export class KnexFeedbackGateway implements IFeedbackGateway {
   }
 
   async findAllByEnterprise(enterprise_id: number): Promise<Feedback[]> {
-    const results = await this.knex<FeedbackProps>("feedbacks").where({
-      enterprise_id,
-    });
+    const results = await this.knex<FeedbackProps>("feedbacks")
+      .where({ enterprise_id })
+      .orderBy("created_at", "desc");
     return results.map(
       (row) =>
         new Feedback({
@@ -34,9 +34,9 @@ export class KnexFeedbackGateway implements IFeedbackGateway {
   }
 
   async findAllByBox(box_id: number): Promise<Feedback[]> {
-    const results = await this.knex<FeedbackProps>("feedbacks").where({
-      box_id,
-    });
+    const results = await this.knex<FeedbackProps>("feedbacks")
+      .where({ box_id })
+      .orderBy("created_at", "desc");
     return results.map(
       (row) =>
         new Feedback({
@@ -74,6 +74,9 @@ export class KnexFeedbackGateway implements IFeedbackGateway {
     if (filters.endDate) {
       query = query.where("created_at", "<=", filters.endDate);
     }
+
+    // Ordena por data de criação (mais recentes primeiro) para manter ordem consistente
+    query = query.orderBy("created_at", "desc");
 
     const results = await query;
     return results.map(
