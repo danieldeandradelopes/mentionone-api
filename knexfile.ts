@@ -80,7 +80,7 @@ const config: { [key: string]: Knex.Config } = {
       database: getEnv("DB_DATABASE"),
       ssl: {
         rejectUnauthorized: true,
-        ca: process.env.AIVEN_CA_CERT, // o conteúdo PEM do CA do Aiven (string com as quebras de linha)
+        ca: Buffer.from(process.env.AIVEN_CA_CERT!, "base64").toString(),
       },
     },
     pool: {
