@@ -247,7 +247,8 @@ container.bind(Registry.FeedbackController).toDynamicValue((context) => {
     require("../controllers/FeedbackController").default;
   return new FeedbackController(
     container.get(Registry.FeedbackGateway),
-    container.get(Registry.BoxesGateway)
+    container.get(Registry.BoxesGateway),
+    container.get(Registry.FeedbackOptionGateway)
   );
 });
 

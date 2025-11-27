@@ -50,6 +50,33 @@ feedbackRoutes.get(
   }
 );
 
+// Obter feedbacks com filtros
+feedbackRoutes.get(
+  "/feedbacks/filtered",
+  Authenticate,
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const controller = container.get<FeedbackController>(
+        Registry.FeedbackController
+      );
+      const filters = {
+        boxId: request.query.boxId ? Number(request.query.boxId) : undefined,
+        category: request.query.category as string | undefined,
+        startDate: request.query.startDate as string | undefined,
+        endDate: request.query.endDate as string | undefined,
+      };
+      const feedbacks = await controller.listWithFilters(
+        request.enterprise_id,
+        filters
+      );
+      return response.json(feedbacks);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // Obter relatório de feedbacks
 feedbackRoutes.get(
   "/feedbacks/report",
@@ -74,7 +101,7 @@ feedbackRoutes.get(
   }
 );
 
-// Obter feedback por ID
+// Obter feedback por ID com informações relacionadas
 feedbackRoutes.get(
   "/feedbacks/:id",
   Authenticate,
@@ -84,7 +111,15 @@ feedbackRoutes.get(
       const controller = container.get<FeedbackController>(
         Registry.FeedbackController
       );
-      const feedback = await controller.get(Number(request.params.id));
+      const feedback = await controller.getWithDetails(
+        Number(request.params.id),
+        request.enterprise_id!
+      );
+      if (!feedback) {
+        return response.status(404).json({
+          message: "Feedback não encontrado.",
+        });
+      }
       return response.json(feedback);
     } catch (error) {
       next(error);

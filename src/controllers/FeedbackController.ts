@@ -8,11 +8,13 @@ import {
   FeedbackReportFilters,
 } from "../gateway/FeedbackGateway/IFeedbackGateway";
 import { IBoxesGateway } from "../gateway/BoxesGateway/IBoxesGateway";
+import { IFeedbackOptionGateway } from "../gateway/FeedbackOptionGateway/IFeedbackOptionGateway";
 
 export default class FeedbackController {
   constructor(
     private readonly gateway: IFeedbackGateway,
-    private readonly boxesGateway: IBoxesGateway
+    private readonly boxesGateway: IBoxesGateway,
+    private readonly feedbackOptionGateway: IFeedbackOptionGateway
   ) {}
 
   async list(enterpriseId: number): Promise<Feedback[]> {
@@ -23,8 +25,93 @@ export default class FeedbackController {
     return this.gateway.findAllByBox(boxId);
   }
 
+  async listWithFilters(
+    enterpriseId: number,
+    filters: {
+      boxId?: number;
+      category?: string;
+      startDate?: string;
+      endDate?: string;
+    }
+  ): Promise<Feedback[]> {
+    return this.gateway.findWithFilters({
+      enterprise_id: enterpriseId,
+      box_id: filters.boxId,
+      category: filters.category,
+      startDate: filters.startDate,
+      endDate: filters.endDate,
+    });
+  }
+
   async get(id: number): Promise<Feedback | null> {
     return this.gateway.findById(id);
+  }
+
+  async getWithDetails(
+    id: number,
+    enterpriseId: number
+  ): Promise<
+    | (Feedback & {
+        box?: {
+          id: number;
+          name: string;
+          slug: string;
+        } | null;
+        feedbackOption?: {
+          id: number;
+          name: string;
+          slug: string;
+          type: "criticism" | "suggestion" | "praise";
+        } | null;
+      })
+    | null
+  > {
+    const feedback = await this.gateway.findById(id);
+    if (!feedback) {
+      return null;
+    }
+
+    // Busca informações da box
+    let box = null;
+    try {
+      const boxData = await this.boxesGateway.findById(feedback.box_id);
+      if (boxData) {
+        box = {
+          id: boxData.id,
+          name: boxData.name,
+          slug: boxData.slug,
+        };
+      }
+    } catch (error) {
+      // Box não encontrada, continua sem box
+    }
+
+    // Busca informações da opção de feedback (se category for um slug válido)
+    let feedbackOption = null;
+    if (feedback.category) {
+      try {
+        const option = await this.feedbackOptionGateway.findBySlug(
+          enterpriseId,
+          feedback.category
+        );
+        if (option) {
+          feedbackOption = {
+            id: option.id,
+            name: option.name,
+            slug: option.slug,
+            type: option.type,
+          };
+        }
+      } catch (error) {
+        // Opção não encontrada, continua sem opção
+      }
+    }
+
+    return {
+      ...feedback,
+      box,
+      feedbackOption,
+    };
   }
 
   async store(data: FeedbackStoreData): Promise<Feedback> {
