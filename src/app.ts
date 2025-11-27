@@ -15,9 +15,10 @@ app.use(
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
 
-      const regex = /^https?:\/\/([a-z0-9-]+)\.agende7\.com$/i;
+      const mentionOneRegex =
+        /^https?:\/\/([a-z0-9-]+\.)*app\.mentionone\.com$/i;
 
-      if (regex.test(origin)) {
+      if (mentionOneRegex.test(origin)) {
         return callback(null, true);
       }
 
