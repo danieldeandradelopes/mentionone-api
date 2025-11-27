@@ -71,7 +71,7 @@ const config: { [key: string]: Knex.Config } = {
   },
 
   production: {
-    client: "pg",
+    client: "postgresql",
     connection: {
       host: getEnv("DB_HOST"),
       port: getEnvNumber("DB_PORT"),
