@@ -45,11 +45,11 @@ export default class KnexBrandingGateway implements IBrandingGateway {
 
     const Enterprise: Enterprise = await this.connection
       .select("id", "address", "cover", "description", "name", "timezone", "id")
-      .from("Enterprise")
+      .from("enterprises")
       .where("id", enterpriseId)
       .first();
 
-    if (!Enterprise) throw new Error("Barber Shop Not Found");
+    if (!Enterprise) throw new Error("Enterprise Not Found");
 
     if (!allBrandings.length)
       throw new HttpException(404, "Branding not found");

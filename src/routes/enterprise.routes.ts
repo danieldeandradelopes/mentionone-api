@@ -11,11 +11,11 @@ const enterpriseRoutes = Router();
 
 /**
  * @openapi
- * /barber-shop/{id}:
+ * /enterprise/{id}:
  *   delete:
- *     summary: Remove uma barbearia pelo ID
+ *     summary: Remove uma empresa pelo ID
  *     tags:
- *       - Barbearias
+ *       - Empresas
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -30,7 +30,7 @@ const enterpriseRoutes = Router();
  */
 
 enterpriseRoutes.delete(
-  "/barber-shop/:id",
+  "/enterprise/:id",
   Authenticate,
   SuperAdminValidate,
   async (request: Request, response: Response, next: NextFunction) => {
@@ -50,11 +50,11 @@ enterpriseRoutes.delete(
 
 /**
  * @openapi
- * /barber-shop/default-template:
+ * /enterprise/default-template:
  *   post:
- *     summary: Cria uma barbearia com template padrão
+ *     summary: Cria uma empresa com template padrão
  *     tags:
- *       - Barbearias
+ *       - Empresas
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -86,7 +86,7 @@ enterpriseRoutes.delete(
  */
 
 enterpriseRoutes.post(
-  "/barber-shop/default-template",
+  "/enterprise/default-template",
   Authenticate,
   SuperAdminValidate,
   async (request: Request, response: Response, next: NextFunction) => {
@@ -142,7 +142,7 @@ enterpriseRoutes.post(
  */
 
 enterpriseRoutes.get(
-  "/barber-shop",
+  "/enterprise",
   Authenticate,
   AdminValidate,
   async (request: Request, response: Response, next: NextFunction) => {
@@ -181,7 +181,7 @@ enterpriseRoutes.get(
  */
 
 enterpriseRoutes.get(
-  "/barber-shop/settings",
+  "/enterprise/settings",
   Authenticate,
   AdminValidate,
   EnterpriseGetInfo,
@@ -221,7 +221,7 @@ enterpriseRoutes.get(
  */
 
 enterpriseRoutes.get(
-  "/barber-shop/:id",
+  "/enterprise/:id",
   Authenticate,
   SuperAdminValidate,
   async (request: Request, response: Response, next: NextFunction) => {
@@ -243,19 +243,13 @@ enterpriseRoutes.get(
 
 /**
  * @openapi
- * /barber-shop/{id}:
+ * /enterprise/settings:
  *   put:
- *     summary: Atualiza dados da barbearia
+ *     summary: Atualiza dados da empresa (admin/superadmin)
  *     tags:
- *       - Barbearias
+ *       - Empresas
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
  *     requestBody:
  *       required: true
  *       content:
@@ -264,61 +258,11 @@ enterpriseRoutes.get(
  *             type: object
  *     responses:
  *       200:
- *         description: Barbearia atualizada com sucesso
+ *         description: Empresa atualizada com sucesso
  */
 
 enterpriseRoutes.put(
-  "/barber-shop/:id",
-  Authenticate,
-  SuperAdminValidate,
-  async (request: Request, response: Response, next: NextFunction) => {
-    try {
-      const { id } = request.params;
-
-      const EnterpriseController = container.get<EnterpriseController>(
-        Registry.EnterpriseController
-      );
-
-      const Enterprise = await EnterpriseController.update({
-        ...request.body,
-        id,
-      });
-
-      return response.status(201).json(Enterprise);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-/**
- * @openapi
- * /barber-shop/settings/by-barber-shop:
- *   put:
- *     summary: Atualiza dados da barbearia
- *     tags:
- *       - Barbearias
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Barbearia atualizada com sucesso
- */
-
-enterpriseRoutes.put(
-  "/barber-shop/settings/by-barber-shop",
+  "/enterprise/settings",
   Authenticate,
   AdminValidate,
   EnterpriseGetInfo,
@@ -331,6 +275,56 @@ enterpriseRoutes.put(
       const Enterprise = await EnterpriseController.update({
         ...request.body,
         id: request.enterprise_id!,
+      });
+
+      return response.status(201).json(Enterprise);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * /enterprise/{id}:
+ *   put:
+ *     summary: Atualiza dados da empresa pelo ID (superadmin)
+ *     tags:
+ *       - Empresas
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Empresa atualizada com sucesso
+ */
+
+enterpriseRoutes.put(
+  "/enterprise/:id",
+  Authenticate,
+  SuperAdminValidate,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const { id } = request.params;
+
+      const EnterpriseController = container.get<EnterpriseController>(
+        Registry.EnterpriseController
+      );
+
+      const Enterprise = await EnterpriseController.update({
+        ...request.body,
+        id: parseInt(id),
       });
 
       return response.status(201).json(Enterprise);
