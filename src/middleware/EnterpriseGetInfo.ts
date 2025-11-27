@@ -59,6 +59,7 @@ const EnterpriseGetInfo = async (
 
     return next();
   } catch (error) {
+    console.log(error, "error");
     return response.status(401).json({ message: "Unauthorized!" });
   }
 };
