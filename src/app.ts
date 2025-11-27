@@ -10,6 +10,8 @@ import { swaggerSpec, swaggerUi } from "./swagger";
 
 const app = express();
 
+app.set("trust proxy", true);
+
 app.use(
   cors({
     origin: (origin, callback) => {
