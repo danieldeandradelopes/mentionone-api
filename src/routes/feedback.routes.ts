@@ -1,14 +1,9 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { container, Registry } from "../infra/ContainerRegistry";
-import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
-import Authenticate from "../middleware/Authenticate";
-import {
-  FeedbackStoreData,
-  FeedbackStoreDataWithSlug,
-  FeedbackUpdateData,
-} from "../entities/Feedback";
 import FeedbackController from "../controllers/FeedbackController";
-import rateLimit from "express-rate-limit";
+import { FeedbackUpdateData } from "../entities/Feedback";
+import { container, Registry } from "../infra/ContainerRegistry";
+import Authenticate from "../middleware/Authenticate";
+import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
 
 const feedbackRoutes = Router();
 

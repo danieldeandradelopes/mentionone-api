@@ -31,6 +31,9 @@ const config: { [key: string]: Knex.Config } = {
       user: getEnv("DB_USER", "postgres"),
       password: getEnv("DB_PASSWORD", "postgres"),
       database: getEnv("DB_DATABASE", "mentionone"),
+      ssl: {
+        rejectUnauthorized: false,
+      },
     },
     pool: {
       min: getEnvNumber("DB_POOL_MIN", 2),
@@ -75,6 +78,9 @@ const config: { [key: string]: Knex.Config } = {
       user: getEnv("DB_USER"),
       password: getEnv("DB_PASSWORD"),
       database: getEnv("DB_DATABASE"),
+      ssl: {
+        rejectUnauthorized: false,
+      },
     },
     pool: {
       min: getEnvNumber("DB_POOL_MIN", 2),

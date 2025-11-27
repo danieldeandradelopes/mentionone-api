@@ -3,6 +3,7 @@ import FileController from "../controllers/FileController";
 import { Registry, container } from "../infra/ContainerRegistry";
 import Authenticate from "../middleware/Authenticate";
 import upload from "../utils/multer";
+import { v4 as uuidv4 } from "uuid";
 
 const uploadRoutes = Router();
 
@@ -54,9 +55,17 @@ uploadRoutes.post(
         Registry.FileController
       );
 
+      if (!request.file) {
+        return response.status(400).json({ error: "Arquivo não enviado" });
+      }
+
+      const ext = request.file.originalname.split(".").pop();
+      const filename = `${uuidv4()}.${ext}`;
+
       const file = await fileController.upload({
-        name: request.file?.filename!,
-        path: request.file?.path!,
+        name: filename,
+        buffer: request.file.buffer, // ← aqui vai o conteúdo do arquivo!
+        mimetype: request.file.mimetype,
       });
 
       return response.status(201).json(file);

@@ -1,5 +1,7 @@
+// IFileGateway.ts
 import File from "../../entities/File";
+import { UploadFileDTO } from "../../types/UploadFileDTO";
 
 export default interface IFileGateway {
-  upload(file: File): Promise<File>;
+  upload(file: UploadFileDTO): Promise<File>;
 }

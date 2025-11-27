@@ -3,7 +3,7 @@ import File from "../../entities/File";
 import IFileGateway from "./IFileGateway";
 
 import B2 from "backblaze-b2";
-import fsp from "fs/promises";
+import { UploadFileDTO } from "../../types/UploadFileDTO";
 
 const { APPLICATION_KEY_ID, APPLICATION_KEY, BUCKET_ID, BASE_URL_BACKBLAZE } =
   process.env;
@@ -13,50 +13,47 @@ const b2 = new B2({
   applicationKey: APPLICATION_KEY!,
 });
 
-const unlinkAsync = fsp.unlink;
-
 export default class BackBlazeFileGateway implements IFileGateway {
-  async upload(file: File): Promise<File> {
-    const { name, path } = file;
-
+  async upload({ name, buffer, mimetype }: UploadFileDTO): Promise<File> {
     try {
-      // Lê e redimensiona antes de enviar
-      const resizedBuffer = await sharp(`uploads/${name}`)
+      await b2.authorize();
+
+      // ⭐ PROCESSAMENTO EM MEMÓRIA
+      const resizedBuffer = await sharp(buffer)
         .resize(800, null, {
           fit: "inside",
           withoutEnlargement: true,
-          kernel: sharp.kernel.lanczos3,
         })
-        .sharpen()
         .jpeg({
           quality: 85,
           mozjpeg: true,
           chromaSubsampling: "4:4:4",
         })
         .toBuffer();
-      await b2.authorize();
 
+      // ⭐ PEGAR URL DE UPLOAD
       const {
         data: { uploadUrl, authorizationToken },
       } = await b2.getUploadUrl({
         bucketId: BUCKET_ID!,
       });
 
+      // ⭐ UPLOAD EM MEMÓRIA
       const { data } = await b2.uploadFile({
-        uploadUrl: uploadUrl,
+        uploadUrl,
         uploadAuthToken: authorizationToken,
         fileName: name,
         data: resizedBuffer,
+        info: {
+          fileContentType: mimetype, // <-- CORRETO
+        },
       });
 
-      await unlinkAsync(path);
-
-      return {
-        name: data.fileName,
-        path: `${BASE_URL_BACKBLAZE}/${data.fileName}`,
-      };
+      // ⭐ RETORNAR ENTIDADE
+      return new File(data.fileName, `${BASE_URL_BACKBLAZE}/${data.fileName}`);
     } catch (error) {
-      throw new Error("Failed to upload!");
+      console.error(error);
+      throw new Error("Failed to upload to Backblaze");
     }
   }
 }
