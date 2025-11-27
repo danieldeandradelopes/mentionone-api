@@ -3,6 +3,18 @@ import EnterpriseController from "../controllers/EnterpriseController";
 import { container, Registry } from "../infra/ContainerRegistry";
 import { subdomainSkip } from "../config/subdomain.skip";
 
+const getSubdomain = (origin?: string) => {
+  if (!origin) return null;
+
+  const hostname = new URL(origin).hostname;
+
+  const parts = hostname.split(".");
+
+  if (parts.length < 3) return null;
+
+  return parts[0];
+};
+
 const EnterpriseGetInfo = async (
   request: Request,
   response: Response,
@@ -11,7 +23,7 @@ const EnterpriseGetInfo = async (
   try {
     const subdomain =
       process.env.NODE_ENV === "production"
-        ? request.headers.origin?.split(".")[0].split("//")[1]
+        ? getSubdomain(request.headers.origin)
         : process.env.ENTERPRISE_SUBDOMAIN;
 
     // Se o subdomain estiver na lista de skip (ex: "admin"), permite continuar sem enterprise_id
