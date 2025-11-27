@@ -26,6 +26,8 @@ const EnterpriseGetInfo = async (
         ? getSubdomain(request.headers.origin)
         : process.env.ENTERPRISE_SUBDOMAIN;
 
+    console.log(subdomain, "subdomain");
+
     // Se o subdomain estiver na lista de skip (ex: "admin"), permite continuar sem enterprise_id
     // Isso permite login de superadmin
     if (subdomainSkip.includes(subdomain ?? "")) {
