@@ -78,7 +78,10 @@ const config: { [key: string]: Knex.Config } = {
       user: getEnv("DB_USER"),
       password: getEnv("DB_PASSWORD"),
       database: getEnv("DB_DATABASE"),
-      ssl: true,
+      ssl: {
+        rejectUnauthorized: true,
+        ca: process.env.AIVEN_CA_CERT, // o conteúdo PEM do CA do Aiven (string com as quebras de linha)
+      },
     },
     pool: {
       min: getEnvNumber("DB_POOL_MIN", 2),
