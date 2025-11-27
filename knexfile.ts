@@ -56,6 +56,9 @@ const config: { [key: string]: Knex.Config } = {
       user: getEnv("DB_USER"),
       password: getEnv("DB_PASSWORD"),
       database: getEnv("DB_DATABASE"),
+      ssl: {
+        rejectUnauthorized: false,
+      },
     },
     pool: {
       min: getEnvNumber("DB_POOL_MIN", 2),
@@ -79,8 +82,7 @@ const config: { [key: string]: Knex.Config } = {
       password: getEnv("DB_PASSWORD"),
       database: getEnv("DB_DATABASE"),
       ssl: {
-        rejectUnauthorized: true,
-        ca: Buffer.from(process.env.AIVEN_CA_CERT!, "base64").toString(),
+        rejectUnauthorized: false,
       },
     },
     pool: {
