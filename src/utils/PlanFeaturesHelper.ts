@@ -14,7 +14,7 @@ export interface PlanFeaturesResult {
  */
 export async function getPlanFeatures(
   connection: any,
-  enterpriseId: number
+  enterpriseId: number,
 ): Promise<PlanFeaturesResult> {
   // Busca subscription ativa
   let subscription = await connection("subscriptions")
@@ -26,12 +26,12 @@ export async function getPlanFeatures(
          AND (subscriptions.end_date IS NULL OR subscriptions.end_date >= NOW()))
         OR (subscriptions.trial_end_date IS NOT NULL AND subscriptions.trial_end_date >= NOW())
       )
-    `
+    `,
     )
     .join("plan_prices", "subscriptions.plan_price_id", "plan_prices.id")
     .join("plans", "plan_prices.plan_id", "plans.id")
     .orderByRaw(
-      "COALESCE(subscriptions.end_date, subscriptions.trial_end_date) DESC"
+      "COALESCE(subscriptions.end_date, subscriptions.trial_end_date) DESC",
     )
     .first();
 
@@ -53,10 +53,19 @@ export async function getPlanFeatures(
     };
   }
 
-  // Parse do JSON features
-  const features: PlanFeatures | null = subscription.features
-    ? JSON.parse(subscription.features)
-    : null;
+  // Parse do JSON features (aceita string ou objeto já parseado)
+  let features: PlanFeatures | null = null;
+  if (subscription.features) {
+    if (typeof subscription.features === "string") {
+      try {
+        features = JSON.parse(subscription.features);
+      } catch {
+        features = null;
+      }
+    } else if (typeof subscription.features === "object") {
+      features = subscription.features as PlanFeatures;
+    }
+  }
 
   return {
     features,
@@ -71,11 +80,10 @@ export async function getPlanFeatures(
 export function getFeatureValue<K extends keyof PlanFeatures>(
   features: PlanFeatures | null,
   key: K,
-  defaultValue: PlanFeatures[K]
+  defaultValue: PlanFeatures[K],
 ): PlanFeatures[K] {
   if (!features) {
     return defaultValue;
   }
   return features[key] ?? defaultValue;
 }
-

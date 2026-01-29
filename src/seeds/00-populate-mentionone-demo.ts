@@ -186,7 +186,7 @@ export async function seed(knex: Knex) {
   for (const table of tables) {
     try {
       await knex.raw(
-        `SELECT setval(pg_get_serial_sequence('${table}', 'id'), 1, false)`
+        `SELECT setval(pg_get_serial_sequence('${table}', 'id'), 1, false)`,
       );
     } catch (error) {
       // Ignora erros se a tabela não existir ou não tiver sequência
@@ -258,6 +258,42 @@ export async function seed(knex: Knex) {
   const createdEnterprises = await knex("enterprises")
     .insert(enterprises)
     .returning(["id", "name"]);
+
+  // 4.1 Manifests (um por enterprise)
+  await knex("manifests").insert([
+    {
+      enterprise_id: createdEnterprises[0].id,
+      name: "MentionOne Alpha",
+      short_name: "Alpha",
+      start_url: "/",
+      display: "standalone",
+      theme_color: "#3477E8",
+      background_color: "#ffffff",
+      icons: JSON.stringify([
+        { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      ]),
+      extra: JSON.stringify({}),
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      enterprise_id: createdEnterprises[1].id,
+      name: "MentionOne Beta",
+      short_name: "Beta",
+      start_url: "/",
+      display: "standalone",
+      theme_color: "#34E877",
+      background_color: "#ffffff",
+      icons: JSON.stringify([
+        { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      ]),
+      extra: JSON.stringify({}),
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ]);
 
   // 5. Vínculo user_enterprises: admin1→alpha, admin2→beta
   await knex("user_enterprises").insert([

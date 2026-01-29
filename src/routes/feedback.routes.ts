@@ -16,7 +16,7 @@ feedbackRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<FeedbackController>(
-        Registry.FeedbackController
+        Registry.FeedbackController,
       );
       const result = await controller.list(request.enterprise_id);
       // Se retornou array, é plano sem limite. Se retornou objeto, tem paginação
@@ -24,7 +24,7 @@ feedbackRoutes.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Lista feedbacks de uma box específica
@@ -35,16 +35,16 @@ feedbackRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<FeedbackController>(
-        Registry.FeedbackController
+        Registry.FeedbackController,
       );
       const feedbacks = await controller.listByBox(
-        Number(request.params.box_id)
+        Number(request.params.box_id),
       );
       return response.json(feedbacks);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Obter feedbacks com filtros
@@ -56,7 +56,7 @@ feedbackRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<FeedbackController>(
-        Registry.FeedbackController
+        Registry.FeedbackController,
       );
       const filters = {
         boxId: request.query.boxId ? Number(request.query.boxId) : undefined,
@@ -66,13 +66,13 @@ feedbackRoutes.get(
       };
       const feedbacks = await controller.listWithFilters(
         request.enterprise_id,
-        filters
+        filters,
       );
       return response.json(feedbacks);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Obter relatório de feedbacks
@@ -84,7 +84,7 @@ feedbackRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<FeedbackController>(
-        Registry.FeedbackController
+        Registry.FeedbackController,
       );
       const filters = {
         boxId: request.query.boxId ? Number(request.query.boxId) : undefined,
@@ -97,7 +97,7 @@ feedbackRoutes.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Obter feedback por ID com informações relacionadas
@@ -108,11 +108,11 @@ feedbackRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<FeedbackController>(
-        Registry.FeedbackController
+        Registry.FeedbackController,
       );
       const feedback = await controller.getWithDetails(
         Number(request.params.id),
-        request.enterprise_id!
+        request.enterprise_id!,
       );
       if (!feedback) {
         return response.status(404).json({
@@ -123,7 +123,7 @@ feedbackRoutes.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Atualizar feedback
@@ -134,7 +134,7 @@ feedbackRoutes.put(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<FeedbackController>(
-        Registry.FeedbackController
+        Registry.FeedbackController,
       );
       const input: FeedbackUpdateData = {
         ...request.body,
@@ -145,7 +145,7 @@ feedbackRoutes.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Deletar feedback
@@ -156,14 +156,14 @@ feedbackRoutes.delete(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<FeedbackController>(
-        Registry.FeedbackController
+        Registry.FeedbackController,
       );
       const ok = await controller.destroy(Number(request.params.id));
       return response.json({ success: ok });
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 export { feedbackRoutes };
