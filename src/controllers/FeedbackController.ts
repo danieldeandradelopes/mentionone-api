@@ -9,6 +9,18 @@ import {
 } from "../gateway/FeedbackGateway/IFeedbackGateway";
 import { IBoxesGateway } from "../gateway/BoxesGateway/IBoxesGateway";
 import { IFeedbackOptionGateway } from "../gateway/FeedbackOptionGateway/IFeedbackOptionGateway";
+import { getPlanFeatures, getFeatureValue } from "../utils/PlanFeaturesHelper";
+import KnexConfig from "../config/knex";
+
+export interface FeedbackListResponse {
+  feedbacks: Feedback[];
+  pagination: {
+    total: number;
+    visible: number;
+    limit_reached: boolean;
+    current_month: string;
+  };
+}
 
 export default class FeedbackController {
   constructor(
@@ -17,8 +29,71 @@ export default class FeedbackController {
     private readonly feedbackOptionGateway: IFeedbackOptionGateway
   ) {}
 
-  async list(enterpriseId: number): Promise<Feedback[]> {
-    return this.gateway.findAllByEnterprise(enterpriseId);
+  async list(enterpriseId: number): Promise<Feedback[] | FeedbackListResponse> {
+    const allFeedbacks = await this.gateway.findAllByEnterprise(enterpriseId);
+
+    // Buscar features do plano
+    const planFeaturesResult = await getPlanFeatures(
+      KnexConfig,
+      enterpriseId
+    );
+
+    // Se não tem subscription ou não tem limite, retorna todos
+    if (!planFeaturesResult.features) {
+      return allFeedbacks;
+    }
+
+    const maxResponsesPerMonth = getFeatureValue(
+      planFeaturesResult.features,
+      "max_responses_per_month",
+      null
+    );
+
+    // Se não tem limite, retorna todos
+    if (maxResponsesPerMonth === null) {
+      return allFeedbacks;
+    }
+
+    // Filtrar feedbacks do mês atual
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const firstDayOfNextMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      1
+    );
+
+    const currentMonthFeedbacks = allFeedbacks.filter((fb) => {
+      if (!fb.created_at) return false;
+      const fbDate = new Date(fb.created_at);
+      return fbDate >= firstDayOfMonth && fbDate < firstDayOfNextMonth;
+    });
+
+    // Se não há mais feedbacks que o limite, retorna todos do mês
+    if (currentMonthFeedbacks.length <= maxResponsesPerMonth) {
+      // Retornar apenas feedbacks do mês atual
+      return currentMonthFeedbacks;
+    }
+
+    // Ordenar por data crescente (mais antigos primeiro) e pegar os N primeiros
+    const sortedFeedbacks = [...currentMonthFeedbacks].sort((a, b) => {
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateA - dateB;
+    });
+
+    const limitedFeedbacks = sortedFeedbacks.slice(0, maxResponsesPerMonth);
+
+    // Retornar resposta com metadados
+    return {
+      feedbacks: limitedFeedbacks,
+      pagination: {
+        total: currentMonthFeedbacks.length,
+        visible: limitedFeedbacks.length,
+        limit_reached: true,
+        current_month: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`,
+      },
+    };
   }
 
   async listByBox(boxId: number): Promise<Feedback[]> {

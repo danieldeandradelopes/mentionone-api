@@ -139,13 +139,31 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
 
       // Configurar horários padrão (segunda a sexta, 8:00 às 18:00)
 
+      // Se não foi fornecido plan_price_id, buscar plano Free
+      let finalPlanPriceId = plan_price_id;
+      if (!finalPlanPriceId) {
+        const freePlan = await transaction("plans")
+          .where({ name: "Free" })
+          .first();
+
+        if (freePlan) {
+          const freePlanPrice = await transaction("plan_prices")
+            .where({ plan_id: freePlan.id })
+            .first();
+
+          if (freePlanPrice) {
+            finalPlanPriceId = freePlanPrice.id;
+          }
+        }
+      }
+
       await transaction("subscription").insert({
         enterprise_id: insertedEnterprise.id,
         status: "active",
         start_date: new Date(),
         end_date: trialEndDate,
         trial_end_date: trialEndDate,
-        plan_price_id: plan_price_id,
+        plan_price_id: finalPlanPriceId,
       });
 
       // Se não foi fornecida uma transação externa, fazer commit

@@ -6,6 +6,7 @@ import { BoxesStoreData, BoxesUpdateData } from "../entities/Boxes";
 import { container, Registry } from "../infra/ContainerRegistry";
 import Authenticate from "../middleware/Authenticate";
 import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
+import { CheckBoxLimit } from "../middleware/CheckBoxLimit";
 
 const boxesRoutes = Router();
 
@@ -68,6 +69,7 @@ boxesRoutes.post(
   "/boxes",
   Authenticate,
   EnterpriseGetInfo,
+  CheckBoxLimit,
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<BoxesController>(

@@ -4,6 +4,7 @@ import { FeedbackUpdateData } from "../entities/Feedback";
 import { container, Registry } from "../infra/ContainerRegistry";
 import Authenticate from "../middleware/Authenticate";
 import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
+import { CheckPlanFeature } from "../middleware/CheckPlanFeature";
 
 const feedbackRoutes = Router();
 
@@ -17,8 +18,9 @@ feedbackRoutes.get(
       const controller = container.get<FeedbackController>(
         Registry.FeedbackController
       );
-      const feedbacks = await controller.list(request.enterprise_id);
-      return response.json(feedbacks);
+      const result = await controller.list(request.enterprise_id);
+      // Se retornou array, é plano sem limite. Se retornou objeto, tem paginação
+      return response.json(result);
     } catch (error) {
       next(error);
     }
@@ -50,6 +52,7 @@ feedbackRoutes.get(
   "/feedbacks/filtered",
   Authenticate,
   EnterpriseGetInfo,
+  CheckPlanFeature("can_filter_feedbacks"),
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<FeedbackController>(
@@ -77,6 +80,7 @@ feedbackRoutes.get(
   "/feedbacks/report",
   Authenticate,
   EnterpriseGetInfo,
+  CheckPlanFeature("can_access_reports"),
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<FeedbackController>(

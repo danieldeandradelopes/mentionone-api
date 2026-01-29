@@ -4,14 +4,56 @@ import bcrypt from "bcryptjs";
 // Todos os dados como variáveis para facilitar referência etc.
 const plans = [
   {
+    name: "Free",
+    description: "Plano gratuito com funcionalidades básicas",
+    features: JSON.stringify({
+      max_boxes: 1,
+      max_responses_per_month: 15,
+      can_access_reports: false,
+      can_access_advanced_charts: false,
+      can_filter_feedbacks: false,
+      can_export_csv: false,
+      show_mentionone_branding: true,
+    }),
+  },
+  {
     name: "Starter",
     description: "Plano básico",
-    features: null,
+    features: JSON.stringify({
+      max_boxes: 3,
+      max_responses_per_month: null,
+      can_access_reports: true,
+      can_access_advanced_charts: true,
+      can_filter_feedbacks: true,
+      can_export_csv: true,
+      show_mentionone_branding: false,
+    }),
   },
   {
     name: "Pro",
     description: "Plano para empresas",
-    features: null,
+    features: JSON.stringify({
+      max_boxes: 15,
+      max_responses_per_month: null,
+      can_access_reports: true,
+      can_access_advanced_charts: true,
+      can_filter_feedbacks: true,
+      can_export_csv: true,
+      show_mentionone_branding: false,
+    }),
+  },
+  {
+    name: "Business",
+    description: "Plano para empresas maiores",
+    features: JSON.stringify({
+      max_boxes: null,
+      max_responses_per_month: null,
+      can_access_reports: true,
+      can_access_advanced_charts: true,
+      can_filter_feedbacks: true,
+      can_export_csv: true,
+      show_mentionone_branding: false,
+    }),
   },
 ];
 
@@ -159,11 +201,52 @@ export async function seed(knex: Knex) {
     .returning(["id", "name"]);
 
   // 2. Plan Prices (usando os IDs retornados dos plans)
+  // Encontrar os planos pelo nome
+  const freePlan = createdPlans.find((p) => p.name === "Free");
+  const starterPlan = createdPlans.find((p) => p.name === "Starter");
+  const proPlan = createdPlans.find((p) => p.name === "Pro");
+  const businessPlan = createdPlans.find((p) => p.name === "Business");
+
+  const planPricesToInsert: Array<{
+    plan_id: number;
+    price: number;
+    billing_cycle: string;
+  }> = [];
+
+  if (freePlan) {
+    planPricesToInsert.push({
+      plan_id: freePlan.id,
+      price: 0,
+      billing_cycle: "monthly",
+    });
+  }
+
+  if (starterPlan) {
+    planPricesToInsert.push({
+      plan_id: starterPlan.id,
+      price: 50,
+      billing_cycle: "monthly",
+    });
+  }
+
+  if (proPlan) {
+    planPricesToInsert.push({
+      plan_id: proPlan.id,
+      price: 130,
+      billing_cycle: "monthly",
+    });
+  }
+
+  if (businessPlan) {
+    planPricesToInsert.push({
+      plan_id: businessPlan.id,
+      price: 250,
+      billing_cycle: "monthly",
+    });
+  }
+
   const createdPlanPrices = await knex("plan_prices")
-    .insert([
-      { plan_id: createdPlans[0].id, price: 50, billing_cycle: "monthly" },
-      { plan_id: createdPlans[1].id, price: 130, billing_cycle: "monthly" },
-    ])
+    .insert(planPricesToInsert)
     .returning(["id"]);
 
   // 3. Users (superadmin, 2 admins)
@@ -195,17 +278,28 @@ export async function seed(knex: Knex) {
   const endDate = new Date();
   endDate.setMonth(endDate.getMonth() + 1); // 1 mês a partir de hoje
 
+  // Encontrar plan_price_id para Starter e Pro
+  const starterPlanPrice = await knex("plan_prices")
+    .join("plans", "plan_prices.plan_id", "plans.id")
+    .where("plans.name", "Starter")
+    .first();
+
+  const proPlanPrice = await knex("plan_prices")
+    .join("plans", "plan_prices.plan_id", "plans.id")
+    .where("plans.name", "Pro")
+    .first();
+
   await knex("subscriptions").insert([
     {
       enterprise_id: createdEnterprises[0].id,
-      plan_price_id: createdPlanPrices[0].id,
+      plan_price_id: starterPlanPrice?.id || createdPlanPrices[0].id,
       status: "active",
       start_date: startDate,
       end_date: endDate,
     },
     {
       enterprise_id: createdEnterprises[1].id,
-      plan_price_id: createdPlanPrices[1].id,
+      plan_price_id: proPlanPrice?.id || createdPlanPrices[1].id,
       status: "active",
       start_date: startDate,
       end_date: endDate,

@@ -5,6 +5,7 @@ import Subscription, {
 } from "../../entities/Subscription";
 import ISubscriptionGateway from "./ISubscriptionGateway";
 import Payment from "../../entities/Payment";
+import { PlanFeatures } from "../../entities/Plan";
 
 export default class KnexSubscriptionGateway implements ISubscriptionGateway {
   constructor(readonly connection: any) {}
@@ -79,8 +80,14 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
         plan_name: "",
         plan_description: "",
         plan_price: "",
+        features: null,
       };
     }
+
+    // Parse do JSON features
+    const features = subscription.features
+      ? JSON.parse(subscription.features)
+      : null;
 
     return {
       status: subscription.status || "active",
@@ -89,6 +96,7 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
       plan_name: subscription.name,
       plan_description: subscription.description,
       plan_price: subscription.price,
+      features,
     };
   }
 
