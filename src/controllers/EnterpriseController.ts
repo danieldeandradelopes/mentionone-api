@@ -14,7 +14,7 @@ interface IEnterpriseController extends IController {
   addUserToEnterprise(
     userId: number,
     enterpriseId: number,
-    trx?: any
+    trx?: any,
   ): Promise<void>;
 }
 
@@ -35,20 +35,22 @@ export default class EnterpriseController implements IEnterpriseController {
   }
 
   async getBySubdomain(subdomain: string | null): Promise<EnterpriseDTO> {
-    const enterprise = await this.enterpriseGateway.getEnterpriseByDomain(
-      subdomain
-    );
+    const enterprise =
+      await this.enterpriseGateway.getEnterpriseByDomain(subdomain);
     return enterprise;
   }
 
   async update(
-    data: Partial<EnterpriseDTO> & { id: number }
+    data: Partial<EnterpriseDTO> & { id: number },
   ): Promise<EnterpriseDTO> {
     return await this.enterpriseGateway.updateEnterprise(data);
   }
 
   async create(
-    data: Omit<EnterpriseDTO, "id" | "created_at" | "updated_at" | "deleted_at">
+    data: Omit<
+      EnterpriseDTO,
+      "id" | "created_at" | "updated_at" | "deleted_at"
+    >,
   ): Promise<EnterpriseDTO> {
     return await this.enterpriseGateway.addEnterprise(data);
   }
@@ -58,7 +60,7 @@ export default class EnterpriseController implements IEnterpriseController {
   }
 
   async storeWithDefaultTemplate(
-    data: EnterpriseWithDefaultTemplate
+    data: EnterpriseWithDefaultTemplate,
   ): Promise<{ enterprise: Enterprise }> {
     return await this.enterpriseGateway.addEnterpriseWithDefaultTemplate(data);
   }
@@ -66,12 +68,12 @@ export default class EnterpriseController implements IEnterpriseController {
   async addUserToEnterprise(
     userId: number,
     enterpriseId: number,
-    trx?: any
+    trx?: any,
   ): Promise<void> {
     return await this.enterpriseGateway.addUserToEnterprise(
       userId,
       enterpriseId,
-      trx
+      trx,
     );
   }
 }

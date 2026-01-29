@@ -1,8 +1,11 @@
 import type { Knex } from "knex";
 import dotenv from "dotenv";
+import path from "path";
 
-// Carrega variáveis de ambiente do arquivo .env
-dotenv.config();
+// Carrega variáveis de ambiente do arquivo .env apropriado
+const env = process.env.NODE_ENV || "development";
+const envFile = env === "development" ? ".env.development" : `.env.${env}`;
+dotenv.config({ path: path.resolve(process.cwd(), envFile) });
 
 // Função auxiliar para obter variáveis de ambiente com fallback
 const getEnv = (key: string, defaultValue?: string): string => {

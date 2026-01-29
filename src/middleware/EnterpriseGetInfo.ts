@@ -18,7 +18,7 @@ const getSubdomain = (origin?: string) => {
 const EnterpriseGetInfo = async (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const subdomain =
@@ -44,7 +44,7 @@ const EnterpriseGetInfo = async (
     }
 
     const EnterpriseController = container.get<EnterpriseController>(
-      Registry.EnterpriseController
+      Registry.EnterpriseController,
     );
     const enterprise = await EnterpriseController.getBySubdomain(subdomain);
 
