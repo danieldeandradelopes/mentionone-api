@@ -10,7 +10,6 @@ const MySelfValidate = async (
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
-      console.log("Unset token! MySelfValidate");
       return response.status(401).json({ message: "Unset token!" });
     }
 
