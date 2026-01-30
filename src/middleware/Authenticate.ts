@@ -9,7 +9,6 @@ const Authenticate = async (
   const authHeader = request.headers.authorization;
 
   if (!authHeader) {
-    console.log("Unset token! Authenticate");
     return response.status(401).json({ message: "Unset token!" });
   }
 
