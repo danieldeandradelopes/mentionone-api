@@ -13,7 +13,6 @@ export async function RequirePayment(
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
-      console.log("Unset token! RequirePayment");
       return response.status(401).json({ message: "Unset token!" });
     }
 

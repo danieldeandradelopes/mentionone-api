@@ -18,14 +18,14 @@ boxesRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<BoxesController>(
-        Registry.BoxesController
+        Registry.BoxesController,
       );
       const boxes = await controller.list(request.enterprise_id);
       return response.json(boxes);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Obter uma box por ID
@@ -36,14 +36,14 @@ boxesRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<BoxesController>(
-        Registry.BoxesController
+        Registry.BoxesController,
       );
       const box = await controller.get(Number(request.params.id));
       return response.json(box);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Obter uma box por SLUG
@@ -54,14 +54,14 @@ boxesRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<BoxesController>(
-        Registry.BoxesController
+        Registry.BoxesController,
       );
       const box = await controller.getBySlug(request.params.slug);
       return response.json(box);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Criar uma nova box
@@ -73,7 +73,7 @@ boxesRoutes.post(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<BoxesController>(
-        Registry.BoxesController
+        Registry.BoxesController,
       );
       const { name, location, slug } = request.body;
       const input: BoxesStoreData = {
@@ -87,7 +87,7 @@ boxesRoutes.post(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Atualizar box
@@ -98,7 +98,7 @@ boxesRoutes.put(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<BoxesController>(
-        Registry.BoxesController
+        Registry.BoxesController,
       );
       const input: BoxesUpdateData = {
         ...request.body,
@@ -109,7 +109,7 @@ boxesRoutes.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Deletar box
@@ -120,14 +120,14 @@ boxesRoutes.delete(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<BoxesController>(
-        Registry.BoxesController
+        Registry.BoxesController,
       );
       const ok = await controller.destroy(Number(request.params.id));
       return response.json({ success: ok });
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Buscar branding da box
@@ -135,17 +135,16 @@ boxesRoutes.get(
   "/boxes/:id/branding",
   EnterpriseGetInfo,
   async (request: Request, response: Response, next: NextFunction) => {
-    console.log("request.params.id", request.params.id, "hahahaha");
     try {
       const controller = container.get<BoxBrandingController>(
-        Registry.BoxBrandingController
+        Registry.BoxBrandingController,
       );
       const branding = await controller.getByBoxId(Number(request.params.id));
       return response.json(branding);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Atualizar (ou criar) branding da box
@@ -156,7 +155,7 @@ boxesRoutes.put(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<BoxBrandingController>(
-        Registry.BoxBrandingController
+        Registry.BoxBrandingController,
       );
       const box_id = Number(request.params.id);
       // para update, espera que branding já exista; senão, cria
@@ -179,7 +178,7 @@ boxesRoutes.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 export { boxesRoutes };
