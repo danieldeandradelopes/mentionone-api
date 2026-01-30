@@ -16,6 +16,7 @@ import customerRoutes from "./customer.routes";
 import { enterpriseRoutes } from "./enterprise.routes";
 import { feedbackRoutes } from "./feedback.routes";
 import { feedbackOptionsRoutes } from "./feedback-options.routes";
+import { publicRoutes } from "./public.routes";
 import { manifestRoutes } from "./manifest.routes";
 import { paymentsRoutes } from "./payments.routes";
 import { planPriceRoutes } from "./plan-price.routes";
@@ -30,6 +31,8 @@ import { userRoutes } from "./users.routes";
 const routes = Router();
 
 routes.use(limiter);
+
+routes.use(publicRoutes);
 
 routes.get("/uptimerobot", (request: Request, response: Response) => {
   response.status(200).send("OK");

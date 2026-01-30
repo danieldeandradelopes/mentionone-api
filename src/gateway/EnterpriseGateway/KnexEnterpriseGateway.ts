@@ -6,7 +6,6 @@ import SocialMedia from "../../entities/SocialMedia";
 import UserEnterprise from "../../entities/UserEnterprise";
 import HttpException from "../../exceptions/HttpException";
 import IEnterpriseGateway from "./IEnterpriseGateway";
-import { darkTheme, lightTheme } from "./defaultValues";
 
 const trialEndDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -17,7 +16,8 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
     enterpriseId: number,
     trx?: any
   ): Promise<void> {
-    await this.connection("user_enterprises")
+    const query = trx ? trx("user_enterprises") : this.connection("user_enterprises");
+    await query
       .insert({ user_id: userId, enterprise_id: enterpriseId })
       .returning("*");
   }
@@ -112,7 +112,6 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
         subdomain: subdomain,
         cover: cover,
         description: description,
-        auto_approve: true,
       };
 
       const [insertedEnterprise] = await transaction("enterprises")
@@ -128,16 +127,6 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
         .returning("*");
 
       // Criar tema light
-
-      const [lightBrandingInserted] = await transaction("branding")
-        .insert(lightTheme(name, insertedEnterprise))
-        .returning("*");
-
-      const [darkBrandingInserted] = await transaction("branding")
-        .insert(darkTheme(name, insertedEnterprise))
-        .returning("*");
-
-      // Configurar horários padrão (segunda a sexta, 8:00 às 18:00)
 
       // Se não foi fornecido plan_price_id, buscar plano Free
       let finalPlanPriceId = plan_price_id;
@@ -157,7 +146,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
         }
       }
 
-      await transaction("subscription").insert({
+      await transaction("subscriptions").insert({
         enterprise_id: insertedEnterprise.id,
         status: "active",
         start_date: new Date(),
@@ -175,7 +164,6 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
         enterprise: new Enterprise({
           ...insertedEnterprise,
           phones: phoneInserted,
-          branding: [lightBrandingInserted, darkBrandingInserted],
         }),
       };
     } catch (error) {
