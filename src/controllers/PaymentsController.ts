@@ -196,6 +196,13 @@ export default class PaymentsController implements IPaymentsController {
       });
     }
 
+    if (payment.plan_price.billing_cycle === "monthly") {
+      await this.subscriptionGateway.updateSubscription({
+        ...payment.subscription,
+        gateway_subscription_id: gateway.transactionId,
+      });
+    }
+
     const currentPayment = await this.paymentGateway.getPayment(payment.id);
     if (currentPayment) {
       await this.paymentGateway.updatePayment({
@@ -240,17 +247,23 @@ export default class PaymentsController implements IPaymentsController {
     }
 
     if (planPrice.billing_cycle === "monthly") {
-      const payment = await this.paymentGateway.getPaymentBySubscriptionId(
-        subscription.id!,
-      );
+      const subscriptionExternalId = subscription.gateway_subscription_id;
+      const fallbackPayment =
+        await this.paymentGateway.getPaymentBySubscriptionId(
+          subscription.id!,
+        );
 
-      if (!payment?.transaction_id) {
+      const externalId =
+        subscriptionExternalId ||
+        (fallbackPayment?.transaction_id?.startsWith("sub_")
+          ? fallbackPayment.transaction_id
+          : null);
+
+      if (!externalId) {
         throw new Error("Subscription transaction not found");
       }
 
-      await this.paymentGatewayAdapter.cancelSubscription(
-        payment.transaction_id,
-      );
+      await this.paymentGatewayAdapter.cancelSubscription(externalId);
     }
 
     await this.subscriptionGateway.updateSubscription({

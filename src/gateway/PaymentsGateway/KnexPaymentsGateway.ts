@@ -213,6 +213,9 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
   ): Promise<Payment | null> {
     return await this.connection("payments")
       .where({ subscription_id: subscriptionId })
+      .whereNotNull("transaction_id")
+      .andWhere("transaction_id", "<>", "")
+      .orderBy("id", "desc")
       .first();
   }
 

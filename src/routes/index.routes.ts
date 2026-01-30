@@ -65,7 +65,7 @@ routes.post(
         await paymentsController.updatePayment({
           ...currentPayment,
           status: "paid",
-          transaction_id: result.transactionId || currentPayment.transaction_id,
+          transaction_id: currentPayment.transaction_id || result.transactionId,
           payment_date: new Date().toISOString(),
         });
 
@@ -80,13 +80,13 @@ routes.post(
         await paymentsController.updatePayment({
           ...currentPayment,
           status: "failed",
-          transaction_id: result.transactionId || currentPayment.transaction_id,
+          transaction_id: currentPayment.transaction_id || result.transactionId,
         });
       } else if (result.status === "refunded") {
         await paymentsController.updatePayment({
           ...currentPayment,
           status: "refunded",
-          transaction_id: result.transactionId || currentPayment.transaction_id,
+          transaction_id: currentPayment.transaction_id || result.transactionId,
         });
       }
 
