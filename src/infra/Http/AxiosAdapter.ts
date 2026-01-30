@@ -2,8 +2,8 @@ import axios from "axios";
 import HttpClient from "./HttpClient";
 
 export default class AxiosAdapter implements HttpClient {
-  async delete(url: string): Promise<any> {
-    const response = await axios.delete(url);
+  async delete(url: string, headers?: any): Promise<any> {
+    const response = await axios.delete(url, { ...headers });
     return response.data;
   }
   async get(url: string, headers?: any): Promise<any> {

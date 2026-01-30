@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import SubscriptionController from "../controllers/SubscriptionController";
+import PaymentsController from "../controllers/PaymentsController";
 import { Registry, container } from "../infra/ContainerRegistry";
 import Authenticate from "../middleware/Authenticate";
 import EnterpriseGetInfo from "../middleware/EnterpriseGetInfo";
@@ -44,6 +45,25 @@ const subscriptionRoutes = Router();
  *                 start_date:
  *                   type: string
  */
+subscriptionRoutes.post(
+  "/subscriptions/cancel",
+  Authenticate,
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const paymentsController = container.get<PaymentsController>(
+        Registry.PaymentsController
+      );
+
+      await paymentsController.cancelSubscription(request.enterprise_id);
+
+      return response.status(200).json({ message: "Subscription canceled" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 subscriptionRoutes.post(
   "/subscriptions",
   Authenticate,

@@ -80,6 +80,7 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
         plan_name: "",
         plan_description: "",
         plan_price: "",
+        billing_cycle: "",
         features: null,
       };
     }
@@ -105,8 +106,18 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
       plan_name: subscription.name,
       plan_description: subscription.description,
       plan_price: subscription.price,
+      billing_cycle: subscription.billing_cycle,
       features,
     };
+  }
+
+  async getSubscriptionByEnterpriseIdRaw(
+    enterpriseId: number,
+  ): Promise<Subscription | null> {
+    return await this.connection("subscriptions")
+      .where({ enterprise_id: enterpriseId })
+      .orderBy("id", "desc")
+      .first();
   }
 
   async getSubscription(id: number): Promise<Subscription> {

@@ -23,6 +23,8 @@ import KnexPlanPriceGateway from "../gateway/PlanPriceGateway /KnexPlanPriceGate
 import KnexRefreshTokenGateway from "../gateway/RefreshTokenGateway/KnexRefreshTokenGateway";
 import KnexSubscriptionGateway from "../gateway/SubscriptionGateway/KnexSubscriptionGateway";
 import KnexUserGateway from "../gateway/UserGateway/KnexUserGateway";
+import MercadoPagoAdapter from "../services/payments/MercadoPagoAdapter";
+import AsaasAdapter from "../services/payments/AsaasAdapter";
 import BCryptAdapter from "./Encrypt/BCryptAdapter";
 import AxiosAdapter from "./Http/AxiosAdapter";
 import JsonWebTokenAdapter from "./JwtAssign/JsonWebTokenAdapter";
@@ -69,6 +71,7 @@ export const Registry = {
   BoxBrandingController: Symbol.for("BoxBrandingController"),
   FeedbackOptionGateway: Symbol.for("FeedbackOptionGateway"),
   FeedbackOptionController: Symbol.for("FeedbackOptionController"),
+  PaymentGatewayAdapter: Symbol.for("PaymentGatewayAdapter"),
 };
 
 export const container = new Container();
@@ -88,7 +91,7 @@ container.bind(Registry.RefreshTokenGateway).toDynamicValue(() => {
 container.bind(Registry.RefreshTokenController).toDynamicValue((context) => {
   return new RefreshTokenController(
     context.container.get(Registry.RefreshTokenGateway),
-    context.container.get(Registry.JsonWebTokenAdapter)
+    context.container.get(Registry.JsonWebTokenAdapter),
   );
 });
 
@@ -98,13 +101,13 @@ container.bind(Registry.AuthenticationGateway).toDynamicValue((context) => {
     context.container.get(Registry.JsonWebTokenAdapter),
     context.container.get(Registry.BCryptAdapter),
     context.container.get(Registry.UserGateway),
-    context.container.get(Registry.RefreshTokenGateway)
+    context.container.get(Registry.RefreshTokenGateway),
   );
 });
 
 container.bind(Registry.AuthenticationController).toDynamicValue((context) => {
   return new AuthenticationController(
-    context.container.get(Registry.AuthenticationGateway)
+    context.container.get(Registry.AuthenticationGateway),
   );
 });
 
@@ -112,7 +115,7 @@ container.bind(Registry.UserGateway).toDynamicValue((context) => {
   return new KnexUserGateway(
     KnexConfig,
     context.container.get(Registry.BCryptAdapter),
-    context.container.get(Registry.JsonWebTokenAdapter)
+    context.container.get(Registry.JsonWebTokenAdapter),
   );
 });
 
@@ -120,7 +123,7 @@ container.bind(Registry.UserController).toDynamicValue((context) => {
   return new UserController(
     context.container.get(Registry.UserGateway),
     context.container.get(Registry.EnterpriseController),
-    context.container.get(Registry.AuthenticationGateway)
+    context.container.get(Registry.AuthenticationGateway),
   );
 });
 
@@ -130,7 +133,7 @@ container.bind(Registry.EnterpriseGateway).toDynamicValue((context) => {
 
 container.bind(Registry.EnterpriseController).toDynamicValue((context) => {
   return new EnterpriseController(
-    context.container.get(Registry.EnterpriseGateway)
+    context.container.get(Registry.EnterpriseGateway),
   );
 });
 
@@ -148,7 +151,7 @@ container.bind(Registry.BrandingGateway).toDynamicValue((context) => {
 
 container.bind(Registry.BrandingController).toDynamicValue((context) => {
   return new BrandingController(
-    context.container.get(Registry.BrandingGateway)
+    context.container.get(Registry.BrandingGateway),
   );
 });
 
@@ -168,7 +171,9 @@ container.bind(Registry.PaymentsController).toDynamicValue((context) => {
   return new PaymentsController(
     context.container.get(Registry.PaymentsGateway),
     context.container.get(Registry.SubscriptionGateway),
-    context.container.get(Registry.PlanPriceGateway)
+    context.container.get(Registry.PlanPriceGateway),
+    context.container.get(Registry.PaymentGatewayAdapter),
+    context.container.get(Registry.EnterpriseGateway),
   );
 });
 
@@ -186,7 +191,7 @@ container.bind(Registry.PlanPriceGateway).toDynamicValue((context) => {
 
 container.bind(Registry.PlanPriceController).toDynamicValue((context) => {
   return new PlanPriceController(
-    context.container.get(Registry.PlanPriceGateway)
+    context.container.get(Registry.PlanPriceGateway),
   );
 });
 
@@ -196,7 +201,7 @@ container.bind(Registry.SubscriptionGateway).toDynamicValue((context) => {
 
 container.bind(Registry.SubscriptionController).toDynamicValue((context) => {
   return new SubscriptionController(
-    context.container.get(Registry.SubscriptionGateway)
+    context.container.get(Registry.SubscriptionGateway),
   );
 });
 
@@ -206,8 +211,16 @@ container.bind(Registry.ManifestGateway).toDynamicValue((context) => {
 
 container.bind(Registry.ManifestController).toDynamicValue((context) => {
   return new ManifestController(
-    context.container.get(Registry.ManifestGateway)
+    context.container.get(Registry.ManifestGateway),
   );
+});
+
+container.bind(Registry.PaymentGatewayAdapter).toDynamicValue((context) => {
+  const gateway = process.env.PAYMENT_GATEWAY || "mercadopago";
+  if (gateway === "asaas") {
+    return new AsaasAdapter(context.container.get(Registry.HttpClient));
+  }
+  return new MercadoPagoAdapter(context.container.get(Registry.HttpClient));
 });
 
 container.bind(Registry.VercelAdapter).toDynamicValue((context) => {
@@ -217,7 +230,7 @@ container.bind(Registry.VercelAdapter).toDynamicValue((context) => {
 container.bind(Registry.GatewayPaymentsController).toDynamicValue((context) => {
   return new GatewayPaymentsController(
     context.container.get(Registry.SubscriptionGateway),
-    context.container.get(Registry.PaymentsGateway)
+    context.container.get(Registry.PaymentsGateway),
   );
 });
 
@@ -227,7 +240,7 @@ container.bind(Registry.KnexConfig).toDynamicValue(() => {
 
 container.bind(Registry.BoxesGateway).toDynamicValue(() => {
   return new (require("../gateway/BoxesGateway/KnexBoxesGateway").KnexBoxesGateway)(
-    container.get(Registry.KnexConfig)
+    container.get(Registry.KnexConfig),
   );
 });
 
@@ -238,7 +251,7 @@ container.bind(Registry.BoxesController).toDynamicValue((context) => {
 
 container.bind(Registry.FeedbackGateway).toDynamicValue(() => {
   return new (require("../gateway/FeedbackGateway/KnexFeedbackGateway").KnexFeedbackGateway)(
-    container.get(Registry.KnexConfig)
+    container.get(Registry.KnexConfig),
   );
 });
 
@@ -248,13 +261,13 @@ container.bind(Registry.FeedbackController).toDynamicValue((context) => {
   return new FeedbackController(
     container.get(Registry.FeedbackGateway),
     container.get(Registry.BoxesGateway),
-    container.get(Registry.FeedbackOptionGateway)
+    container.get(Registry.FeedbackOptionGateway),
   );
 });
 
 container.bind(Registry.BoxBrandingGateway).toDynamicValue(() => {
   return new (require("../gateway/BoxBrandingGateway/KnexBoxBrandingGateway").KnexBoxBrandingGateway)(
-    container.get(Registry.KnexConfig)
+    container.get(Registry.KnexConfig),
   );
 });
 
@@ -266,7 +279,7 @@ container.bind(Registry.BoxBrandingController).toDynamicValue((context) => {
 
 container.bind(Registry.FeedbackOptionGateway).toDynamicValue(() => {
   return new (require("../gateway/FeedbackOptionGateway/KnexFeedbackOptionGateway").KnexFeedbackOptionGateway)(
-    container.get(Registry.KnexConfig)
+    container.get(Registry.KnexConfig),
   );
 });
 
@@ -274,6 +287,6 @@ container.bind(Registry.FeedbackOptionController).toDynamicValue((context) => {
   const FeedbackOptionController =
     require("../controllers/FeedbackOptionController").default;
   return new FeedbackOptionController(
-    container.get(Registry.FeedbackOptionGateway)
+    container.get(Registry.FeedbackOptionGateway),
   );
 });

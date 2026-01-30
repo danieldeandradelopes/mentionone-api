@@ -4,6 +4,18 @@ import IPlanGateway from "./IPlanGateway";
 
 export default class KnexPlanGateway implements IPlanGateway {
   constructor(readonly connection: any) {}
+  private parseFeatures(features: unknown) {
+    if (!features) return null;
+    if (typeof features === "string") {
+      try {
+        return JSON.parse(features);
+      } catch {
+        return null;
+      }
+    }
+    return features;
+  }
+
   async getPlan(id: number): Promise<PlanResponse> {
     const plan: any = await this.connection("plans")
       .where("plans.id", id)
@@ -25,7 +37,7 @@ export default class KnexPlanGateway implements IPlanGateway {
           ) FILTER (WHERE plan_prices.id IS NOT NULL),
           '[]'
         ) as plan_price
-      `)
+      `),
       )
       .first();
 
@@ -35,7 +47,7 @@ export default class KnexPlanGateway implements IPlanGateway {
 
     return {
       ...plan,
-      features: plan.features ? JSON.parse(plan.features) : null,
+      features: this.parseFeatures(plan.features),
     };
   }
 
@@ -60,12 +72,12 @@ export default class KnexPlanGateway implements IPlanGateway {
         ) FILTER (WHERE plan_prices.id IS NOT NULL),
         '[]'
       ) as plan_price
-    `)
+    `),
       );
 
     return plans.map((plan) => ({
       ...plan,
-      features: plan.features ? JSON.parse(plan.features) : null,
+      features: this.parseFeatures(plan.features),
     }));
   }
   async addPlan(data: Plan): Promise<Plan> {

@@ -12,6 +12,7 @@ export interface EnterpriseDTO {
   document?: string | null;
   document_type?: "cpf" | "cnpj" | null;
   email?: string | null;
+  asaas_customer_id?: string | null;
   timezone: string;
   deleted_at?: string | null;
   created_at?: string;
@@ -41,6 +42,7 @@ export default class Enterprise {
   readonly document?: string | null;
   readonly document_type?: "cpf" | "cnpj" | null;
   readonly email?: string | null;
+  readonly asaas_customer_id?: string | null;
   readonly timezone: string;
   readonly deleted_at?: string | null;
   readonly created_at?: string;
@@ -59,6 +61,7 @@ export default class Enterprise {
     this.document = data.document;
     this.document_type = data.document_type;
     this.email = data.email;
+    this.asaas_customer_id = data.asaas_customer_id;
     this.timezone = data.timezone || "America/Sao_Paulo";
     this.deleted_at = data.deleted_at;
     this.created_at = data.created_at;

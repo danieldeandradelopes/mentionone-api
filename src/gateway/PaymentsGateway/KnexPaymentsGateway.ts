@@ -12,10 +12,17 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
   async getPayments(): Promise<Payment[]> {
     return await this.connection("payments");
   }
+  async getPaymentsByEnterpriseId(enterpriseId: number): Promise<Payment[]> {
+    return await this.connection("payments")
+      .join("subscriptions", "payments.subscription_id", "subscriptions.id")
+      .where("subscriptions.enterprise_id", enterpriseId)
+      .select("payments.*")
+      .orderBy("payments.created_at", "desc");
+  }
   async addPayment(
     enterprise_id: number,
     planId: number,
-    trx: any
+    trx: any,
   ): Promise<PaymentResponse> {
     const plan = await trx("plans").where({ id: planId }).first();
 
@@ -61,7 +68,7 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
         amount: planPrice.price,
         payment_date: new Date().toISOString(),
         due_date: new Date(
-          new Date().getTime() + 7 * 24 * 60 * 60 * 1000
+          new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
         ).toISOString(),
         transaction_id: "",
         items: JSON.stringify([
@@ -92,10 +99,88 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
     };
   }
 
+  async addPaymentByPlanPrice(
+    enterprise_id: number,
+    planPriceId: number,
+  ): Promise<PaymentResponse> {
+    const planPrice = await this.connection("plan_prices")
+      .where({ id: planPriceId })
+      .first();
+
+    if (!planPrice) throw new Error("Plan price not found");
+
+    const plan = await this.connection("plans")
+      .where({ id: planPrice.plan_id })
+      .first();
+
+    if (!plan) throw new Error("Plan not found");
+
+    let subscription = await this.connection("subscriptions")
+      .where({ enterprise_id, plan_price_id: planPrice.id })
+      .first();
+
+    if (subscription) {
+      const [updated] = await this.connection("subscriptions")
+        .update({
+          plan_price_id: planPrice.id,
+          status: "past_due",
+        })
+        .where({ id: subscription.id })
+        .returning("*");
+
+      subscription = updated;
+    }
+
+    if (!subscription) {
+      const [created] = await this.connection("subscriptions")
+        .insert({
+          enterprise_id,
+          plan_price_id: planPrice.id,
+          start_date: new Date().toISOString(),
+          end_date: new Date().toISOString(),
+        })
+        .returning("*");
+
+      subscription = created;
+    }
+
+    const [payment] = await this.connection("payments")
+      .insert({
+        subscription_id: subscription.id,
+        amount: planPrice.price,
+        payment_date: null,
+        due_date: new Date().toISOString(),
+        transaction_id: "",
+        items: JSON.stringify([
+          {
+            id: planPrice.id.toString(),
+            title: plan.name,
+            description: plan.description,
+          },
+        ]),
+      })
+      .returning("*");
+
+    if (!payment) throw new Error("Payment not created");
+
+    return {
+      id: payment.id,
+      subscription_id: payment.subscription_id,
+      amount: Number(planPrice.price),
+      status: payment.status,
+      transaction_id: payment.transaction_id,
+      created_at: payment.created_at,
+      subscription: subscription,
+      plan_price: planPrice,
+      name: plan.name,
+      description: plan.description,
+    };
+  }
+
   async updatePaymentTransactionId(
     paymentId: number,
     transactionId: string,
-    trx: any
+    trx: any,
   ): Promise<Payment> {
     const payment = await trx("payment").where({ id: paymentId }).first();
 
@@ -111,18 +196,20 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
   }
 
   async updatePayment(data: Payment): Promise<Payment> {
+    const { id, items, created_at, ...updates } = data;
+
     const payment = await this.connection("payments")
-      .update(data)
-      .where({ id: data.id })
+      .update(updates)
+      .where({ id })
       .returning("*");
-    return new Payment(payment);
+    return new Payment(payment[0]);
   }
   async removePayment(id: number): Promise<void> {
     await this.connection("payments").where({ id }).delete();
     return undefined;
   }
   async getPaymentBySubscriptionId(
-    subscriptionId: number
+    subscriptionId: number,
   ): Promise<Payment | null> {
     return await this.connection("payments")
       .where({ subscription_id: subscriptionId })

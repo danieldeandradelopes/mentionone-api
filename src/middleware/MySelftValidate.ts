@@ -4,12 +4,13 @@ import JsonWebTokenAdapter from "../infra/JwtAssign/JsonWebTokenAdapter";
 const MySelfValidate = async (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
+      console.log("Unset token! MySelfValidate");
       return response.status(401).json({ message: "Unset token!" });
     }
 

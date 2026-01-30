@@ -29,7 +29,7 @@ userRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const userController = container.get<UserController>(
-        Registry.UserController
+        Registry.UserController,
       );
 
       const users = await userController.list({
@@ -41,7 +41,7 @@ userRoutes.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -70,19 +70,19 @@ userRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const userController = container.get<UserController>(
-        Registry.UserController
+        Registry.UserController,
       );
 
       const user = await userController.getUserSession(
         request.user_id!,
-        request.enterprise_id!
+        request.enterprise_id!,
       );
 
       return response.status(201).json(user);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -111,9 +111,8 @@ userRoutes.get(
   AdminValidate,
   async (request: Request, response: Response, next: NextFunction) => {
     try {
-      // TODO DANIEL: pensar como bloquear para a barbearia só pegar os próprios clientes
       const userController = container.get<UserController>(
-        Registry.UserController
+        Registry.UserController,
       );
 
       const users = await userController.get(parseInt(request.params.id));
@@ -122,7 +121,7 @@ userRoutes.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -173,7 +172,7 @@ userRoutes.put(
       const { currentPassword, name, email, phone, password, avatar } =
         request.body;
       const userController = container.get<UserController>(
-        Registry.UserController
+        Registry.UserController,
       );
 
       const user = await userController.update({
@@ -189,7 +188,7 @@ userRoutes.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -229,7 +228,7 @@ userRoutes.put(
     try {
       const { phone } = request.body;
       const userController = container.get<UserController>(
-        Registry.UserController
+        Registry.UserController,
       );
 
       const user = await userController.updatePhone(request.user_id!, phone);
@@ -237,7 +236,7 @@ userRoutes.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -289,7 +288,7 @@ userRoutes.put(
       const { currentPassword, name, email, phone, password, avatar } =
         request.body;
       const userController = container.get<UserController>(
-        Registry.UserController
+        Registry.UserController,
       );
 
       const user = await userController.update({
@@ -305,7 +304,7 @@ userRoutes.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 export { userRoutes };

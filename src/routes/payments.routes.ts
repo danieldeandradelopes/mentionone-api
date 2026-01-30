@@ -8,13 +8,39 @@ import SuperAdminValidate from "../middleware/SuperAdminValidate";
 const paymentsRoutes = Router();
 
 paymentsRoutes.post(
+  "/payments/checkout",
+  Authenticate,
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const paymentsController = container.get<PaymentsController>(
+        Registry.PaymentsController,
+      );
+
+      const { plan_price_id, card, holder } = request.body;
+
+      const result = await paymentsController.createTransparentCheckout({
+        enterprise_id: request.enterprise_id,
+        plan_price_id,
+        card,
+        holder,
+      });
+
+      return response.status(201).json(result);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+paymentsRoutes.post(
   "/payments/create-payment-link",
   Authenticate,
   EnterpriseGetInfo,
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const paymentsController = container.get<PaymentsController>(
-        Registry.PaymentsController
+        Registry.PaymentsController,
       );
 
       const { subscription_id } = request.body;
@@ -25,7 +51,7 @@ paymentsRoutes.post(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -66,7 +92,7 @@ paymentsRoutes.post(
       const trx = await knexConfig.transaction();
 
       const paymentsController = container.get<PaymentsController>(
-        Registry.PaymentsController
+        Registry.PaymentsController,
       );
 
       const { plan_id } = request.body;
@@ -74,14 +100,14 @@ paymentsRoutes.post(
       const payment = await paymentsController.addPayment(
         request.enterprise_id,
         plan_id,
-        trx
+        trx,
       );
 
       return response.status(201).json(payment);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -97,13 +123,34 @@ paymentsRoutes.post(
  *         description: Lista de pagamentos
  */
 paymentsRoutes.get(
+  "/payments/history",
+  Authenticate,
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const paymentsController = container.get<PaymentsController>(
+        Registry.PaymentsController,
+      );
+
+      const payments = await paymentsController.getPaymentsByEnterpriseId(
+        request.enterprise_id,
+      );
+
+      return response.status(200).json(payments);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+paymentsRoutes.get(
   "/payments",
   Authenticate,
   EnterpriseGetInfo,
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const paymentsController = container.get<PaymentsController>(
-        Registry.PaymentsController
+        Registry.PaymentsController,
       );
 
       const payments = await paymentsController.getPayments();
@@ -112,7 +159,7 @@ paymentsRoutes.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -141,18 +188,18 @@ paymentsRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const paymentsController = container.get<PaymentsController>(
-        Registry.PaymentsController
+        Registry.PaymentsController,
       );
 
       const payment = await paymentsController.getPayment(
-        parseInt(request.params.id)
+        parseInt(request.params.id),
       );
 
       return response.status(201).json(payment);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -202,7 +249,7 @@ paymentsRoutes.put(
       const { id } = request.params;
 
       const paymentsController = container.get<PaymentsController>(
-        Registry.PaymentsController
+        Registry.PaymentsController,
       );
 
       const payment = await paymentsController.updatePayment({
@@ -214,7 +261,7 @@ paymentsRoutes.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -245,7 +292,7 @@ paymentsRoutes.delete(
       const { id } = request.params;
 
       const paymentsController = container.get<PaymentsController>(
-        Registry.PaymentsController
+        Registry.PaymentsController,
       );
 
       await paymentsController.removePayment(parseInt(id));
@@ -254,7 +301,7 @@ paymentsRoutes.delete(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 export { paymentsRoutes };
