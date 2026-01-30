@@ -26,33 +26,23 @@ export default class FeedbackController {
   constructor(
     private readonly gateway: IFeedbackGateway,
     private readonly boxesGateway: IBoxesGateway,
-    private readonly feedbackOptionGateway: IFeedbackOptionGateway
+    private readonly feedbackOptionGateway: IFeedbackOptionGateway,
   ) {}
 
   async list(enterpriseId: number): Promise<Feedback[] | FeedbackListResponse> {
     const allFeedbacks = await this.gateway.findAllByEnterprise(enterpriseId);
 
     // Buscar features do plano
-    const planFeaturesResult = await getPlanFeatures(
-      KnexConfig,
-      enterpriseId
-    );
+    const planFeaturesResult = await getPlanFeatures(KnexConfig, enterpriseId);
 
-    // Se não tem subscription ou não tem limite, retorna todos
-    if (!planFeaturesResult.features) {
-      return allFeedbacks;
-    }
-
-    const maxResponsesPerMonth = getFeatureValue(
+    const maxResponsesPerMonthValue = getFeatureValue(
       planFeaturesResult.features,
       "max_responses_per_month",
-      null
+      null,
     );
 
-    // Se não tem limite, retorna todos
-    if (maxResponsesPerMonth === null) {
-      return allFeedbacks;
-    }
+    // Sem features (subscription ausente), aplicar limite do plano Free
+    const maxResponsesPerMonth = maxResponsesPerMonthValue ?? 15;
 
     // Filtrar feedbacks do mês atual
     const now = new Date();
@@ -60,7 +50,7 @@ export default class FeedbackController {
     const firstDayOfNextMonth = new Date(
       now.getFullYear(),
       now.getMonth() + 1,
-      1
+      1,
     );
 
     const currentMonthFeedbacks = allFeedbacks.filter((fb) => {
@@ -91,7 +81,9 @@ export default class FeedbackController {
         total: currentMonthFeedbacks.length,
         visible: limitedFeedbacks.length,
         limit_reached: true,
-        current_month: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`,
+        current_month: `${now.getFullYear()}-${String(
+          now.getMonth() + 1,
+        ).padStart(2, "0")}`,
       },
     };
   }
@@ -107,7 +99,7 @@ export default class FeedbackController {
       category?: string;
       startDate?: string;
       endDate?: string;
-    }
+    },
   ): Promise<Feedback[]> {
     return this.gateway.findWithFilters({
       enterprise_id: enterpriseId,
@@ -124,7 +116,7 @@ export default class FeedbackController {
 
   async getWithDetails(
     id: number,
-    enterpriseId: number
+    enterpriseId: number,
   ): Promise<
     | (Feedback & {
         box?: {
@@ -167,7 +159,7 @@ export default class FeedbackController {
       try {
         const option = await this.feedbackOptionGateway.findBySlug(
           enterpriseId,
-          feedback.category
+          feedback.category,
         );
         if (option) {
           feedbackOption = {
@@ -201,7 +193,7 @@ export default class FeedbackController {
 
   async storeWithSlug(
     data: FeedbackStoreDataWithSlug,
-    enterpriseId: number
+    enterpriseId: number,
   ): Promise<Feedback> {
     // Busca a box pelo slug para obter o ID
     const box = await this.boxesGateway.findBySlug(data.box_slug);
@@ -238,7 +230,7 @@ export default class FeedbackController {
       category?: string;
       startDate?: string;
       endDate?: string;
-    }
+    },
   ) {
     const feedbacks = await this.gateway.findWithFilters({
       enterprise_id: enterpriseId,
