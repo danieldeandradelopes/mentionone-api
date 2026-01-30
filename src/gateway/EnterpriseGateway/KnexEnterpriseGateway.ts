@@ -1,10 +1,6 @@
 import Enterprise, {
   EnterpriseWithDefaultTemplate,
 } from "../../entities/Enterprise";
-import Phone from "../../entities/Phone";
-import SocialMedia from "../../entities/SocialMedia";
-import UserEnterprise from "../../entities/UserEnterprise";
-import HttpException from "../../exceptions/HttpException";
 import IEnterpriseGateway from "./IEnterpriseGateway";
 
 const trialEndDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -14,9 +10,11 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   async addUserToEnterprise(
     userId: number,
     enterpriseId: number,
-    trx?: any
+    trx?: any,
   ): Promise<void> {
-    const query = trx ? trx("user_enterprises") : this.connection("user_enterprises");
+    const query = trx
+      ? trx("user_enterprises")
+      : this.connection("user_enterprises");
     await query
       .insert({ user_id: userId, enterprise_id: enterpriseId })
       .returning("*");
@@ -36,7 +34,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
     data: Omit<
       import("../../entities/Enterprise").EnterpriseDTO,
       "id" | "created_at" | "updated_at" | "deleted_at"
-    >
+    >,
   ): Promise<Enterprise> {
     const [row] = await this.connection("enterprises")
       .insert({ ...data })
@@ -54,7 +52,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   async updateEnterprise(
     data: Partial<import("../../entities/Enterprise").EnterpriseDTO> & {
       id: number;
-    }
+    },
   ): Promise<Enterprise> {
     const { id, ...fields } = data;
     await this.connection("enterprises").where({ id }).update(fields);
@@ -84,7 +82,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   async addEnterpriseWithDefaultTemplate(
     data: EnterpriseWithDefaultTemplate & { trx?: any } & {
       phone: string;
-    }
+    },
   ): Promise<{ enterprise: Enterprise }> {
     const {
       name,
