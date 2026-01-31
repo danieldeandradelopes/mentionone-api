@@ -3,14 +3,23 @@ import EnterpriseController from "../controllers/EnterpriseController";
 import { container, Registry } from "../infra/ContainerRegistry";
 import { subdomainSkip } from "../config/subdomain.skip";
 
-const getSubdomain = (origin?: string) => {
-  if (!origin) return null;
+const getSubdomain = (originOrHost?: string) => {
+  if (!originOrHost) return null;
 
-  const hostname = new URL(origin).hostname;
+  const hostname = (() => {
+    try {
+      return new URL(originOrHost).hostname;
+    } catch {
+      return originOrHost.split(":")[0] ?? "";
+    }
+  })();
 
   const parts = hostname.split(".");
 
   if (parts.length < 3) return null;
+
+  const appIndex = parts.indexOf("app");
+  if (appIndex > 0) return parts[appIndex - 1] ?? null;
 
   return parts[0];
 };
@@ -23,10 +32,12 @@ const EnterpriseGetInfo = async (
   try {
     const subdomain =
       process.env.NODE_ENV === "production"
-        ? getSubdomain(request.headers.origin)
+        ? getSubdomain(
+            request.headers.origin ??
+              request.headers.host ??
+              request.headers.referer
+          )
         : process.env.ENTERPRISE_SUBDOMAIN;
-
-    console.log(subdomain);
 
     // Se o subdomain estiver na lista de skip (ex: "admin"), permite continuar sem enterprise_id
     // Isso permite login de superadmin
