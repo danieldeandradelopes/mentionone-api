@@ -4,7 +4,7 @@ import JsonWebTokenAdapter from "../infra/JwtAssign/JsonWebTokenAdapter";
 const Authenticate = async (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const authHeader = request.headers.authorization;
 

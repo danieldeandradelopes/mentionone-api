@@ -7,7 +7,7 @@ import JsonWebTokenAdapter from "../infra/JwtAssign/JsonWebTokenAdapter";
 export async function RequirePayment(
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const authHeader = request.headers.authorization;
@@ -39,16 +39,16 @@ export async function RequirePayment(
     }
 
     const subscriptionController = container.get<SubscriptionController>(
-      Registry.SubscriptionController
+      Registry.SubscriptionController,
     );
     const EnterpriseController = container.get<EnterpriseController>(
-      Registry.EnterpriseController
+      Registry.EnterpriseController,
     );
 
     const Enterprise = await EnterpriseController.getBySubdomain(subdomain);
 
     const subscription = await subscriptionController.getByEnterpriseId(
-      Enterprise.id
+      Enterprise.id,
     );
 
     if (!Enterprise)

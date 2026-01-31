@@ -51,7 +51,7 @@ authRoutes.post(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const authenticationController = container.get<AuthenticationController>(
-        Registry.AuthenticationController
+        Registry.AuthenticationController,
       );
 
       const { email, password } = request.body;
@@ -73,7 +73,7 @@ authRoutes.post(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -120,7 +120,7 @@ authRoutes.post(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const authenticationController = container.get<AuthenticationController>(
-        Registry.AuthenticationController
+        Registry.AuthenticationController,
       );
 
       const { email, password } = request.body;
@@ -134,7 +134,7 @@ authRoutes.post(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 export { authRoutes };

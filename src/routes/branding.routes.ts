@@ -82,10 +82,18 @@ boxesBrandingRoutes.get(
       const brandingController = container.get<BoxBrandingController>(
         Registry.BoxBrandingController
       );
-      // Busca a box pelo slug para pegar o ID (gateway lança erro se não encontrar)
+      // Busca a box pelo slug para pegar o ID e enterprise_id
       const box = await boxesController.getBySlug(request.params.slug);
-      // Busca o branding pelo box_id (gateway lança erro se não encontrar)
-      const branding = await brandingController.getByBoxId(box.id);
+      // Busca o branding com informação do plano
+      const branding = await brandingController.getByBoxIdWithPlan(
+        box.id,
+        box.enterprise_id
+      );
+      if (!branding) {
+        return response
+          .status(404)
+          .json({ message: "Branding não encontrado para esta box." });
+      }
       return response.json(branding);
     } catch (error) {
       next(error);

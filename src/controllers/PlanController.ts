@@ -2,8 +2,10 @@ import Plan from "../entities/Plan";
 import IPlanGateway from "../gateway/PlanGateway/IPlanGateway";
 import IController from "./IController";
 
+import { PlanResponse } from "../entities/Plan";
+
 interface IPlanController extends IController {
-  get(id: number): Promise<Plan>;
+  get(id: number): Promise<PlanResponse>;
   store(data: { name: string; description: string }): Promise<Plan>;
   update(data: Plan): Promise<Plan>;
 }
@@ -11,7 +13,7 @@ interface IPlanController extends IController {
 export default class PlanController implements IPlanController {
   constructor(readonly planGateway: IPlanGateway) {}
 
-  async get(id: number) {
+  async get(id: number): Promise<PlanResponse> {
     return await this.planGateway.getPlan(id);
   }
 

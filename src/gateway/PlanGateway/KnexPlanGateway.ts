@@ -4,8 +4,20 @@ import IPlanGateway from "./IPlanGateway";
 
 export default class KnexPlanGateway implements IPlanGateway {
   constructor(readonly connection: any) {}
+  private parseFeatures(features: unknown) {
+    if (!features) return null;
+    if (typeof features === "string") {
+      try {
+        return JSON.parse(features);
+      } catch {
+        return null;
+      }
+    }
+    return features;
+  }
+
   async getPlan(id: number): Promise<PlanResponse> {
-    const plan: PlanResponse = await this.connection("plans")
+    const plan: any = await this.connection("plans")
       .where("plans.id", id)
       .leftJoin("plan_prices", "plans.id", "plan_prices.plan_id")
       .groupBy("plans.id")
@@ -25,7 +37,7 @@ export default class KnexPlanGateway implements IPlanGateway {
           ) FILTER (WHERE plan_prices.id IS NOT NULL),
           '[]'
         ) as plan_price
-      `)
+      `),
       )
       .first();
 
@@ -33,11 +45,14 @@ export default class KnexPlanGateway implements IPlanGateway {
       throw new Error("Plan not found");
     }
 
-    return plan;
+    return {
+      ...plan,
+      features: this.parseFeatures(plan.features),
+    };
   }
 
   async getPlans(): Promise<PlanResponse[]> {
-    const plans: PlanResponse[] = await this.connection("plans")
+    const plans: any[] = await this.connection("plans")
       .leftJoin("plan_prices", "plans.id", "plan_prices.plan_id")
       .groupBy("plans.id")
       .select(
@@ -57,10 +72,13 @@ export default class KnexPlanGateway implements IPlanGateway {
         ) FILTER (WHERE plan_prices.id IS NOT NULL),
         '[]'
       ) as plan_price
-    `)
+    `),
       );
 
-    return plans;
+    return plans.map((plan) => ({
+      ...plan,
+      features: this.parseFeatures(plan.features),
+    }));
   }
   async addPlan(data: Plan): Promise<Plan> {
     const currentPlan = await this.connection("plans")

@@ -5,6 +5,7 @@ import Subscription, {
 } from "../../entities/Subscription";
 import ISubscriptionGateway from "./ISubscriptionGateway";
 import Payment from "../../entities/Payment";
+import { PlanFeatures } from "../../entities/Plan";
 
 export default class KnexSubscriptionGateway implements ISubscriptionGateway {
   constructor(readonly connection: any) {}
@@ -21,7 +22,7 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
             b.whereNotNull("trial_end_date").andWhere(
               "trial_end_date",
               "<",
-              now
+              now,
             );
           })
           .orWhere((b) => {
@@ -42,7 +43,7 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
   }
 
   async getSubscriptionByEnterpriseId(
-    enterpriseId: number
+    enterpriseId: number,
   ): Promise<SubscriptionValidateResponse> {
     let subscription = await this.connection("subscriptions")
       .where({ enterprise_id: enterpriseId })
@@ -53,12 +54,12 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
        AND (subscriptions.end_date IS NULL OR subscriptions.end_date >= NOW()))
       OR (subscriptions.trial_end_date IS NOT NULL AND subscriptions.trial_end_date >= NOW())
     )
-  `
+  `,
       )
       .join("plan_prices", "subscriptions.plan_price_id", "plan_prices.id")
       .join("plans", "plan_prices.plan_id", "plans.id")
       .orderByRaw(
-        "COALESCE(subscriptions.end_date, subscriptions.trial_end_date) DESC"
+        "COALESCE(subscriptions.end_date, subscriptions.trial_end_date) DESC",
       )
       .first();
 
@@ -79,7 +80,23 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
         plan_name: "",
         plan_description: "",
         plan_price: "",
+        billing_cycle: "",
+        features: null,
       };
+    }
+
+    // Parse do JSON features
+    let features: PlanFeatures | null = null;
+    if (subscription.features) {
+      if (typeof subscription.features === "string") {
+        try {
+          features = JSON.parse(subscription.features) as PlanFeatures;
+        } catch {
+          features = null;
+        }
+      } else {
+        features = subscription.features as PlanFeatures;
+      }
     }
 
     return {
@@ -89,7 +106,18 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
       plan_name: subscription.name,
       plan_description: subscription.description,
       plan_price: subscription.price,
+      billing_cycle: subscription.billing_cycle,
+      features,
     };
+  }
+
+  async getSubscriptionByEnterpriseIdRaw(
+    enterpriseId: number,
+  ): Promise<Subscription | null> {
+    return await this.connection("subscriptions")
+      .where({ enterprise_id: enterpriseId })
+      .orderBy("id", "desc")
+      .first();
   }
 
   async getSubscription(id: number): Promise<Subscription> {
@@ -113,11 +141,11 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
 
     if (planPrice.billing_cycle === "monthly") {
       end_date = new Date(
-        new Date(data.start_date).getTime() + 30 * 24 * 60 * 60 * 1000
+        new Date(data.start_date).getTime() + 30 * 24 * 60 * 60 * 1000,
       );
     } else {
       end_date = new Date(
-        new Date(data.start_date).getTime() + 365 * 24 * 60 * 60 * 1000
+        new Date(data.start_date).getTime() + 365 * 24 * 60 * 60 * 1000,
       );
     }
 
@@ -141,10 +169,10 @@ export default class KnexSubscriptionGateway implements ISubscriptionGateway {
   }
 
   async updateSubscriptionConfirmedPayment(
-    payment: Payment
+    payment: Payment,
   ): Promise<Subscription> {
     const currentSubscription: Subscription = await this.connection(
-      "subscriptions"
+      "subscriptions",
     )
       .where({
         id: payment.subscription_id,

@@ -1,5 +1,7 @@
 export type SubscriptionStatus = "active" | "past_due" | "canceled";
 
+import { PlanFeatures } from "./Plan";
+
 export interface SubscriptionValidateResponse {
   status: SubscriptionStatus;
   expires_at: string;
@@ -7,6 +9,8 @@ export interface SubscriptionValidateResponse {
   plan_name: string;
   plan_description: string;
   plan_price: string;
+  billing_cycle: "monthly" | "yearly" | "";
+  features: PlanFeatures | null;
 }
 
 export interface SubscriptionProps {
@@ -17,6 +21,7 @@ export interface SubscriptionProps {
   start_date: string;
   end_date?: string;
   trial_end_date?: string;
+  gateway_subscription_id?: string | null;
   created_at?: string;
 }
 
@@ -28,6 +33,7 @@ export default class Subscription {
   readonly start_date: string;
   readonly end_date?: string;
   readonly trial_end_date?: string;
+  readonly gateway_subscription_id?: string | null;
   readonly created_at?: string;
 
   constructor({
@@ -38,6 +44,7 @@ export default class Subscription {
     start_date,
     end_date,
     trial_end_date,
+    gateway_subscription_id,
     created_at,
   }: SubscriptionProps) {
     this.id = id;
@@ -47,6 +54,7 @@ export default class Subscription {
     this.start_date = start_date;
     this.end_date = end_date ?? "";
     this.trial_end_date = trial_end_date;
+    this.gateway_subscription_id = gateway_subscription_id;
     this.created_at = created_at;
   }
 }

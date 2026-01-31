@@ -8,7 +8,7 @@ export default class KnexManifestGateway implements IManifestGateway {
   async getManifest(enterpriseId: number): Promise<Manifest> {
     const currentManifest: Manifest = await this.connection
       .select("*")
-      .from("manifest")
+      .from("manifests")
       .where("enterprise_id", enterpriseId)
       .first();
 

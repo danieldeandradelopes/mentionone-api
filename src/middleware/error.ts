@@ -7,9 +7,9 @@ export const errorHandler = (
   error: HttpException,
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV !== "production") {
     console.log(error);
   }
 

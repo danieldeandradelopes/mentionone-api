@@ -9,10 +9,13 @@ export default interface IEnterpriseGateway {
   getEnterprise(id: number): Promise<Enterprise>;
   getEnterpriseByDomain(domain: string | null): Promise<Enterprise>;
   addEnterprise(
-    data: Omit<EnterpriseDTO, "id" | "created_at" | "updated_at" | "deleted_at">
+    data: Omit<
+      EnterpriseDTO,
+      "id" | "created_at" | "updated_at" | "deleted_at"
+    >,
   ): Promise<Enterprise>;
   updateEnterprise(
-    data: Partial<EnterpriseDTO> & { id: number }
+    data: Partial<EnterpriseDTO> & { id: number },
   ): Promise<Enterprise>;
   removeEnterprise(id: number): Promise<void>;
   getTransaction(): Promise<any>;
@@ -21,9 +24,9 @@ export default interface IEnterpriseGateway {
   addUserToEnterprise(
     userId: number,
     enterpriseId: number,
-    trx?: any
+    trx?: any,
   ): Promise<void>;
   addEnterpriseWithDefaultTemplate(
-    data: EnterpriseWithDefaultTemplate
+    data: EnterpriseWithDefaultTemplate,
   ): Promise<{ enterprise: Enterprise }>;
 }

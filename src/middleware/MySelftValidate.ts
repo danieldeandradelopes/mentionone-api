@@ -4,7 +4,7 @@ import JsonWebTokenAdapter from "../infra/JwtAssign/JsonWebTokenAdapter";
 const MySelfValidate = async (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const authHeader = request.headers.authorization;

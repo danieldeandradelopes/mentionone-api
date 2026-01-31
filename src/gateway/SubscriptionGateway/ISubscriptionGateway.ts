@@ -12,6 +12,9 @@ export default interface ISubscriptionGateway {
   getSubscriptionByEnterpriseId(
     enterpriseId: number
   ): Promise<SubscriptionValidateResponse>;
+  getSubscriptionByEnterpriseIdRaw(
+    enterpriseId: number
+  ): Promise<Subscription | null>;
   verifyAndUpdateSubscriptionStatus(): Promise<void>;
   updateSubscriptionConfirmedPayment(payment: Payment): Promise<Subscription>;
 }

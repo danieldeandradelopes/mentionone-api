@@ -1,12 +1,7 @@
 import Enterprise, {
   EnterpriseWithDefaultTemplate,
 } from "../../entities/Enterprise";
-import Phone from "../../entities/Phone";
-import SocialMedia from "../../entities/SocialMedia";
-import UserEnterprise from "../../entities/UserEnterprise";
-import HttpException from "../../exceptions/HttpException";
 import IEnterpriseGateway from "./IEnterpriseGateway";
-import { darkTheme, lightTheme } from "./defaultValues";
 
 const trialEndDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -15,9 +10,12 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   async addUserToEnterprise(
     userId: number,
     enterpriseId: number,
-    trx?: any
+    trx?: any,
   ): Promise<void> {
-    await this.connection("user_enterprises")
+    const query = trx
+      ? trx("user_enterprises")
+      : this.connection("user_enterprises");
+    await query
       .insert({ user_id: userId, enterprise_id: enterpriseId })
       .returning("*");
   }
@@ -36,7 +34,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
     data: Omit<
       import("../../entities/Enterprise").EnterpriseDTO,
       "id" | "created_at" | "updated_at" | "deleted_at"
-    >
+    >,
   ): Promise<Enterprise> {
     const [row] = await this.connection("enterprises")
       .insert({ ...data })
@@ -54,7 +52,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   async updateEnterprise(
     data: Partial<import("../../entities/Enterprise").EnterpriseDTO> & {
       id: number;
-    }
+    },
   ): Promise<Enterprise> {
     const { id, ...fields } = data;
     await this.connection("enterprises").where({ id }).update(fields);
@@ -84,7 +82,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   async addEnterpriseWithDefaultTemplate(
     data: EnterpriseWithDefaultTemplate & { trx?: any } & {
       phone: string;
-    }
+    },
   ): Promise<{ enterprise: Enterprise }> {
     const {
       name,
@@ -112,7 +110,6 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
         subdomain: subdomain,
         cover: cover,
         description: description,
-        auto_approve: true,
       };
 
       const [insertedEnterprise] = await transaction("enterprises")
@@ -129,23 +126,31 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
 
       // Criar tema light
 
-      const [lightBrandingInserted] = await transaction("branding")
-        .insert(lightTheme(name, insertedEnterprise))
-        .returning("*");
+      // Se não foi fornecido plan_price_id, buscar plano Free
+      let finalPlanPriceId = plan_price_id;
+      if (!finalPlanPriceId) {
+        const freePlan = await transaction("plans")
+          .where({ name: "Free" })
+          .first();
 
-      const [darkBrandingInserted] = await transaction("branding")
-        .insert(darkTheme(name, insertedEnterprise))
-        .returning("*");
+        if (freePlan) {
+          const freePlanPrice = await transaction("plan_prices")
+            .where({ plan_id: freePlan.id })
+            .first();
 
-      // Configurar horários padrão (segunda a sexta, 8:00 às 18:00)
+          if (freePlanPrice) {
+            finalPlanPriceId = freePlanPrice.id;
+          }
+        }
+      }
 
-      await transaction("subscription").insert({
+      await transaction("subscriptions").insert({
         enterprise_id: insertedEnterprise.id,
         status: "active",
         start_date: new Date(),
         end_date: trialEndDate,
         trial_end_date: trialEndDate,
-        plan_price_id: plan_price_id,
+        plan_price_id: finalPlanPriceId,
       });
 
       // Se não foi fornecida uma transação externa, fazer commit
@@ -157,7 +162,6 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
         enterprise: new Enterprise({
           ...insertedEnterprise,
           phones: phoneInserted,
-          branding: [lightBrandingInserted, darkBrandingInserted],
         }),
       };
     } catch (error) {
