@@ -134,6 +134,8 @@ container.bind(Registry.EnterpriseGateway).toDynamicValue((context) => {
 container.bind(Registry.EnterpriseController).toDynamicValue((context) => {
   return new EnterpriseController(
     context.container.get(Registry.EnterpriseGateway),
+    context.container.get(Registry.CloudFlareAdapter),
+    context.container.get(Registry.VercelAdapter),
   );
 });
 

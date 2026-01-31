@@ -3,6 +3,8 @@ import Enterprise, {
   EnterpriseWithDefaultTemplate,
 } from "../entities/Enterprise";
 import IEnterpriseGateway from "../gateway/EnterpriseGateway/IEnterpriseGateway";
+import CloudFlareAdapter from "../infra/SubDomain/CloudFlareAdapter";
+import VercelAdapter from "../infra/SubDomain/VercelAdapter";
 import IController from "./IController";
 
 interface IEnterpriseController extends IController {
@@ -21,7 +23,11 @@ interface IEnterpriseController extends IController {
 }
 
 export default class EnterpriseController implements IEnterpriseController {
-  constructor(readonly enterpriseGateway: IEnterpriseGateway) {}
+  constructor(
+    readonly enterpriseGateway: IEnterpriseGateway,
+    readonly cloudFlareAdapter: CloudFlareAdapter,
+    readonly vercelAdapter: VercelAdapter,
+  ) {}
 
   async store(data: EnterpriseDTO): Promise<EnterpriseDTO> {
     return await this.enterpriseGateway.addEnterprise(data);
@@ -64,6 +70,22 @@ export default class EnterpriseController implements IEnterpriseController {
   async storeWithDefaultTemplate(
     data: EnterpriseWithDefaultTemplate & { trx?: any },
   ): Promise<{ enterprise: Enterprise }> {
+    if (!data.subdomain) {
+      throw new Error("Subdomain ausente para configuracao.");
+    }
+
+    const vercelOk = await this.vercelAdapter.addSubdomain(data.subdomain);
+    if (!vercelOk) {
+      throw new Error("Falha ao configurar subdominio na Vercel.");
+    }
+
+    const cloudflareOk = await this.cloudFlareAdapter.createSubdomain(
+      data.subdomain,
+    );
+    if (!cloudflareOk) {
+      throw new Error("Falha ao configurar subdominio na Cloudflare.");
+    }
+
     return await this.enterpriseGateway.addEnterpriseWithDefaultTemplate(data);
   }
 
