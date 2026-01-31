@@ -14,7 +14,7 @@ export default class VercelAdapter {
   async addSubdomain(subdomain: string): Promise<boolean> {
     if (process.env.NODE_ENV === "development") {
       console.log(
-        `🔧 [DEV] Simulando adição do subdomínio '${subdomain}.agende7.com'`
+        `🔧 [DEV] Simulando adição do subdomínio '${subdomain}.app.mentionone.com'`
       );
       return true;
     }
@@ -26,7 +26,7 @@ export default class VercelAdapter {
         );
       }
 
-      const domain = `${subdomain}.agende7.com`;
+      const domain = `${subdomain}.app.mentionone.com`;
 
       const response = await this.httpClient.post(
         `${VERCEL_API_URL}/projects/${VERCEL_PROJECT_ID}/domains`,

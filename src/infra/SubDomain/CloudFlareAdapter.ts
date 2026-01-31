@@ -14,7 +14,7 @@ export default class CloudFlareAdapter implements ISubDomain {
   async createSubdomain(subdomain: string): Promise<boolean> {
     if (process.env.NODE_ENV === "development") {
       console.log(
-        `🔧 [DEV] Simulando criação do subdomínio '${subdomain}.agende7.com'`
+        `🔧 [DEV] Simulando criação do subdomínio '${subdomain}.app.mentionone.com'`
       );
       return true;
     }
@@ -27,10 +27,10 @@ export default class CloudFlareAdapter implements ISubDomain {
       }
 
       const response = await this.httpClient.post(
-        `${CLOUDFLARE_API_URL}${CLOUDFLARE_ZONE_ID}/dns_records`,
+        `${CLOUDFLARE_API_URL}/zones/${CLOUDFLARE_ZONE_ID}/dns_records`,
         {
           type: "CNAME",
-          name: `${subdomain}`,
+          name: `${subdomain}.app`,
           content: "57cab917206c08a4.vercel-dns-017.com",
           ttl: 3600,
           proxied: false,
@@ -45,7 +45,7 @@ export default class CloudFlareAdapter implements ISubDomain {
 
       if (response.success) {
         console.log(
-          `✅ Subdomínio '${subdomain}.agende7.com' criado com sucesso!`
+          `✅ Subdomínio '${subdomain}.app.mentionone.com' criado com sucesso!`
         );
         return true;
       } else {
