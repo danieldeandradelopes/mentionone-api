@@ -14,6 +14,8 @@ interface IUserControler {
     accessLevel: "superadmin" | "admin" | "employee" | "customer";
     phone: string;
     enterpriseId: number;
+    trx?: any;
+    commitTransaction?: boolean;
   }): Promise<Authentication>;
   list(data: ListUsersRequest): Promise<PaginatedResult<User>>;
   get(id: number): Promise<User>;
@@ -58,10 +60,25 @@ export default class UserController implements IUserControler {
     accessLevel: "superadmin" | "admin" | "employee" | "customer";
     phone: string;
     enterpriseId: number;
+    trx?: any;
+    commitTransaction?: boolean;
   }): Promise<Authentication> {
-    const { name, email, password, accessLevel, phone, enterpriseId } = data;
+    const {
+      name,
+      email,
+      password,
+      accessLevel,
+      phone,
+      enterpriseId,
+      trx: externalTrx,
+      commitTransaction,
+    } = data;
 
-    const trx = await this.userGateway.getTransaction();
+    const trx = externalTrx || (await this.userGateway.getTransaction());
+    const shouldCommit =
+      typeof commitTransaction === "boolean"
+        ? commitTransaction
+        : !externalTrx;
 
     try {
       const user = await this.userGateway.addUser(
@@ -81,7 +98,9 @@ export default class UserController implements IUserControler {
         trx
       );
 
-      await trx.commit();
+      if (shouldCommit) {
+        await trx.commit();
+      }
 
       const auth = await this.authGateway.makeLogin(
         email,
@@ -91,7 +110,9 @@ export default class UserController implements IUserControler {
 
       return auth;
     } catch (error) {
-      await trx.rollback();
+      if (shouldCommit) {
+        await trx.rollback();
+      }
       throw error;
     }
   }
