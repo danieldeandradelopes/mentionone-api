@@ -74,19 +74,40 @@ export default class EnterpriseController implements IEnterpriseController {
       throw new Error("Subdomain ausente para configuracao.");
     }
 
-    const vercelOk = await this.vercelAdapter.addSubdomain(data.subdomain);
-    if (!vercelOk) {
-      throw new Error("Falha ao configurar subdominio na Vercel.");
-    }
+    const trx = data.trx || (await this.enterpriseGateway.getTransaction());
+    const shouldCommit = !data.trx;
 
-    const cloudflareOk = await this.cloudFlareAdapter.createSubdomain(
-      data.subdomain,
-    );
-    if (!cloudflareOk) {
-      throw new Error("Falha ao configurar subdominio na Cloudflare.");
-    }
+    try {
+      const result = await this.enterpriseGateway.addEnterpriseWithDefaultTemplate(
+        {
+          ...data,
+          trx,
+        },
+      );
 
-    return await this.enterpriseGateway.addEnterpriseWithDefaultTemplate(data);
+      const vercelOk = await this.vercelAdapter.addSubdomain(data.subdomain);
+      if (!vercelOk) {
+        throw new Error("Falha ao configurar subdominio na Vercel.");
+      }
+
+      const cloudflareOk = await this.cloudFlareAdapter.createSubdomain(
+        data.subdomain,
+      );
+      if (!cloudflareOk) {
+        throw new Error("Falha ao configurar subdominio na Cloudflare.");
+      }
+
+      if (shouldCommit) {
+        await trx.commit();
+      }
+
+      return result;
+    } catch (error) {
+      if (shouldCommit) {
+        await trx.rollback();
+      }
+      throw error;
+    }
   }
 
   async addUserToEnterprise(
