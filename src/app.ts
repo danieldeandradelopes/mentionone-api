@@ -19,8 +19,9 @@ app.use(
 
       const mentionOneRegex =
         /^https?:\/\/([a-z0-9-]+\.)*app\.mentionone\.com$/i;
+      const mentionOneRootRegex = /^https?:\/\/mentionone\.com$/i;
 
-      if (mentionOneRegex.test(origin)) {
+      if (mentionOneRegex.test(origin) || mentionOneRootRegex.test(origin)) {
         return callback(null, true);
       }
 
