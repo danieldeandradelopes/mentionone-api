@@ -109,6 +109,9 @@ publicRoutes.post(
 publicRoutes.post(
   "/public/signup-free",
   async (request: Request, response: Response, next: NextFunction) => {
+    const knexConfig = container.get<any>(Registry.KnexConfig);
+    const trx = await knexConfig.transaction();
+
     try {
       const enterpriseController = container.get<EnterpriseController>(
         Registry.EnterpriseController,
@@ -137,11 +140,14 @@ publicRoutes.post(
         address: "",
         phone: phone || "",
         description: "",
-        subdomain: subdomain ? sanitizeSubdomain(subdomain) : sanitizeSubdomain(companyName),
+        subdomain: subdomain
+          ? sanitizeSubdomain(subdomain)
+          : sanitizeSubdomain(companyName),
         email,
         document,
         document_type,
         timezone: "America/Sao_Paulo",
+        trx,
       } as any);
 
       const auth = await userController.store({
@@ -151,10 +157,15 @@ publicRoutes.post(
         accessLevel: "admin",
         phone: phone || "",
         enterpriseId: enterprise.enterprise.id,
+        trx,
+        commitTransaction: true,
       });
 
       return response.status(201).json(auth);
     } catch (error) {
+      if (typeof trx?.isCompleted === "function" && !trx.isCompleted()) {
+        await trx.rollback();
+      }
       next(error);
     }
   },
@@ -163,6 +174,9 @@ publicRoutes.post(
 publicRoutes.post(
   "/public/checkout",
   async (request: Request, response: Response, next: NextFunction) => {
+    const knexConfig = container.get<any>(Registry.KnexConfig);
+    const trx = await knexConfig.transaction();
+
     try {
       const enterpriseController = container.get<EnterpriseController>(
         Registry.EnterpriseController,
@@ -197,12 +211,15 @@ publicRoutes.post(
         address: holder?.address || "",
         phone: phone || "",
         description: "",
-        subdomain: subdomain ? sanitizeSubdomain(subdomain) : sanitizeSubdomain(companyName),
+        subdomain: subdomain
+          ? sanitizeSubdomain(subdomain)
+          : sanitizeSubdomain(companyName),
         email,
         document,
         document_type,
         plan_price_id,
         timezone: "America/Sao_Paulo",
+        trx,
       } as any);
 
       const auth = await userController.store({
@@ -212,6 +229,8 @@ publicRoutes.post(
         accessLevel: "admin",
         phone: phone || "",
         enterpriseId: enterprise.enterprise.id,
+        trx,
+        commitTransaction: true,
       });
 
       const payment = await paymentsController.createTransparentCheckout({
@@ -223,6 +242,9 @@ publicRoutes.post(
 
       return response.status(201).json({ auth, payment });
     } catch (error) {
+      if (typeof trx?.isCompleted === "function" && !trx.isCompleted()) {
+        await trx.rollback();
+      }
       next(error);
     }
   },

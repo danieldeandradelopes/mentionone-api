@@ -27,6 +27,6 @@ export default interface IEnterpriseGateway {
     trx?: any,
   ): Promise<void>;
   addEnterpriseWithDefaultTemplate(
-    data: EnterpriseWithDefaultTemplate,
+    data: EnterpriseWithDefaultTemplate & { trx?: any },
   ): Promise<{ enterprise: Enterprise }>;
 }

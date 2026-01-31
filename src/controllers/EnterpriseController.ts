@@ -7,7 +7,9 @@ import IController from "./IController";
 
 interface IEnterpriseController extends IController {
   getBySubdomain(subdomain: string): Promise<any>;
-  storeWithDefaultTemplate(data: EnterpriseWithDefaultTemplate): Promise<{
+  storeWithDefaultTemplate(
+    data: EnterpriseWithDefaultTemplate & { trx?: any },
+  ): Promise<{
     enterprise: Enterprise;
   }>;
   list(): Promise<Enterprise[]>;
@@ -60,7 +62,7 @@ export default class EnterpriseController implements IEnterpriseController {
   }
 
   async storeWithDefaultTemplate(
-    data: EnterpriseWithDefaultTemplate,
+    data: EnterpriseWithDefaultTemplate & { trx?: any },
   ): Promise<{ enterprise: Enterprise }> {
     return await this.enterpriseGateway.addEnterpriseWithDefaultTemplate(data);
   }
