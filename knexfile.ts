@@ -1,11 +1,15 @@
 import type { Knex } from "knex";
 import dotenv from "dotenv";
+import fs from "fs";
 import path from "path";
 
 // Carrega variáveis de ambiente do arquivo .env apropriado
 const env = process.env.NODE_ENV || "development";
 const envFile = env === "development" ? ".env.development" : `.env.${env}`;
-dotenv.config({ path: path.resolve(process.cwd(), envFile) });
+const envPath = path.resolve(process.cwd(), envFile);
+const fallbackEnvPath = path.resolve(process.cwd(), ".env");
+const finalEnvPath = fs.existsSync(envPath) ? envPath : fallbackEnvPath;
+dotenv.config({ path: finalEnvPath });
 
 // Função auxiliar para obter variáveis de ambiente com fallback
 const getEnv = (key: string, defaultValue?: string): string => {
@@ -62,9 +66,11 @@ const config: { [key: string]: Knex.Config } = {
       user: getEnv("DB_USER"),
       password: getEnv("DB_PASSWORD"),
       database: getEnv("DB_DATABASE"),
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      ssl: getEnvBoolean("DB_SSL")
+        ? {
+            rejectUnauthorized: false,
+          }
+        : undefined,
     },
     pool: {
       min: getEnvNumber("DB_POOL_MIN", 2),
@@ -87,9 +93,11 @@ const config: { [key: string]: Knex.Config } = {
       user: getEnv("DB_USER"),
       password: getEnv("DB_PASSWORD"),
       database: getEnv("DB_DATABASE"),
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      ssl: getEnvBoolean("DB_SSL")
+        ? {
+            rejectUnauthorized: false,
+          }
+        : undefined,
     },
     pool: {
       min: getEnvNumber("DB_POOL_MIN", 2),
