@@ -5,12 +5,19 @@ import IEnterpriseGateway from "./IEnterpriseGateway";
 
 const trialEndDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000);
 
+const sanitizeSlug = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/([\u0300-\u036f]|[^0-9a-zA-Z\s-])/g, "")
+    .replace(/\s+/g, "-")
+    .toLowerCase();
+
 export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   constructor(readonly connection: any) {}
   async addUserToEnterprise(
     userId: number,
     enterpriseId: number,
-    trx?: any,
+    trx?: any
   ): Promise<void> {
     const query = trx
       ? trx("user_enterprises")
@@ -34,7 +41,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
     data: Omit<
       import("../../entities/Enterprise").EnterpriseDTO,
       "id" | "created_at" | "updated_at" | "deleted_at"
-    >,
+    >
   ): Promise<Enterprise> {
     const [row] = await this.connection("enterprises")
       .insert({ ...data })
@@ -52,7 +59,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   async updateEnterprise(
     data: Partial<import("../../entities/Enterprise").EnterpriseDTO> & {
       id: number;
-    },
+    }
   ): Promise<Enterprise> {
     const { id, ...fields } = data;
     await this.connection("enterprises").where({ id }).update(fields);
@@ -82,7 +89,7 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   async addEnterpriseWithDefaultTemplate(
     data: EnterpriseWithDefaultTemplate & { trx?: any } & {
       phone: string;
-    },
+    }
   ): Promise<{ enterprise: Enterprise }> {
     const {
       name,
@@ -124,7 +131,29 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
         })
         .returning("*");
 
-      // Criar tema light
+      const defaultBoxName = "Caixa de teste";
+      const defaultBoxSlug = sanitizeSlug(
+        `${defaultBoxName}-${insertedEnterprise.id}`
+      );
+
+      const [insertedBox] = await transaction("boxes")
+        .insert({
+          enterprise_id: insertedEnterprise.id,
+          name: defaultBoxName,
+          slug: defaultBoxSlug,
+        })
+        .returning("*");
+
+      await transaction("feedbacks").insert({
+        enterprise_id: insertedEnterprise.id,
+        box_id: insertedBox.id,
+        text: "Este e um feedback de teste.",
+        category: "teste",
+        status: "pending",
+        response: null,
+        rating: null,
+        attachments: null,
+      });
 
       // Se não foi fornecido plan_price_id, buscar plano Free
       let finalPlanPriceId = plan_price_id;
