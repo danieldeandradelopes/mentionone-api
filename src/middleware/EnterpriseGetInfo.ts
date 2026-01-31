@@ -18,13 +18,15 @@ const getSubdomain = (origin?: string) => {
 const EnterpriseGetInfo = async (
   request: Request,
   response: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const subdomain =
       process.env.NODE_ENV === "production"
         ? getSubdomain(request.headers.origin)
         : process.env.ENTERPRISE_SUBDOMAIN;
+
+    console.log(subdomain);
 
     // Se o subdomain estiver na lista de skip (ex: "admin"), permite continuar sem enterprise_id
     // Isso permite login de superadmin
@@ -44,7 +46,7 @@ const EnterpriseGetInfo = async (
     }
 
     const EnterpriseController = container.get<EnterpriseController>(
-      Registry.EnterpriseController,
+      Registry.EnterpriseController
     );
     const enterprise = await EnterpriseController.getBySubdomain(subdomain);
 
