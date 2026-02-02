@@ -16,7 +16,7 @@
     "migration:run": "NODE_ENV=development knex migrate:latest",
     "migration:up": "knex migrate:up",
     "seed:create": "knex seed:make",
-    "seed:run": "NODE_ENV=development knex seed:run",
+    "seed:run": "NODE_ENV=production knex seed:run",
     "seed:master": "knex seed:run --specific=00-populate-mentionone-demo.ts",
     "seed:clean": "knex seed:run --specific=00-populate-mentionone-demo.ts",
     "seed:reset": "knex migrate:rollback --all && knex migrate:latest && knex seed:run --specific=00-populate-mentionone-demo.ts",
