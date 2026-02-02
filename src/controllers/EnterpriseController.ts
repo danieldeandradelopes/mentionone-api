@@ -10,7 +10,7 @@ import IController from "./IController";
 interface IEnterpriseController extends IController {
   getBySubdomain(subdomain: string): Promise<any>;
   storeWithDefaultTemplate(
-    data: EnterpriseWithDefaultTemplate & { trx?: any },
+    data: EnterpriseWithDefaultTemplate & { trx?: any }
   ): Promise<{
     enterprise: Enterprise;
   }>;
@@ -18,7 +18,7 @@ interface IEnterpriseController extends IController {
   addUserToEnterprise(
     userId: number,
     enterpriseId: number,
-    trx?: any,
+    trx?: any
   ): Promise<void>;
 }
 
@@ -26,7 +26,7 @@ export default class EnterpriseController implements IEnterpriseController {
   constructor(
     readonly enterpriseGateway: IEnterpriseGateway,
     readonly cloudFlareAdapter: CloudFlareAdapter,
-    readonly vercelAdapter: VercelAdapter,
+    readonly vercelAdapter: VercelAdapter
   ) {}
 
   async store(data: EnterpriseDTO): Promise<EnterpriseDTO> {
@@ -43,22 +43,20 @@ export default class EnterpriseController implements IEnterpriseController {
   }
 
   async getBySubdomain(subdomain: string | null): Promise<EnterpriseDTO> {
-    const enterprise =
-      await this.enterpriseGateway.getEnterpriseByDomain(subdomain);
+    const enterprise = await this.enterpriseGateway.getEnterpriseByDomain(
+      subdomain
+    );
     return enterprise;
   }
 
   async update(
-    data: Partial<EnterpriseDTO> & { id: number },
+    data: Partial<EnterpriseDTO> & { id: number }
   ): Promise<EnterpriseDTO> {
     return await this.enterpriseGateway.updateEnterprise(data);
   }
 
   async create(
-    data: Omit<
-      EnterpriseDTO,
-      "id" | "created_at" | "updated_at" | "deleted_at"
-    >,
+    data: Omit<EnterpriseDTO, "id" | "created_at" | "updated_at" | "deleted_at">
   ): Promise<EnterpriseDTO> {
     return await this.enterpriseGateway.addEnterprise(data);
   }
@@ -68,7 +66,7 @@ export default class EnterpriseController implements IEnterpriseController {
   }
 
   async storeWithDefaultTemplate(
-    data: EnterpriseWithDefaultTemplate & { trx?: any },
+    data: EnterpriseWithDefaultTemplate & { trx?: any }
   ): Promise<{ enterprise: Enterprise }> {
     if (!data.subdomain) {
       throw new Error("Subdomain ausente para configuracao.");
@@ -78,12 +76,11 @@ export default class EnterpriseController implements IEnterpriseController {
     const shouldCommit = !data.trx;
 
     try {
-      const result = await this.enterpriseGateway.addEnterpriseWithDefaultTemplate(
-        {
+      const result =
+        await this.enterpriseGateway.addEnterpriseWithDefaultTemplate({
           ...data,
           trx,
-        },
-      );
+        });
 
       const vercelOk = await this.vercelAdapter.addSubdomain(data.subdomain);
       if (!vercelOk) {
@@ -91,7 +88,7 @@ export default class EnterpriseController implements IEnterpriseController {
       }
 
       const cloudflareOk = await this.cloudFlareAdapter.createSubdomain(
-        data.subdomain,
+        data.subdomain
       );
       if (!cloudflareOk) {
         throw new Error("Falha ao configurar subdominio na Cloudflare.");
@@ -113,12 +110,12 @@ export default class EnterpriseController implements IEnterpriseController {
   async addUserToEnterprise(
     userId: number,
     enterpriseId: number,
-    trx?: any,
+    trx?: any
   ): Promise<void> {
     return await this.enterpriseGateway.addUserToEnterprise(
       userId,
       enterpriseId,
-      trx,
+      trx
     );
   }
 }
