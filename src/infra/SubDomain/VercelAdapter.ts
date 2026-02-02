@@ -2,7 +2,6 @@ import HttpClient from "../Http/HttpClient";
 
 const VERCEL_API_TOKEN = process.env.VERCEL_API_TOKEN;
 const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
-const VERCEL_TEAM_ID = process.env.VERCEL_TEAM_ID;
 const VERCEL_API_URL = "https://api.vercel.com/v9";
 
 export default class VercelAdapter {
@@ -28,10 +27,9 @@ export default class VercelAdapter {
       }
 
       const domain = `${subdomain}.app.mentionone.com`;
-      const teamQuery = VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : "";
 
       const response = await this.httpClient.post(
-        `${VERCEL_API_URL}/projects/${VERCEL_PROJECT_ID}/domains${teamQuery}`,
+        `${VERCEL_API_URL}/projects/${VERCEL_PROJECT_ID}/domains`,
         { name: domain },
         {
           headers: {
@@ -42,24 +40,6 @@ export default class VercelAdapter {
       );
 
       if (response && !response.error) {
-        const check = await this.httpClient.get(
-          `${VERCEL_API_URL}/projects/${VERCEL_PROJECT_ID}/domains/${domain}${teamQuery}`,
-          {
-            headers: {
-              Authorization: `Bearer ${VERCEL_API_TOKEN}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!check || check.error) {
-          console.error(
-            "❌ Dominio nao encontrado no projeto apos criar:",
-            check?.error || check
-          );
-          return false;
-        }
-
         console.log(
           `✅ Subdomínio '${domain}' adicionado ao projeto Vercel com sucesso!`
         );
