@@ -23,6 +23,7 @@ interface IUserControler {
   getUserByEmail(email: string): Promise<User>;
   update(data: UserUpdate): Promise<User>;
   updatePhone(id: number, phone: string): Promise<User>;
+  completeOnboarding(userId: number, enterpriseId: number): Promise<void>;
 }
 
 type UserUpdate = {
@@ -51,6 +52,10 @@ export default class UserController implements IUserControler {
     const userSession = await this.userGateway.getUserSession(id, userId);
 
     return userSession;
+  }
+
+  async completeOnboarding(userId: number, enterpriseId: number): Promise<void> {
+    await this.userGateway.setOnboardingCompleted(userId, enterpriseId);
   }
 
   async store(data: {

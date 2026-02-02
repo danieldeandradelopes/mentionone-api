@@ -11,12 +11,12 @@ export default class KnexUserGateway implements IUserGateway {
   constructor(
     readonly connection: any,
     readonly Encrypt: IEncrypt,
-    readonly jwtSign: IJwtAssign
+    readonly jwtSign: IJwtAssign,
   ) {}
 
   async getUserSession(
     userId: number,
-    enterpriseId: number
+    enterpriseId: number,
   ): Promise<UserSession> {
     const user = await this.connection("users").where("id", userId).first();
 
@@ -24,12 +24,12 @@ export default class KnexUserGateway implements IUserGateway {
       throw new HttpException(404, "User not found");
     }
 
-    const Enterprise = await this.connection("Enterprise")
+    const enterpriseRow = await this.connection("enterprises")
       .where("id", enterpriseId)
       .first();
 
-    if (!Enterprise) {
-      throw new HttpException(404, "Barber shop not found");
+    if (!enterpriseRow) {
+      throw new HttpException(404, "Enterprise not found");
     }
 
     const formattedUser = { ...user };
@@ -41,14 +41,14 @@ export default class KnexUserGateway implements IUserGateway {
     if (enterpriseId) {
       const EnterpriseData = await this.connection
         .select(
-          "Enterprise.id",
-          "Enterprise.name",
-          "Enterprise.address",
-          "Enterprise.description",
-          "Enterprise.cover"
+          "enterprises.id",
+          "enterprises.name",
+          "enterprises.address",
+          "enterprises.description",
+          "enterprises.cover",
         )
-        .from("Enterprise")
-        .where("Enterprise.id", enterpriseId)
+        .from("enterprises")
+        .where("enterprises.id", enterpriseId)
         .first();
 
       const phones = await this.connection
@@ -65,68 +65,46 @@ export default class KnexUserGateway implements IUserGateway {
       }));
 
       if (EnterpriseData) {
-        // Se for barbeiro ou admin, buscar informações adicionais
-
-        const barberInfo = await this.connection
-          .select("barbers.specialties", "barbers.bio", "barbers.rate")
-          .from("barbers")
-          .where({
-            enterprise_id: enterpriseId,
-            user_id: user.id,
-          })
-          .first();
-
-        if (barberInfo) {
-          EnterpriseData.specialties = barberInfo.specialties;
-          EnterpriseData.bio = barberInfo.bio;
-          EnterpriseData.rate = barberInfo.rate;
-        }
-
-        // Buscar horários de funcionamento
-        const workingHours = await this.connection
-          .select("working_hours.*")
-          .from("working_hours")
-          .where("enterprise_id", EnterpriseData.id)
-          .orderBy("week_day");
-
-        // Buscar slots de horário para cada dia
-        const workingHoursWithSlots = await Promise.all(
-          workingHours.map(async (wh: any) => {
-            const timeSlots = await this.connection("working_hours_time_slots")
-              .select("time_slot")
-              .where("working_hours_id", wh.id)
-              .orderBy("time_slot");
-
-            return {
-              id: wh.id,
-              week_day: wh.week_day,
-              time_slots: timeSlots.map((slot: any) => slot.time_slot),
-              is_open: wh.is_open,
-              created_at: wh.created_at,
-              updated_at: wh.updated_at,
-            };
-          })
-        );
-
         formattedEnterprise = {
           ...EnterpriseData,
-          working_hours: workingHoursWithSlots,
           phones: formattedPhones,
         };
       }
     }
 
+    const onboardingCompletedAt = enterpriseRow?.onboarding_completed_at
+      ? new Date(enterpriseRow.onboarding_completed_at).toISOString()
+      : null;
+
     const userSession = new UserSession({
       user: formattedUser,
       Enterprise: formattedEnterprise,
+      onboarding_completed_at: onboardingCompletedAt,
     });
 
     return userSession;
   }
 
+  async setOnboardingCompleted(
+    userId: number,
+    enterpriseId: number,
+  ): Promise<void> {
+    await this.connection("enterprises")
+      .where("id", enterpriseId)
+      .update({ onboarding_completed_at: new Date() });
+  }
+
+  async getFirstEnterpriseIdByUserId(userId: number): Promise<number | null> {
+    const row = await this.connection("user_enterprises")
+      .where("user_id", userId)
+      .orderBy("id", "asc")
+      .first();
+    return row ? row.enterprise_id : null;
+  }
+
   async getUsers(
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<PaginatedResult<User>> {
     // Validação dos parâmetros
     if (page < 1) page = 1;
@@ -151,7 +129,7 @@ export default class KnexUserGateway implements IUserGateway {
         "phone",
         "avatar",
         "created_at",
-        "updated_at"
+        "updated_at",
       )
       .from("users")
       .orderBy("id")
@@ -183,7 +161,7 @@ export default class KnexUserGateway implements IUserGateway {
     password: string,
     accessLevel: "superadmin" | "admin" | "employee" | "customer",
     phone: string,
-    trx?: any
+    trx?: any,
   ): Promise<User> {
     const newUser = {
       name: name,
@@ -362,7 +340,7 @@ export default class KnexUserGateway implements IUserGateway {
         new User({
           ...customer,
           id: customer.user_id,
-        })
+        }),
       );
     }
 

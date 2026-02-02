@@ -7,7 +7,10 @@ import { PaymentGatewayAdapter } from "../services/payments/PaymentGatewayAdapte
 import AsaasAdapter from "../services/payments/AsaasAdapter";
 import AsaasWebhookValidate from "../middleware/AsaasWebhookValidate";
 import MercadoPagoWebhookValidate from "../middleware/MercadoPagoWebhookValidate";
+import UserController from "../controllers/UserController";
+import IUserGateway from "../gateway/UserGateway/IUserGateway";
 import { RequirePayment } from "../middleware/RequirePayment";
+import Authenticate from "../middleware/Authenticate";
 import { limiter } from "../utils/limit";
 import { authRoutes } from "./auth.routes";
 import { boxesRoutes } from "./boxes.routes";
@@ -169,6 +172,40 @@ routes.use(customerRoutes);
 routes.use(planRoutes);
 routes.use(planPriceRoutes);
 routes.use(paymentsRoutes);
+
+// Concluir onboarding antes do RequirePayment (não exige subdomínio/pagamento)
+routes.put(
+  "/users/onboarding",
+  Authenticate,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      let enterpriseId: number | null | undefined = request.enterprise_id;
+      if (enterpriseId == null) {
+        const userGateway = container.get<IUserGateway>(Registry.UserGateway);
+        enterpriseId = await userGateway.getFirstEnterpriseIdByUserId(
+          request.user_id!,
+        );
+      }
+
+      if (enterpriseId == null) {
+        return response.status(400).json({
+          message: "Nenhuma empresa vinculada ao usuário.",
+        });
+      }
+      const enterpriseIdToUse: number = enterpriseId;
+      const userController = container.get<UserController>(
+        Registry.UserController,
+      );
+      await userController.completeOnboarding(
+        request.user_id!,
+        enterpriseIdToUse,
+      );
+      return response.status(200).json({ ok: true });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 routes.use(RequirePayment);
 

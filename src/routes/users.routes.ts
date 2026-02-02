@@ -86,6 +86,11 @@ userRoutes.get(
 );
 
 /**
+ * PATCH /users/onboarding está em index.routes.ts (antes do RequirePayment)
+ * para funcionar em dev sem subdomínio e com JWT sem enterprise_id.
+ */
+
+/**
  * @openapi
  * /users/{id}:
  *   get:

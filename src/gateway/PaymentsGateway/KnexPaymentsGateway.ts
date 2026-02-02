@@ -220,22 +220,20 @@ export default class KnexPaymentsGateway implements IPaymentsGateway {
   }
 
   async registerPayment(enterprise_id: number): Promise<void> {
-    const Enterprise = await this.connection("Enterprise")
-      .where({
-        enterprise_id: enterprise_id,
-      })
+    const enterpriseRow = await this.connection("enterprises")
+      .where("id", enterprise_id)
       .first();
 
-    if (!Enterprise) throw new Error("User not found");
+    if (!enterpriseRow) throw new Error("Enterprise not found");
 
     await this.connection("payments")
-      .insert({ user_id: Enterprise.id, payment_date: new Date() })
+      .insert({ user_id: enterpriseRow.id, payment_date: new Date() })
       .returning("*");
 
-    await this.connection("Enterprise")
-      .where("id", Enterprise.id)
+    await this.connection("enterprises")
+      .where("id", enterpriseRow.id)
       .update({
-        ...Enterprise,
+        ...enterpriseRow,
         status: "payed",
       })
       .returning("*");
