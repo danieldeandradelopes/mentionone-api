@@ -1,7 +1,7 @@
 import HttpClient from "../Http/HttpClient";
 
 const VERCEL_API_TOKEN = process.env.VERCEL_API_TOKEN;
-const VERCEL_PROJECT_ID = process.env.VERCEL_PROJECT_ID;
+const VERCEL_FRONT_PROJECT_ID = process.env.VERCEL_FRONT_PROJECT_ID;
 const VERCEL_API_URL = "https://api.vercel.com/v9";
 
 export default class VercelAdapter {
@@ -20,15 +20,15 @@ export default class VercelAdapter {
     }
 
     try {
-      if (!VERCEL_API_TOKEN || !VERCEL_PROJECT_ID) {
+      if (!VERCEL_API_TOKEN || !VERCEL_FRONT_PROJECT_ID) {
         throw new Error(
-          "❌ VERCEL_API_TOKEN ou VERCEL_PROJECT_ID não definidos nas variáveis de ambiente."
+          "❌ VERCEL_API_TOKEN ou VERCEL_FRONT_PROJECT_ID não definidos nas variáveis de ambiente."
         );
       }
 
       const domain = `${subdomain}.app.mentionone.com`;
       const project = await this.httpClient.get(
-        `${VERCEL_API_URL}/projects/${VERCEL_PROJECT_ID}`,
+        `${VERCEL_API_URL}/projects/${VERCEL_FRONT_PROJECT_ID}`,
         {
           Authorization: `Bearer ${VERCEL_API_TOKEN}`,
         }
@@ -42,12 +42,10 @@ export default class VercelAdapter {
         return false;
       }
 
-      console.log(
-        `ℹ️ Vercel project alvo: ${project.name || project.id}`
-      );
+      console.log(`ℹ️ Vercel project alvo: ${project.name || project.id}`);
 
       const response = await this.httpClient.post(
-        `${VERCEL_API_URL}/projects/${VERCEL_PROJECT_ID}/domains`,
+        `${VERCEL_API_URL}/projects/${VERCEL_FRONT_PROJECT_ID}/domains`,
         { name: domain },
         {
           headers: {
