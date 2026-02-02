@@ -27,6 +27,24 @@ export default class VercelAdapter {
       }
 
       const domain = `${subdomain}.app.mentionone.com`;
+      const project = await this.httpClient.get(
+        `${VERCEL_API_URL}/projects/${VERCEL_PROJECT_ID}`,
+        {
+          Authorization: `Bearer ${VERCEL_API_TOKEN}`,
+        }
+      );
+
+      if (!project || project.error) {
+        console.error(
+          "❌ Projeto Vercel nao encontrado para o ID informado:",
+          project?.error || project
+        );
+        return false;
+      }
+
+      console.log(
+        `ℹ️ Vercel project alvo: ${project.name || project.id}`
+      );
 
       const response = await this.httpClient.post(
         `${VERCEL_API_URL}/projects/${VERCEL_PROJECT_ID}/domains`,
