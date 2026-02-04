@@ -19,6 +19,8 @@ import customerRoutes from "./customer.routes";
 import { enterpriseRoutes } from "./enterprise.routes";
 import { feedbackRoutes } from "./feedback.routes";
 import { feedbackOptionsRoutes } from "./feedback-options.routes";
+import { branchesRoutes } from "./branches.routes";
+import { npsCampaignsRoutes } from "./nps-campaigns.routes";
 import { publicRoutes } from "./public.routes";
 import { manifestRoutes } from "./manifest.routes";
 import { paymentsRoutes } from "./payments.routes";
@@ -217,5 +219,7 @@ routes.use(subscriptionRoutes);
 routes.use(boxesRoutes);
 routes.use(feedbackRoutes);
 routes.use(feedbackOptionsRoutes);
+routes.use(branchesRoutes);
+routes.use(npsCampaignsRoutes);
 
 export default routes;

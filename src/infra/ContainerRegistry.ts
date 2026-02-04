@@ -71,6 +71,14 @@ export const Registry = {
   BoxBrandingController: Symbol.for("BoxBrandingController"),
   FeedbackOptionGateway: Symbol.for("FeedbackOptionGateway"),
   FeedbackOptionController: Symbol.for("FeedbackOptionController"),
+  BranchGateway: Symbol.for("BranchGateway"),
+  BranchController: Symbol.for("BranchController"),
+  NPSCampaignGateway: Symbol.for("NPSCampaignGateway"),
+  NPSQuestionGateway: Symbol.for("NPSQuestionGateway"),
+  NPSQuestionOptionGateway: Symbol.for("NPSQuestionOptionGateway"),
+  NPSResponseGateway: Symbol.for("NPSResponseGateway"),
+  NPSCampaignController: Symbol.for("NPSCampaignController"),
+  NPSResponseController: Symbol.for("NPSResponseController"),
   PaymentGatewayAdapter: Symbol.for("PaymentGatewayAdapter"),
 };
 
@@ -290,5 +298,63 @@ container.bind(Registry.FeedbackOptionController).toDynamicValue((context) => {
     require("../controllers/FeedbackOptionController").default;
   return new FeedbackOptionController(
     container.get(Registry.FeedbackOptionGateway),
+  );
+});
+
+container.bind(Registry.BranchGateway).toDynamicValue(() => {
+  return new (require("../gateway/BranchGateway/KnexBranchGateway").KnexBranchGateway)(
+    container.get(Registry.KnexConfig),
+  );
+});
+
+container.bind(Registry.BranchController).toDynamicValue(() => {
+  const BranchController = require("../controllers/BranchController").default;
+  return new BranchController(container.get(Registry.BranchGateway));
+});
+
+container.bind(Registry.NPSCampaignGateway).toDynamicValue(() => {
+  return new (require("../gateway/NPSCampaignGateway/KnexNPSCampaignGateway").KnexNPSCampaignGateway)(
+    container.get(Registry.KnexConfig),
+  );
+});
+
+container.bind(Registry.NPSQuestionGateway).toDynamicValue(() => {
+  return new (require("../gateway/NPSQuestionGateway/KnexNPSQuestionGateway").KnexNPSQuestionGateway)(
+    container.get(Registry.KnexConfig),
+  );
+});
+
+container.bind(Registry.NPSQuestionOptionGateway).toDynamicValue(() => {
+  return new (require("../gateway/NPSQuestionOptionGateway/KnexNPSQuestionOptionGateway").KnexNPSQuestionOptionGateway)(
+    container.get(Registry.KnexConfig),
+  );
+});
+
+container.bind(Registry.NPSResponseGateway).toDynamicValue(() => {
+  return new (require("../gateway/NPSResponseGateway/KnexNPSResponseGateway").KnexNPSResponseGateway)(
+    container.get(Registry.KnexConfig),
+  );
+});
+
+container.bind(Registry.NPSCampaignController).toDynamicValue(() => {
+  const NPSCampaignController =
+    require("../controllers/NPSCampaignController").default;
+  return new NPSCampaignController(
+    container.get(Registry.NPSCampaignGateway),
+    container.get(Registry.NPSQuestionGateway),
+    container.get(Registry.NPSQuestionOptionGateway),
+  );
+});
+
+container.bind(Registry.NPSResponseController).toDynamicValue(() => {
+  const NPSResponseController =
+    require("../controllers/NPSResponseController").default;
+  return new NPSResponseController(
+    container.get(Registry.NPSCampaignGateway),
+    container.get(Registry.NPSQuestionGateway),
+    container.get(Registry.NPSQuestionOptionGateway),
+    container.get(Registry.NPSResponseGateway),
+    container.get(Registry.BranchGateway),
+    container.get(Registry.KnexConfig),
   );
 });

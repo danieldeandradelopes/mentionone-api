@@ -21,6 +21,7 @@ type IdEmail = { id: number; email: string };
 type EnterpriseRow = { id: number; name: string; subdomain: string | null };
 type PlanPriceRow = { id: number; plan_id: number };
 type BoxRow = { id: number; slug: string; enterprise_id: number };
+type BranchRow = { id: number; enterprise_id: number; slug: string };
 
 const planInputs: PlanInput[] = [
   {
@@ -89,12 +90,10 @@ async function upsertPlan(knex: Knex, plan: PlanInput): Promise<IdName> {
     return created;
   }
 
-  await knex("plans")
-    .where({ id: existing.id })
-    .update({
-      description: plan.description,
-      features,
-    });
+  await knex("plans").where({ id: existing.id }).update({
+    description: plan.description,
+    features,
+  });
 
   return existing;
 }
@@ -130,7 +129,9 @@ async function upsertPlanPrice(
 
 async function upsertUser(knex: Knex): Promise<IdEmail> {
   const passwordHash = bcrypt.hashSync(superadminPassword, 8);
-  const existing = await knex("users").where({ email: superadminEmail }).first();
+  const existing = await knex("users")
+    .where({ email: superadminEmail })
+    .first();
 
   if (!existing) {
     const [created] = (await knex("users")
@@ -144,13 +145,11 @@ async function upsertUser(knex: Knex): Promise<IdEmail> {
     return created;
   }
 
-  await knex("users")
-    .where({ id: existing.id })
-    .update({
-      name: "Daniel de Andrade Lopes",
-      password: passwordHash,
-      access_level: "superadmin",
-    });
+  await knex("users").where({ id: existing.id }).update({
+    name: "Daniel de Andrade Lopes",
+    password: passwordHash,
+    access_level: "superadmin",
+  });
 
   return existing;
 }
@@ -171,13 +170,11 @@ async function upsertAdminUser(knex: Knex): Promise<IdEmail> {
     return created;
   }
 
-  await knex("users")
-    .where({ id: existing.id })
-    .update({
-      name: "Admin MentionOne",
-      password: passwordHash,
-      access_level: "admin",
-    });
+  await knex("users").where({ id: existing.id }).update({
+    name: "Admin MentionOne",
+    password: passwordHash,
+    access_level: "admin",
+  });
 
   return existing;
 }
@@ -273,18 +270,59 @@ async function upsertSubscription(
     return;
   }
 
-  await knex("subscriptions")
+  await knex("subscriptions").where({ id: existing.id }).update({
+    plan_price_id: planPriceId,
+    start_date: startDate,
+    end_date: endDate,
+  });
+}
+
+async function upsertBranch(
+  knex: Knex,
+  input: {
+    enterprise_id: number;
+    name: string;
+    slug: string;
+    address?: string | null;
+  },
+): Promise<BranchRow> {
+  const existing = await knex("branches")
+    .where({ enterprise_id: input.enterprise_id, slug: input.slug })
+    .first();
+
+  if (!existing) {
+    const [created] = (await knex("branches")
+      .insert({
+        enterprise_id: input.enterprise_id,
+        name: input.name,
+        slug: input.slug,
+        address: input.address ?? null,
+        created_at: new Date(),
+        updated_at: new Date(),
+      })
+      .returning(["id", "enterprise_id", "slug"])) as BranchRow[];
+    return created;
+  }
+
+  await knex("branches")
     .where({ id: existing.id })
     .update({
-      plan_price_id: planPriceId,
-      start_date: startDate,
-      end_date: endDate,
+      name: input.name,
+      address: input.address ?? null,
+      updated_at: new Date(),
     });
+
+  return existing;
 }
 
 async function upsertBox(
   knex: Knex,
-  input: { enterprise_id: number; name: string; location: string; slug: string },
+  input: {
+    enterprise_id: number;
+    name: string;
+    location: string;
+    slug: string;
+  },
 ): Promise<BoxRow> {
   const existing = await knex("boxes").where({ slug: input.slug }).first();
 
@@ -295,14 +333,12 @@ async function upsertBox(
     return created;
   }
 
-  await knex("boxes")
-    .where({ id: existing.id })
-    .update({
-      name: input.name,
-      location: input.location,
-      enterprise_id: input.enterprise_id,
-      updated_at: new Date(),
-    });
+  await knex("boxes").where({ id: existing.id }).update({
+    name: input.name,
+    location: input.location,
+    enterprise_id: input.enterprise_id,
+    updated_at: new Date(),
+  });
 
   return existing;
 }
@@ -330,15 +366,13 @@ async function upsertBoxBranding(
     return;
   }
 
-  await knex("boxes_branding")
-    .where({ id: existing.id })
-    .update({
-      primary_color: input.primary_color,
-      secondary_color: input.secondary_color,
-      logo_url: input.logo_url,
-      client_name: input.client_name,
-      updated_at: new Date(),
-    });
+  await knex("boxes_branding").where({ id: existing.id }).update({
+    primary_color: input.primary_color,
+    secondary_color: input.secondary_color,
+    logo_url: input.logo_url,
+    client_name: input.client_name,
+    updated_at: new Date(),
+  });
 }
 
 export async function seed(knex: Knex) {
@@ -393,6 +427,24 @@ export async function seed(knex: Knex) {
   for (const box of boxes) {
     const created = await upsertBox(knex, box);
     createdBoxes.push(created);
+  }
+
+  const branches = [
+    {
+      enterprise_id: enterprise.id,
+      name: "Filial Teste Centro",
+      slug: "teste-filial-centro",
+      address: "Rua das Caixas, 999",
+    },
+    {
+      enterprise_id: enterprise.id,
+      name: "Filial Teste Norte",
+      slug: "teste-filial-norte",
+      address: "Av. Exemplo, 100",
+    },
+  ];
+  for (const branch of branches) {
+    await upsertBranch(knex, branch);
   }
 
   for (const [index, box] of createdBoxes.entries()) {

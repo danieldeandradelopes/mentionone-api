@@ -150,6 +150,9 @@ export async function seed(knex: Knex) {
   await knex("social_medias")
     .del()
     .catch(() => {});
+  await knex("branches")
+    .del()
+    .catch(() => {});
 
   // 2. Tabelas principais (referenciadas por outras)
   await knex("plan_prices")
@@ -177,6 +180,7 @@ export async function seed(knex: Knex) {
     "manifests",
     "phones",
     "social_medias",
+    "branches",
     "plan_prices",
     "plans",
     "users",
@@ -259,7 +263,44 @@ export async function seed(knex: Knex) {
     .insert(enterprises)
     .returning(["id", "name"]);
 
-  // 4.1 Manifests (um por enterprise)
+  // 4.1 Filiais (branches) – algumas por enterprise
+  const now = new Date();
+  await knex("branches").insert([
+    {
+      enterprise_id: createdEnterprises[0].id,
+      name: "Filial Centro",
+      slug: "filial-centro",
+      address: "Av. Central, 100",
+      created_at: now,
+      updated_at: now,
+    },
+    {
+      enterprise_id: createdEnterprises[0].id,
+      name: "Filial Zona Sul",
+      slug: "filial-zona-sul",
+      address: "Rua das Flores, 50",
+      created_at: now,
+      updated_at: now,
+    },
+    {
+      enterprise_id: createdEnterprises[1].id,
+      name: "Filial Matriz",
+      slug: "filial-matriz",
+      address: "Av. Sugestões, 321",
+      created_at: now,
+      updated_at: now,
+    },
+    {
+      enterprise_id: createdEnterprises[1].id,
+      name: "Filial Norte",
+      slug: "filial-norte",
+      address: "Rua do Comércio, 200",
+      created_at: now,
+      updated_at: now,
+    },
+  ]);
+
+  // 4.2 Manifests (um por enterprise)
   await knex("manifests").insert([
     {
       enterprise_id: createdEnterprises[0].id,
@@ -427,6 +468,7 @@ export async function seed(knex: Knex) {
   console.log(`   - ${createdPlanPrices.length} preço(s) de plano criado(s)`);
   console.log(`   - ${createdUsers.length} usuário(s) criado(s)`);
   console.log(`   - ${createdEnterprises.length} empresa(s) criada(s)`);
+  console.log(`   - 4 filial(is) criada(s)`);
   console.log(`   - ${boxes.length} caixa(s) criada(s)`);
   console.log(`   - 4 feedback(s) criado(s)`);
 }

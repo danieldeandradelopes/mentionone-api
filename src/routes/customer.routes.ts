@@ -6,6 +6,8 @@ import FeedbackController from "../controllers/FeedbackController";
 import { container, Registry } from "../infra/ContainerRegistry";
 import BoxesController from "../controllers/BoxesController";
 import FeedbackOptionController from "../controllers/FeedbackOptionController";
+import NPSCampaignController from "../controllers/NPSCampaignController";
+import NPSResponseController from "../controllers/NPSResponseController";
 
 const customerRoutes = Router();
 
@@ -18,6 +20,15 @@ const feedbackPostLimiter = rateLimit({
   },
 });
 
+const npsResponsePostLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutos
+  max: 10, // 10 respostas NPS por IP por janela
+  message: {
+    error:
+      "Você está enviando respostas rápido demais. Tente novamente em alguns minutos.",
+  },
+});
+
 // Criar novo feedback (não autenticado, com rate limit)
 customerRoutes.post(
   "/customers/feedbacks",
@@ -26,7 +37,7 @@ customerRoutes.post(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const controller = container.get<FeedbackController>(
-        Registry.FeedbackController
+        Registry.FeedbackController,
       );
       // Aceita box_slug ao invés de box_id - backend resolve internamente
       const payload: FeedbackStoreDataWithSlug = {
@@ -40,13 +51,13 @@ customerRoutes.post(
       };
       const feedback = await controller.storeWithSlug(
         payload,
-        request.enterprise_id!
+        request.enterprise_id!,
       );
       return response.status(201).json(feedback);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // Obter opções de feedback por SLUG da box (público, sem autenticação)
@@ -56,10 +67,10 @@ customerRoutes.get(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
       const boxesController = container.get<BoxesController>(
-        Registry.BoxesController
+        Registry.BoxesController,
       );
       const feedbackOptionController = container.get<FeedbackOptionController>(
-        Registry.FeedbackOptionController
+        Registry.FeedbackOptionController,
       );
       // Busca a box pelo slug para pegar o ID
       const box = await boxesController.getBySlug(request.params.slug);
@@ -71,7 +82,55 @@ customerRoutes.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
+);
+
+// NPS público: obter campanha por slug (formulário)
+customerRoutes.get(
+  "/customers/nps/:slug",
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const controller = container.get<NPSCampaignController>(
+        Registry.NPSCampaignController,
+      );
+      const campaign = await controller.getBySlugForPublic(
+        request.enterprise_id!,
+        request.params.slug,
+      );
+      if (!campaign) {
+        return response
+          .status(404)
+          .json({ message: "Campaign not found or inactive." });
+      }
+      return response.json(campaign);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// NPS público: enviar resposta (rate limit)
+customerRoutes.post(
+  "/customers/nps/:slug/responses",
+  npsResponsePostLimiter,
+  EnterpriseGetInfo,
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const controller = container.get<NPSResponseController>(
+        Registry.NPSResponseController,
+      );
+      const { nps_score, branch_id, branch_slug, answers } = request.body;
+      const responseEntity = await controller.store(
+        request.enterprise_id!,
+        request.params.slug,
+        { nps_score, branch_id, branch_slug, answers },
+      );
+      return response.status(201).json(responseEntity);
+    } catch (error) {
+      next(error);
+    }
+  },
 );
 
 export default customerRoutes;
