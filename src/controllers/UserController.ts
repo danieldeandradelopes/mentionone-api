@@ -54,7 +54,10 @@ export default class UserController implements IUserControler {
     return userSession;
   }
 
-  async completeOnboarding(userId: number, enterpriseId: number): Promise<void> {
+  async completeOnboarding(
+    userId: number,
+    enterpriseId: number
+  ): Promise<void> {
     await this.userGateway.setOnboardingCompleted(userId, enterpriseId);
   }
 
@@ -81,9 +84,7 @@ export default class UserController implements IUserControler {
 
     const trx = externalTrx || (await this.userGateway.getTransaction());
     const shouldCommit =
-      typeof commitTransaction === "boolean"
-        ? commitTransaction
-        : !externalTrx;
+      typeof commitTransaction === "boolean" ? commitTransaction : !externalTrx;
 
     try {
       const user = await this.userGateway.addUser(
@@ -115,7 +116,11 @@ export default class UserController implements IUserControler {
 
       return auth;
     } catch (error) {
-      if (shouldCommit) {
+      if (
+        shouldCommit &&
+        typeof trx?.isCompleted === "function" &&
+        !trx.isCompleted()
+      ) {
         await trx.rollback();
       }
       throw error;
