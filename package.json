@@ -27,6 +27,7 @@
   "license": "ISC",
   "dependencies": {
     "@babel/preset-env": "^7.23.9",
+    "@google/generative-ai": "^0.24.1",
     "@sentry/node": "^10.8.0",
     "axios": "^1.11.0",
     "backblaze-b2": "^1.7.0",

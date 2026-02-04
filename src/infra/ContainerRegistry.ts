@@ -79,6 +79,10 @@ export const Registry = {
   NPSResponseGateway: Symbol.for("NPSResponseGateway"),
   NPSCampaignController: Symbol.for("NPSCampaignController"),
   NPSResponseController: Symbol.for("NPSResponseController"),
+  AIAdapter: Symbol.for("AIAdapter"),
+  AIAnalysisRunGateway: Symbol.for("AIAnalysisRunGateway"),
+  InsightsService: Symbol.for("InsightsService"),
+  InsightsController: Symbol.for("InsightsController"),
   PaymentGatewayAdapter: Symbol.for("PaymentGatewayAdapter"),
 };
 
@@ -356,5 +360,33 @@ container.bind(Registry.NPSResponseController).toDynamicValue(() => {
     container.get(Registry.NPSResponseGateway),
     container.get(Registry.BranchGateway),
     container.get(Registry.KnexConfig),
+  );
+});
+
+container.bind(Registry.AIAdapter).toDynamicValue(() => {
+  const { GeminiAdapter } = require("../infra/ai/GeminiAdapter");
+  return new GeminiAdapter();
+});
+
+container.bind(Registry.AIAnalysisRunGateway).toDynamicValue(() => {
+  const { KnexAIAnalysisRunGateway } = require("../gateway/AIAnalysisRunGateway/KnexAIAnalysisRunGateway");
+  return new KnexAIAnalysisRunGateway(KnexConfig);
+});
+
+container.bind(Registry.InsightsService).toDynamicValue((context) => {
+  const InsightsService = require("../services/InsightsService").default;
+  return new InsightsService(
+    context.container.get(Registry.EnterpriseGateway),
+    context.container.get(Registry.FeedbackGateway),
+    context.container.get(Registry.AIAnalysisRunGateway),
+    context.container.get(Registry.AIAdapter),
+  );
+});
+
+container.bind(Registry.InsightsController).toDynamicValue((context) => {
+  const InsightsController = require("../controllers/InsightsController").default;
+  return new InsightsController(
+    context.container.get(Registry.InsightsService),
+    context.container.get(Registry.AIAnalysisRunGateway),
   );
 });

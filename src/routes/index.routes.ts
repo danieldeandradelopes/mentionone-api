@@ -21,6 +21,7 @@ import { feedbackRoutes } from "./feedback.routes";
 import { feedbackOptionsRoutes } from "./feedback-options.routes";
 import { branchesRoutes } from "./branches.routes";
 import { npsCampaignsRoutes } from "./nps-campaigns.routes";
+import { insightsRoutes } from "./insights.routes";
 import { publicRoutes } from "./public.routes";
 import { manifestRoutes } from "./manifest.routes";
 import { paymentsRoutes } from "./payments.routes";
@@ -221,5 +222,6 @@ routes.use(feedbackRoutes);
 routes.use(feedbackOptionsRoutes);
 routes.use(branchesRoutes);
 routes.use(npsCampaignsRoutes);
+routes.use(insightsRoutes);
 
 export default routes;
