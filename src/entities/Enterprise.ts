@@ -14,6 +14,8 @@ export interface EnterpriseDTO {
   email?: string | null;
   asaas_customer_id?: string | null;
   timezone: string;
+  terms_accepted_at?: string | null;
+  terms_accepted_ip?: string | null;
   deleted_at?: string | null;
   created_at?: string;
   updated_at?: string;
@@ -44,6 +46,8 @@ export default class Enterprise {
   readonly email?: string | null;
   readonly asaas_customer_id?: string | null;
   readonly timezone: string;
+  readonly terms_accepted_at?: string | null;
+  readonly terms_accepted_ip?: string | null;
   readonly deleted_at?: string | null;
   readonly created_at?: string;
   readonly updated_at?: string;
@@ -63,6 +67,8 @@ export default class Enterprise {
     this.email = data.email;
     this.asaas_customer_id = data.asaas_customer_id;
     this.timezone = data.timezone || "America/Sao_Paulo";
+    this.terms_accepted_at = data.terms_accepted_at;
+    this.terms_accepted_ip = data.terms_accepted_ip;
     this.deleted_at = data.deleted_at;
     this.created_at = data.created_at;
     this.updated_at = data.updated_at;

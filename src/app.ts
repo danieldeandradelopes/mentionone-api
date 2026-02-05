@@ -10,7 +10,8 @@ import { swaggerSpec, swaggerUi } from "./swagger";
 
 const app = express();
 
-app.set("trust proxy", "loopback"); // aceita apenas localhost (127.0.0.1)
+// trust proxy 1: atrás de nginx/reverse proxy, request.ip usa X-Forwarded-For (para termos_accepted_ip)
+app.set("trust proxy", 1);
 
 app.use(
   cors({

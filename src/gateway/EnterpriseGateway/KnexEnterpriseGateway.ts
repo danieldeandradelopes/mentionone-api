@@ -89,6 +89,8 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
   async addEnterpriseWithDefaultTemplate(
     data: EnterpriseWithDefaultTemplate & { trx?: any } & {
       phone: string;
+      terms_accepted_at?: Date | null;
+      terms_accepted_ip?: string | null;
     }
   ): Promise<{ enterprise: Enterprise }> {
     const {
@@ -102,6 +104,8 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
       document,
       document_type,
       plan_price_id,
+      terms_accepted_at,
+      terms_accepted_ip,
       trx,
     } = data;
 
@@ -117,6 +121,8 @@ export default class KnexEnterpriseGateway implements IEnterpriseGateway {
         subdomain: subdomain,
         cover: cover,
         description: description,
+        terms_accepted_at: terms_accepted_at ?? null,
+        terms_accepted_ip: terms_accepted_ip ?? null,
       };
 
       const [insertedEnterprise] = await transaction("enterprises")

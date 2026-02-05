@@ -19,6 +19,14 @@ const sanitizeSubdomain = (value: string) => {
   return `empresa-${Date.now()}`;
 };
 
+const getClientIp = (request: Request): string | null => {
+  const ip =
+    request.ip ||
+    (request.socket as any)?.remoteAddress ||
+    (request.headers["x-forwarded-for"] as string)?.toString().split(",")[0]?.trim();
+  return ip || null;
+};
+
 publicRoutes.get(
   "/public/plans",
   async (request: Request, response: Response, next: NextFunction) => {
@@ -129,11 +137,20 @@ publicRoutes.post(
         password,
         document,
         document_type,
+        terms_accepted,
       } = request.body;
 
       if (!companyName || !name || !email || !password) {
         throw new Error("Missing required fields");
       }
+      if (terms_accepted !== true) {
+        return response.status(400).json({
+          message: "É necessário aceitar os Termos de Uso",
+        });
+      }
+
+      const termsAcceptedAt = new Date();
+      const termsAcceptedIp = getClientIp(request);
 
       const enterprise = await enterpriseController.storeWithDefaultTemplate({
         name: companyName,
@@ -147,6 +164,8 @@ publicRoutes.post(
         document,
         document_type,
         timezone: "America/Sao_Paulo",
+        terms_accepted_at: termsAcceptedAt,
+        terms_accepted_ip: termsAcceptedIp,
         trx,
       } as any);
 
@@ -200,11 +219,20 @@ publicRoutes.post(
         plan_price_id,
         card,
         holder,
+        terms_accepted,
       } = request.body;
 
       if (!companyName || !name || !email || !password || !plan_price_id) {
         throw new Error("Missing required fields");
       }
+      if (terms_accepted !== true) {
+        return response.status(400).json({
+          message: "É necessário aceitar os Termos de Uso",
+        });
+      }
+
+      const termsAcceptedAt = new Date();
+      const termsAcceptedIp = getClientIp(request);
 
       const enterprise = await enterpriseController.storeWithDefaultTemplate({
         name: companyName,
@@ -219,6 +247,8 @@ publicRoutes.post(
         document_type,
         plan_price_id,
         timezone: "America/Sao_Paulo",
+        terms_accepted_at: termsAcceptedAt,
+        terms_accepted_ip: termsAcceptedIp,
         trx,
       } as any);
 
